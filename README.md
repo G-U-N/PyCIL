@@ -22,6 +22,8 @@ python main.py
 ```
 
 ## Results
+<img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/cifar100_10.png" width = "325"/><img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/cifar100_20.png" width = "325"/><img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/cifar100_50.png" width = "325"/>
+
 Average accuracies of CIFAR-100:
 | Increments | Paper reported | Reproduce |
 | :--------: | :------------: | :-------: |
