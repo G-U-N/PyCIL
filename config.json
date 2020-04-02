@@ -1,0 +1,11 @@
+{
+	"prefix": "reproduce",
+	"dataset": "cifar100",
+	"shuffle": true,
+	"init_cls": 10,
+	"increment": 10,
+	"model_name": "iCaRL",
+	"convnet_type": "resnet32",
+	"device": 0,
+	"seed": [57]
+}
