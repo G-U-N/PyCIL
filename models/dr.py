@@ -28,7 +28,6 @@ memory_size = 2000
 T1 = 2
 T2 = 2
 
-
 class DR(BaseLearner):
     def __init__(self, args):
         super().__init__()
@@ -170,8 +169,9 @@ class DR(BaseLearner):
 
         for class_idx in range(self._known_classes):
             mask = np.where(dummy_targets == class_idx)[0]
-            dd, dt = dummy_data[mask][:m], dummy_targets[mask][:m]
-            self._data_memory.append(dd)
+            dd = [dummy_data[i] for i in mask][:m]
+            dt = dummy_targets[mask][:m]
+            self._data_memory = self._data_memory + dd
             self._targets_memory.append(dt)
 
             # Exemplar mean
@@ -184,10 +184,12 @@ class DR(BaseLearner):
 
             self._class_means[class_idx, :] = mean
 
+        '''
         if len(self._data_memory) == 0:
             self._data_memory = np.array(self._data_memory)
         else:
             self._data_memory = np.concatenate((self._data_memory))
+        '''
 
     def _construct_exemplar(self, data_manager, m):
         logging.info('Constructing exemplars...({} per classes)'.format(m))
@@ -208,14 +210,17 @@ class DR(BaseLearner):
                 i = np.argmin(np.sqrt(np.sum((class_mean - mu_p) ** 2, axis=1)))
                 exemplar_vectors.append(vectors[i])
                 selected_exemplars.append(data[i])
-            selected_exemplars = np.array(selected_exemplars)  # [n, H, W, C]
+
             exemplar_targets = np.full(m, class_idx)
+            '''
+            selected_exemplars = np.array(selected_exemplars)  # [n, H, W, C]
             dummy = []
             for sample in self._data_memory:
                 dummy.append(sample)
             for sample in selected_exemplars:
                 dummy.append(sample)
-            self._data_memory = np.array(dummy)
+            '''
+            self._data_memory = self._data_memory + selected_exemplars
             self._targets_memory.append(exemplar_targets)
 
             # Exemplar mean
@@ -229,7 +234,7 @@ class DR(BaseLearner):
 
             self._class_means[class_idx, :] = mean
 
-        self._data_memory = np.array(self._data_memory)
+        # self._data_memory = np.array(self._data_memory)
         self._targets_memory = np.concatenate(self._targets_memory)
 
 

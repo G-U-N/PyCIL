@@ -44,15 +44,15 @@ class DataManager(object):
         data, targets = [], []
         for idx in indices:
             class_data, class_targets = self._select(x, y, low_range=idx, high_range=idx+1)
-            data.append(class_data)
+            data = data + class_data
             targets.append(class_targets)
 
         if appendent is not None:
             appendent_data, appendent_targets = appendent
-            data.append(appendent_data)
+            data = data + appendent_data if len(data) != 0 else appendent_data
             targets.append(appendent_targets)
 
-        data, targets = np.concatenate(data), np.concatenate(targets)
+        targets = np.concatenate(targets)
 
         if ret_data:
             return data, targets, DummyDataset(data, targets, trsf)
@@ -88,7 +88,9 @@ class DataManager(object):
 
     def _select(self, x, y, low_range, high_range):
         idxes = np.where(np.logical_and(y >= low_range, y < high_range))[0]
-        return x[idxes], y[idxes]
+        ret_x = [x[i] for i in idxes]
+        ret_y = y[idxes]
+        return ret_x, ret_y
 
 
 class DummyDataset(Dataset):
@@ -102,7 +104,7 @@ class DummyDataset(Dataset):
         return len(self.images)
 
     def __getitem__(self, idx):
-        image = self.trsf(Image.fromarray(self.images[idx]))
+        image = self.trsf(Image.fromarray(np.array(self.images[idx]).astype(np.uint8)))
         label = self.labels[idx]
 
         return idx, image, label
