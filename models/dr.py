@@ -28,6 +28,7 @@ memory_size = 2000
 T1 = 2
 T2 = 2
 
+
 class DR(BaseLearner):
     def __init__(self, args):
         super().__init__()
@@ -184,13 +185,6 @@ class DR(BaseLearner):
 
             self._class_means[class_idx, :] = mean
 
-        '''
-        if len(self._data_memory) == 0:
-            self._data_memory = np.array(self._data_memory)
-        else:
-            self._data_memory = np.concatenate((self._data_memory))
-        '''
-
     def _construct_exemplar(self, data_manager, m):
         logging.info('Constructing exemplars...({} per classes)'.format(m))
         for class_idx in range(self._known_classes, self._total_classes):
@@ -212,14 +206,6 @@ class DR(BaseLearner):
                 selected_exemplars.append(data[i])
 
             exemplar_targets = np.full(m, class_idx)
-            '''
-            selected_exemplars = np.array(selected_exemplars)  # [n, H, W, C]
-            dummy = []
-            for sample in self._data_memory:
-                dummy.append(sample)
-            for sample in selected_exemplars:
-                dummy.append(sample)
-            '''
             self._data_memory = self._data_memory + selected_exemplars
             self._targets_memory.append(exemplar_targets)
 
@@ -234,7 +220,6 @@ class DR(BaseLearner):
 
             self._class_means[class_idx, :] = mean
 
-        # self._data_memory = np.array(self._data_memory)
         self._targets_memory = np.concatenate(self._targets_memory)
 
 

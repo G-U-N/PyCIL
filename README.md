@@ -31,6 +31,9 @@ Average accuracies of CIFAR-100:
 | 20 classes | 67.2           | 66.24     |
 | 50 classes | 68.6           | 67.65     |
 
+## Change log
+- [x] (2020.6.8) Store data with list instead of np.array to avoid bugs when the image size is different.
+
 ## Some problems
 Q: Why can't I reproduce the results of the paper by this repository?
 

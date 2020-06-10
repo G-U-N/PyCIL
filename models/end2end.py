@@ -154,13 +154,6 @@ class End2End(BaseLearner):
             self._data_memory = self._data_memory + dd
             self._targets_memory.append(dt)
 
-        '''
-        if len(self._data_memory) == 0:
-            self._data_memory = np.array(self._data_memory)
-        else:
-            self._data_memory = np.concatenate((self._data_memory))
-        '''
-
     def _construct_exemplar(self, data_manager, m):
         logging.info('Constructing exemplars...({} per classes)'.format(m))
         for class_idx in range(self._known_classes, self._total_classes):
@@ -182,16 +175,7 @@ class End2End(BaseLearner):
                 selected_exemplars.append(data[i])
 
             exemplar_targets = np.full(m, class_idx)
-            '''
-            selected_exemplars = np.array(selected_exemplars)  # [n, H, W, C]
-            dummy = []
-            for sample in self._data_memory:
-                dummy.append(sample)
-            for sample in selected_exemplars:
-                dummy.append(sample)
-            '''
             self._data_memory = self._data_memory + selected_exemplars
             self._targets_memory.append(exemplar_targets)
 
-        # self._data_memory = np.array(self._data_memory)
         self._targets_memory = np.concatenate(self._targets_memory)
