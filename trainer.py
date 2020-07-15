@@ -21,7 +21,8 @@ def _train(args):
         level=logging.INFO,
         format='%(asctime)s [%(levelname)s] => %(message)s',
         handlers=[
-            logging.FileHandler(filename=args['prefix'] + '_{}.log'.format(args['model_name'])),
+            logging.FileHandler(filename=args['prefix'] + '_{}_{}_{}.log'.format(
+                args['model_name'], args['init_cls'], args['increment'])),
             logging.StreamHandler(sys.stdout)
         ]
     )

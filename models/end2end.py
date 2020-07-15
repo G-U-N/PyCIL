@@ -174,6 +174,11 @@ class End2End(BaseLearner):
                 exemplar_vectors.append(vectors[i])
                 selected_exemplars.append(data[i])
 
+                vectors = np.delete(vectors, i, axis=0)  # Remove it to avoid duplicative selection
+                data = np.delete(data, i, axis=0)  # Remove it to avoid duplicative selection
+
+            # uniques = np.unique(selected_exemplars, axis=0)
+            # print('Unique elements: {}'.format(len(uniques)))
             exemplar_targets = np.full(m, class_idx)
             self._data_memory = self._data_memory + selected_exemplars
             self._targets_memory.append(exemplar_targets)
