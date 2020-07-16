@@ -6,6 +6,7 @@ Especially the methods based on **memory replay**.
 - [x] iCaRL: Incremental Classifier and Representation Learning. [[paper](https://arxiv.org/abs/1611.07725)]
 - [x] End2End: End-to-End Incremental Learning. [[paper](https://arxiv.org/abs/1807.09536)]
 - [x] DR: Lifelong Learning via Progressive Distillation and Retrospection. [[paper](http://openaccess.thecvf.com/content_ECCV_2018/html/Saihui_Hou_Progressive_Lifelong_Learning_ECCV_2018_paper.html)]
+- [x] UCIR: Learning a Unified Classifier Incrementally via Rebalancing. [[paper](https://openaccess.thecvf.com/content_CVPR_2019/html/Hou_Learning_a_Unified_Classifier_Incrementally_via_Rebalancing_CVPR_2019_paper.html)]
 
 ## Dependencies
 1. torch 1.4.0
@@ -22,17 +23,24 @@ python main.py
 ```
 
 ## Results
-<img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/cifar100_10.png" width = "325"/><img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/cifar100_20.png" width = "325"/><img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/cifar100_50.png" width = "325"/>
+**iCaRL**
 
-Average accuracies of CIFAR-100:
+<img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/iCaRL_cifar100_10.png" width = "325"/><img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/iCaRL_cifar100_20.png" width = "325"/><img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/iCaRL_cifar100_50.png" width = "325"/>
+
+Average accuracies of CIFAR-100 (iCaRL):
 | Increments | Paper reported | Reproduce |
 | :--------: | :------------: | :-------: |
 | 10 classes | 64.1           | 61.93     |
 | 20 classes | 67.2           | 66.24     |
 | 50 classes | 68.6           | 67.65     |
 
+**UCIR**
+
+<img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/UCIR_CNN_cifar100_5.png" width = "325"/><img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/UCIR_NCM_cifar100_5.png" width = "325"/><img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/UCIR_CNN_cifar100_10.png" width = "325"/><img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/UCIR_NCM_cifar100_10.png" width = "325"/>
+
 ## Change log
 - [x] (2020.6.8) Store data with list instead of np.array to avoid bugs when the image size is different.
+- [x] (2020.7.15) Avoid duplicative selection in constructing exemplars.
 
 ## Some problems
 Q: Why can't I reproduce the results of the paper by this repository?
