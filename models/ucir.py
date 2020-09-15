@@ -6,7 +6,7 @@ from torch import optim
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from models.base import BaseLearner
-from utils.modified_inc_net import ModifiedIncrementalNet
+from utils.inc_net import ModifiedIncrementalNet
 from utils.toolkit import accuracy, tensor2numpy, target2onehot
 
 EPSILON = 1e-8

@@ -21,13 +21,15 @@ def _train(args):
         level=logging.INFO,
         format='%(asctime)s [%(levelname)s] => %(message)s',
         handlers=[
-            logging.FileHandler(filename=args['prefix'] + '_{}_{}_{}.log'.format(
-                args['model_name'], args['init_cls'], args['increment'])),
+            logging.FileHandler(filename=args['prefix'] + '_{}_{}_{}_{}.log'.format(
+                args['model_name'], args['convnet_type'], args['init_cls'], args['increment'])),
             logging.StreamHandler(sys.stdout)
         ]
     )
 
     logging.info('Seed: {}'.format(args['seed']))
+    logging.info('Model: {}'.format(args['model_name']))
+    logging.info('Convnet: {}'.format(args['convnet_type']))
     _set_device(args)
     data_manager = DataManager(args['dataset'], args['shuffle'], args['seed'], args['init_cls'], args['increment'])
     model = factory.get_model(args['model_name'], args)
