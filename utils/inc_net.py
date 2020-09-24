@@ -3,6 +3,7 @@ from torch import nn
 from convs.cifar_resnet import resnet32
 from convs.resnet import resnet18, resnet50
 from convs.modified_cifar_resnet import resnet32 as cosine_resnet32
+from convs.modified_resnet import resnet34 as cosine_resnet34
 from convs.modified_resnet import resnet50 as cosine_resnet50
 from convs.modified_linear import SplitCosineLinear, CosineLinear
 
@@ -17,16 +18,18 @@ def get_convnet(convnet_type, pretrained=False):
         return resnet50(pretrained=pretrained)
     elif name == 'cosine_resnet32':
         return cosine_resnet32()
+    elif name == 'cosine_resnet34':
+        return cosine_resnet34(pretrained=pretrained)
     elif name == 'cosine_resnet50':
-        return cosine_resnet50()
+        return cosine_resnet50(pretrained=pretrained)
     else:
         raise NotImplementedError('Unknown type {}'.format(convnet_type))
 
 
-class IncrementalNet(nn.Module):
+class BaseNet(nn.Module):
 
     def __init__(self, convnet_type, pretrained):
-        super(IncrementalNet, self).__init__()
+        super(BaseNet, self).__init__()
 
         self.convnet = get_convnet(convnet_type, pretrained)
         self.fc = None
@@ -43,6 +46,28 @@ class IncrementalNet(nn.Module):
         logits = self.fc(x)
 
         return logits
+
+    def update_fc(self, nb_classes):
+        pass
+
+    def generate_fc(self, in_dim, out_dim):
+        pass
+
+    def copy(self):
+        return copy.deepcopy(self)
+
+    def freeze(self):
+        for param in self.parameters():
+            param.requires_grad = False
+        self.eval()
+
+        return self
+
+
+class IncrementalNet(BaseNet):
+
+    def __init__(self, convnet_type, pretrained):
+        super().__init__(convnet_type, pretrained)
 
     def update_fc(self, nb_classes):
         fc = self.generate_fc(self.feature_dim, nb_classes)
@@ -63,43 +88,17 @@ class IncrementalNet(nn.Module):
 
         return fc
 
-    def copy(self):
-        return copy.deepcopy(self)
 
-    def freeze(self):
-        for param in self.parameters():
-            param.requires_grad = False
-        self.eval()
-
-        return self
-
-
-class ModifiedIncrementalNet(nn.Module):
+class ModifiedIncrementalNet(BaseNet):
 
     def __init__(self, convnet_type, pretrained):
-        super(ModifiedIncrementalNet, self).__init__()
-
-        self.convnet = get_convnet(convnet_type, pretrained)
-        self.fc = None
-
-    @property
-    def feature_dim(self):
-        return self.convnet.out_dim
+        super().__init__(convnet_type, pretrained)
 
     def get_features_fn(self, module, inputs, outputs):
         self.features = inputs[0]
 
     def get_features(self):
         return self.features
-
-    def extract_vector(self, x):
-        return self.convnet(x)
-
-    def forward(self, x):
-        x = self.convnet(x)
-        logits = self.fc(x)
-
-        return logits
 
     def update_fc(self, nb_classes, task_num):
         fc = self.generate_fc(self.feature_dim, nb_classes)
@@ -126,13 +125,3 @@ class ModifiedIncrementalNet(nn.Module):
             fc = SplitCosineLinear(in_dim, prev_out_features, out_dim - prev_out_features)
 
         return fc
-
-    def copy(self):
-        return copy.deepcopy(self)
-
-    def freeze(self):
-        for param in self.parameters():
-            param.requires_grad = False
-        self.eval()
-
-        return self

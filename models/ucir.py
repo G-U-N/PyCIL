@@ -26,7 +26,7 @@ margin = 0.5
 class UCIR(BaseLearner):
     def __init__(self, args):
         super().__init__()
-        self._network = ModifiedIncrementalNet(args['convnet_type'], True)
+        self._network = ModifiedIncrementalNet(args['convnet_type'], pretrained=False)
         self._device = args['device']
         self._class_means = None
 
