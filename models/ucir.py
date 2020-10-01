@@ -96,9 +96,9 @@ class UCIR(BaseLearner):
         else:
             ignored_params = list(map(id, self._network.fc.fc1.parameters()))
             base_params = filter(lambda p: id(p) not in ignored_params, self._network.parameters())
-            network_params = [{'params': base_params, 'lr': lrate, 'weight_decay': 5e-5},
+            network_params = [{'params': base_params, 'lr': lrate, 'weight_decay': 5e-4},
                               {'params': self._network.fc.fc1.parameters(), 'lr': 0, 'weight_decay': 0}]
-        optimizer = optim.SGD(network_params, lr=lrate, momentum=0.9, weight_decay=5e-5)
+        optimizer = optim.SGD(network_params, lr=lrate, momentum=0.9, weight_decay=5e-4)
         scheduler = optim.lr_scheduler.MultiStepLR(optimizer=optimizer, milestones=milestones, gamma=lrate_decay)
 
         self._run(train_loader, test_loader, optimizer, scheduler)
