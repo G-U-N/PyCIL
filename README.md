@@ -42,6 +42,7 @@ Average accuracies of CIFAR-100 (iCaRL):
 ## Change log
 - [x] (2020.6.8) Store data with list instead of np.array to avoid bugs when the image size is different.
 - [x] (2020.7.15) Avoid duplicative selection in constructing exemplars.
+- [x] (2020.10.3) Fix the bug of excessive memory usage.
 
 ## Some problems
 Q: Why can't I reproduce the results of the paper by this repository?
