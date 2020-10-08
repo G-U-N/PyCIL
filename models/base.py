@@ -17,7 +17,7 @@ class BaseLearner(object):
         self._total_classes = 0
         self._network = None
         self._old_network = None
-        self._data_memory, self._targets_memory = [], []
+        self._data_memory, self._targets_memory = np.array([]), np.array([])
 
     def after_task(self):
         pass
@@ -89,14 +89,13 @@ class BaseLearner(object):
         logging.info('Reducing exemplars...({} per classes)'.format(m))
         dummy_data, dummy_targets = copy.deepcopy(self._data_memory), copy.deepcopy(self._targets_memory)
         self._class_means = np.zeros((self._total_classes, self._network.feature_dim))
-        self._data_memory, self._targets_memory = [], []
+        self._data_memory, self._targets_memory = np.array([]), np.array([])
 
         for class_idx in range(self._known_classes):
             mask = np.where(dummy_targets == class_idx)[0]
-            dd = [dummy_data[i] for i in mask][:m]
-            dt = dummy_targets[mask][:m]
-            self._data_memory = self._data_memory + dd
-            self._targets_memory.append(dt)
+            dd, dt = dummy_data[mask][:m], dummy_targets[mask][:m]
+            self._data_memory = np.concatenate((self._data_memory, dd)) if len(self._data_memory) != 0 else dd
+            self._targets_memory = np.concatenate((self._targets_memory, dt)) if len(self._targets_memory) != 0 else dt
 
             # Exemplar mean
             idx_dataset = data_manager.get_dataset([], source='train', mode='test', appendent=(dd, dt))
@@ -125,18 +124,20 @@ class BaseLearner(object):
                 S = np.sum(exemplar_vectors, axis=0)  # [feature_dim] sum of selected exemplars vectors
                 mu_p = (vectors + S) / k  # [n, feature_dim] sum to all vectors
                 i = np.argmin(np.sqrt(np.sum((class_mean - mu_p) ** 2, axis=1)))
-                exemplar_vectors.append(vectors[i])
-                selected_exemplars.append(data[i])
+                selected_exemplars.append(np.array(data[i]))  # New object to avoid passing by inference
+                exemplar_vectors.append(np.array(vectors[i]))  # New object to avoid passing by inference
 
                 vectors = np.delete(vectors, i, axis=0)  # Remove it to avoid duplicative selection
-                # data = np.delete(data, i, axis=0)  # Remove it to avoid duplicative selection
-                del data[i]
+                data = np.delete(data, i, axis=0)  # Remove it to avoid duplicative selection
 
             # uniques = np.unique(selected_exemplars, axis=0)
             # print('Unique elements: {}'.format(len(uniques)))
+            selected_exemplars = np.array(selected_exemplars)
             exemplar_targets = np.full(m, class_idx)
-            self._data_memory = self._data_memory + selected_exemplars
-            self._targets_memory.append(exemplar_targets)
+            self._data_memory = np.concatenate((self._data_memory, selected_exemplars)) if len(self._data_memory) != 0 \
+                else selected_exemplars
+            self._targets_memory = np.concatenate((self._targets_memory, exemplar_targets)) if \
+                len(self._targets_memory) != 0 else exemplar_targets
 
             # Exemplar mean
             idx_dataset = data_manager.get_dataset([], source='train', mode='test',
@@ -149,8 +150,6 @@ class BaseLearner(object):
 
             self._class_means[class_idx, :] = mean
 
-        self._targets_memory = np.concatenate(self._targets_memory)
-
     def _construct_exemplar_unified(self, data_manager, m):
         logging.info('Constructing exemplars for new classes...({} per classes)'.format(m))
         _class_means = np.zeros((self._total_classes, self._network.feature_dim))
@@ -158,8 +157,7 @@ class BaseLearner(object):
         # Calculate the means of old classes with newly trained network
         for class_idx in range(self._known_classes):
             mask = np.where(self._targets_memory == class_idx)[0]
-            class_data = [self._data_memory[i] for i in mask]
-            class_targets = self._targets_memory[mask]
+            class_data, class_targets = self._data_memory[mask], self._targets_memory[mask]
 
             class_dset = data_manager.get_dataset([], source='train', mode='test',
                                                   appendent=(class_data, class_targets))
@@ -189,16 +187,18 @@ class BaseLearner(object):
                 mu_p = (vectors + S) / k  # [n, feature_dim] sum to all vectors
                 i = np.argmin(np.sqrt(np.sum((class_mean - mu_p) ** 2, axis=1)))
 
-                exemplar_vectors.append(vectors[i])
-                selected_exemplars.append(data[i])
+                selected_exemplars.append(np.array(data[i]))  # New object to avoid passing by inference
+                exemplar_vectors.append(np.array(vectors[i]))  # New object to avoid passing by inference
 
                 vectors = np.delete(vectors, i, axis=0)  # Remove it to avoid duplicative selection
-                # data = np.delete(data, i, axis=0)  # Remove it to avoid duplicative selection
-                del data[i]
+                data = np.delete(data, i, axis=0)  # Remove it to avoid duplicative selection
 
-            exemplar_targets = np.full(m, class_idx).tolist()
-            self._data_memory = self._data_memory + selected_exemplars
-            self._targets_memory = np.concatenate((self._targets_memory, exemplar_targets)).astype(int)
+            selected_exemplars = np.array(selected_exemplars)
+            exemplar_targets = np.full(m, class_idx)
+            self._data_memory = np.concatenate((self._data_memory, selected_exemplars)) if len(self._data_memory) != 0 \
+                else selected_exemplars
+            self._targets_memory = np.concatenate((self._targets_memory, exemplar_targets)) if \
+                len(self._targets_memory) != 0 else exemplar_targets
 
             # Exemplar mean
             exemplar_dset = data_manager.get_dataset([], source='train', mode='test',
