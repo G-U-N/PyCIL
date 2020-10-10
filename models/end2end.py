@@ -70,6 +70,8 @@ class End2End(BaseLearner):
 
     def _train(self, data_manager, train_loader, test_loader):
         self._network.to(self._device)
+        if self._old_network is not None:
+            self._old_network.to(self._device)
         if self._cur_task == 0:
             optimizer = optim.SGD(self._network.parameters(), lr=lrate_init, momentum=0.9, weight_decay=1e-3)
             scheduler = optim.lr_scheduler.MultiStepLR(optimizer=optimizer, milestones=milestones_init,

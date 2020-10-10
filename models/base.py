@@ -19,6 +19,14 @@ class BaseLearner(object):
         self._old_network = None
         self._data_memory, self._targets_memory = np.array([]), np.array([])
 
+    def save_checkpoint(self, filename):
+        self._network.cpu()
+        save_dict = {
+            'tasks': self._cur_task,
+            'model_state_dict': self._network.state_dict(),
+        }
+        torch.save(save_dict, '{}_{}.pkl'.format(filename, self._cur_task))
+
     def after_task(self):
         pass
 

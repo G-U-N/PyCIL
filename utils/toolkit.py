@@ -44,3 +44,14 @@ def accuracy(y_pred, y_true, nb_old, increment=10):
     all_acc['new'] = np.around((y_pred[idxes] == y_true[idxes]).sum() / len(idxes), 3)
 
     return all_acc
+
+
+def split_images_labels(imgs):
+    # split trainset.imgs in ImageFolder
+    images = []
+    labels = []
+    for item in imgs:
+        images.append(item[0])
+        labels.append(item[1])
+
+    return np.array(images), np.array(labels)

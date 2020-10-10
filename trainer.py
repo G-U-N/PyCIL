@@ -18,12 +18,13 @@ def train(args):
 
 
 def _train(args):
+    logfilename = '{}_{}_{}_{}_{}_{}_{}'.format(args['prefix'], args['seed'], args['model_name'], args['convnet_type'],
+                                                args['dataset'], args['init_cls'], args['increment'])
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s [%(levelname)s] => %(message)s',
         handlers=[
-            logging.FileHandler(filename=args['prefix'] + '_{}_{}_{}_{}.log'.format(
-                args['model_name'], args['convnet_type'], args['init_cls'], args['increment'])),
+            logging.FileHandler(filename=logfilename + '.log'),
             logging.StreamHandler(sys.stdout)
         ]
     )

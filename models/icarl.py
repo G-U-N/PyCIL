@@ -11,6 +11,16 @@ from utils.toolkit import target2onehot, accuracy
 
 EPSILON = 1e-8
 
+# ImageNet1000, ResNet18
+'''
+epochs = 60
+lrate = 2.0
+milestones = [20, 30, 40, 50]
+lrate_decay = 0.2
+batch_size = 128
+memory_size = 20000
+'''
+
 # CIFAR100, ResNet32
 epochs = 70
 lrate = 2.0
@@ -57,6 +67,8 @@ class iCaRL(BaseLearner):
 
     def _train(self, train_loader, test_loader):
         self._network.to(self._device)
+        if self._old_network is not None:
+            self._old_network.to(self._device)
         optimizer = optim.SGD(self._network.parameters(), lr=lrate, momentum=0.9, weight_decay=1e-5)
         scheduler = optim.lr_scheduler.MultiStepLR(optimizer=optimizer, milestones=milestones, gamma=lrate_decay)
         self._update_representation(train_loader, test_loader, optimizer, scheduler)

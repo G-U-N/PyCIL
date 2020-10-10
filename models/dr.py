@@ -82,6 +82,8 @@ class DR(BaseLearner):
 
     def _train(self, train_loader, test_loader):
         self._network.to(self._device)
+        if self._old_network is not None:
+            self._old_network.to(self._device)
         optimizer = optim.SGD(self._network.parameters(), lr=lrate, momentum=0.9, weight_decay=1e-5)
         scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=milestones, gamma=lrate_decay)
 

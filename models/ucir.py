@@ -30,16 +30,6 @@ class UCIR(BaseLearner):
         self._device = args['device']
         self._class_means = None
 
-    def save_checkpoint(self):
-        self._network.cpu()
-        save_dict = {
-            'tasks': self._cur_task,
-            'model_state_dict': self._network.state_dict(),
-            'data_memory': self._data_memory,
-            'targets_memory': self._targets_memory,
-        }
-        torch.save(save_dict, 'dict_{}.pkl'.format(self._cur_task))
-
     def after_task(self):
         # self.save_checkpoint()
         self._old_network = self._network.copy().freeze()

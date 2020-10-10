@@ -3,11 +3,12 @@ import numpy as np
 from PIL import Image
 from torch.utils.data import Dataset
 from torchvision import transforms
-from utils.data import iCIFAR10, iCIFAR100
+from utils.data import iCIFAR10, iCIFAR100, iImageNet1000
 
 
 class DataManager(object):
     def __init__(self, dataset_name, shuffle, seed, init_cls, increment):
+        self.dataset_name = dataset_name
         self._setup_data(dataset_name, shuffle, seed)
         assert init_cls <= len(self._class_order), 'No enough classes.'
         self._increments = [init_cls]
@@ -55,9 +56,15 @@ class DataManager(object):
         data, targets = np.concatenate(data), np.concatenate(targets)
 
         if ret_data:
-            return data, targets, DummyDataset(data, targets, trsf)
+            if self.dataset_name.lower() == 'imagenet1000':
+                return data, targets, PathDataset(data, targets, trsf)
+            else:
+                return data, targets, DummyDataset(data, targets, trsf)
         else:
-            return DummyDataset(data, targets, trsf)
+            if self.dataset_name.lower() == 'imagenet1000':
+                return PathDataset(data, targets, trsf)
+            else:
+                return DummyDataset(data, targets, trsf)
 
     def _setup_data(self, dataset_name, shuffle, seed):
         idata = _get_idata(dataset_name)
@@ -109,6 +116,23 @@ class DummyDataset(Dataset):
         return idx, image, label
 
 
+class PathDataset(Dataset):
+    def __init__(self, paths, labels, trsf):
+        assert len(paths) == len(labels), 'Data size error!'
+        self.paths = paths
+        self.labels = labels
+        self.trsf = trsf
+
+    def __len__(self):
+        return len(self.paths)
+
+    def __getitem__(self, idx):
+        image = self.trsf(pil_loader(self.paths[idx]))
+        label = self.labels[idx]
+
+        return idx, image, label
+
+
 def _map_new_class_index(y, order):
     return np.array(list(map(lambda x: order.index(x), y)))
 
@@ -119,5 +143,45 @@ def _get_idata(dataset_name):
         return iCIFAR10()
     elif name == 'cifar100':
         return iCIFAR100()
+    elif name == 'imagenet1000':
+        return iImageNet1000()
     else:
         raise NotImplementedError('Unknown dataset {}.'.format(dataset_name))
+
+
+def pil_loader(path):
+    '''
+    Ref:
+    https://pytorch.org/docs/stable/_modules/torchvision/datasets/folder.html#ImageFolder
+    '''
+    # open path as file to avoid ResourceWarning (https://github.com/python-pillow/Pillow/issues/835)
+    with open(path, 'rb') as f:
+        img = Image.open(f)
+        return img.convert('RGB')
+
+
+def accimage_loader(path):
+    '''
+    Ref:
+    https://pytorch.org/docs/stable/_modules/torchvision/datasets/folder.html#ImageFolder
+    accimage is an accelerated Image loader and preprocessor leveraging Intel IPP.
+    accimage is available on conda-forge.
+    '''
+    import accimage
+    try:
+        return accimage.Image(path)
+    except IOError:
+        # Potentially a decoding problem, fall back to PIL.Image
+        return pil_loader(path)
+
+
+def default_loader(path):
+    '''
+    Ref:
+    https://pytorch.org/docs/stable/_modules/torchvision/datasets/folder.html#ImageFolder
+    '''
+    from torchvision import get_image_backend
+    if get_image_backend() == 'accimage':
+        return accimage_loader(path)
+    else:
+        return pil_loader(path)
