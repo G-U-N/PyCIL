@@ -22,7 +22,7 @@ def _train(args):
                                                 args['dataset'], args['init_cls'], args['increment'])
     logging.basicConfig(
         level=logging.INFO,
-        format='%(asctime)s [%(levelname)s] => %(message)s',
+        format='%(asctime)s [%(filename)s] => %(message)s',
         handlers=[
             logging.FileHandler(filename=logfilename + '.log'),
             logging.StreamHandler(sys.stdout)
