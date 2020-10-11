@@ -125,3 +125,11 @@ class ModifiedIncrementalNet(BaseNet):
             fc = SplitCosineLinear(in_dim, prev_out_features, out_dim - prev_out_features)
 
         return fc
+
+    def copy(self):
+        '''
+        Dirty operations to remove non-leaf tensor
+        Would meet error in deepcopy without this operations
+        '''
+        self.convnet.fmaps = None
+        return copy.deepcopy(self)
