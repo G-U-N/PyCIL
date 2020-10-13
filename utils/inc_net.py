@@ -3,9 +3,12 @@ from torch import nn
 from convs.cifar_resnet import resnet32
 from convs.resnet import resnet18, resnet50
 from convs.modified_cifar_resnet import resnet32 as cosine_resnet32
+from convs.modified_resnet import resnet18 as cosine_resnet18
 from convs.modified_resnet import resnet34 as cosine_resnet34
 from convs.modified_resnet import resnet50 as cosine_resnet50
 from convs.modified_linear import SplitCosineLinear, CosineLinear
+from convs.vgg import vgg19_bn
+from convs.modified_vgg import vgg19_bn as cosine_vgg19
 
 
 def get_convnet(convnet_type, pretrained=False):
@@ -16,12 +19,18 @@ def get_convnet(convnet_type, pretrained=False):
         return resnet18(pretrained=pretrained)
     elif name == 'resnet50':
         return resnet50(pretrained=pretrained)
+    elif name == 'cosine_resnet18':
+        return cosine_resnet18()
     elif name == 'cosine_resnet32':
         return cosine_resnet32()
     elif name == 'cosine_resnet34':
         return cosine_resnet34(pretrained=pretrained)
     elif name == 'cosine_resnet50':
         return cosine_resnet50(pretrained=pretrained)
+    elif name == 'vgg19':
+        return vgg19_bn()
+    elif name == 'cosine_vgg19':
+        return cosine_vgg19()
     else:
         raise NotImplementedError('Unknown type {}'.format(convnet_type))
 
