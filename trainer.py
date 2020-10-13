@@ -32,6 +32,7 @@ def _train(args):
     logging.info('Seed: {}'.format(args['seed']))
     logging.info('Model: {}'.format(args['model_name']))
     logging.info('Convnet: {}'.format(args['convnet_type']))
+    logging.info('Dataset: {}'.format(args['dataset']))
     _set_device(args)
     data_manager = DataManager(args['dataset'], args['shuffle'], args['seed'], args['init_cls'], args['increment'])
     model = factory.get_model(args['model_name'], args)

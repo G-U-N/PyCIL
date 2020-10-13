@@ -56,15 +56,9 @@ class DataManager(object):
         data, targets = np.concatenate(data), np.concatenate(targets)
 
         if ret_data:
-            if self.dataset_name.lower() == 'imagenet1000':
-                return data, targets, PathDataset(data, targets, trsf)
-            else:
-                return data, targets, DummyDataset(data, targets, trsf)
+            return data, targets, DummyDataset(data, targets, trsf, self.use_path)
         else:
-            if self.dataset_name.lower() == 'imagenet1000':
-                return PathDataset(data, targets, trsf)
-            else:
-                return DummyDataset(data, targets, trsf)
+            return DummyDataset(data, targets, trsf, self.use_path)
 
     def _setup_data(self, dataset_name, shuffle, seed):
         idata = _get_idata(dataset_name)
@@ -73,6 +67,7 @@ class DataManager(object):
         # Data
         self._train_data, self._train_targets = idata.train_data, idata.train_targets
         self._test_data, self._test_targets = idata.test_data, idata.test_targets
+        self.use_path = idata.use_path
 
         # Transforms
         self._train_trsf = idata.train_trsf
@@ -99,35 +94,21 @@ class DataManager(object):
 
 
 class DummyDataset(Dataset):
-    def __init__(self, images, labels, trsf):
+    def __init__(self, images, labels, trsf, use_path=False):
         assert len(images) == len(labels), 'Data size error!'
         self.images = images
         self.labels = labels
         self.trsf = trsf
+        self.use_path = use_path
 
     def __len__(self):
         return len(self.images)
 
     def __getitem__(self, idx):
-        image = self.trsf(Image.fromarray(self.images[idx]))
-        # image = self.trsf(Image.fromarray(np.array(self.images[idx]).astype(np.uint8)))
-        label = self.labels[idx]
-
-        return idx, image, label
-
-
-class PathDataset(Dataset):
-    def __init__(self, paths, labels, trsf):
-        assert len(paths) == len(labels), 'Data size error!'
-        self.paths = paths
-        self.labels = labels
-        self.trsf = trsf
-
-    def __len__(self):
-        return len(self.paths)
-
-    def __getitem__(self, idx):
-        image = self.trsf(pil_loader(self.paths[idx]))
+        if self.use_path:
+            image = self.trsf(pil_loader(self.images[idx]))
+        else:
+            image = self.trsf(Image.fromarray(self.images[idx]))
         label = self.labels[idx]
 
         return idx, image, label
