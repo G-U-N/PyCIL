@@ -7,7 +7,7 @@ from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from utils.inc_net import IncrementalNet
 from models.base import BaseLearner
-from utils.toolkit import accuracy, tensor2numpy
+from utils.toolkit import tensor2numpy
 
 EPSILON = 1e-8
 
@@ -40,12 +40,6 @@ class DR(BaseLearner):
     def after_task(self):
         self._old_network = self._network.copy().freeze()
         self._known_classes = self._total_classes
-
-    def eval_task(self):
-        y_pred, y_true = self._eval_ncm(self.test_loader, self._class_means)
-        accy = accuracy(y_pred, y_true, self._known_classes)
-
-        return accy
 
     def incremental_train(self, data_manager):
         self._cur_task += 1
@@ -91,6 +85,7 @@ class DR(BaseLearner):
         for _, epoch in enumerate(prog_bar):
             self._network.train()
             losses = 0.
+            correct, total = 0, 0
             for i, (_, inputs, targets) in enumerate(train_loader):
                 inputs, targets = inputs.to(self._device), targets.to(self._device)
                 logits = self._network(inputs)
@@ -109,10 +104,16 @@ class DR(BaseLearner):
                 loss.backward()
                 optimizer.step()
 
+                # acc
+                _, preds = torch.max(logits, dim=1)
+                correct += preds.eq(targets.expand_as(preds)).cpu().sum()
+                total += len(targets)
+
             scheduler.step()
-            train_acc = self._compute_accuracy(self._network, train_loader)
+            # train_acc = self._compute_accuracy(self._network, train_loader)
+            train_acc = np.around(tensor2numpy(correct)*100 / total, decimals=2)
             test_acc = self._compute_accuracy(self._network, test_loader)
-            info = 'Updated CNN => Epoch {}/{}, Loss {:.3f}, Train accy {:.3f}, Test accy {:.3f}'.format(
+            info = 'Updated CNN => Epoch {}/{}, Loss {:.3f}, Train accy {:.2f}, Test accy {:.2f}'.format(
                 epoch+1, epochs, losses/len(train_loader), train_acc, test_acc)
             prog_bar.set_description(info)
 
@@ -143,7 +144,7 @@ class DR(BaseLearner):
             scheduler.step()
             train_acc = self._compute_accuracy(self.expert, train_loader, self._known_classes)
             test_acc = self._compute_accuracy(self.expert, test_loader, self._known_classes)
-            info = 'Expert CNN => Epoch {}/{}, Loss {:.3f}, Train accy {:.3f}, Test accy {:.3f}'.format(
+            info = 'Expert CNN => Epoch {}/{}, Loss {:.3f}, Train accy {:.2f}, Test accy {:.2f}'.format(
                 epoch+1, epochs_expert, losses/len(train_loader), train_acc, test_acc)
             prog_bar.set_description(info)
 
@@ -161,7 +162,7 @@ class DR(BaseLearner):
             correct += (predicts.cpu() == targets).sum()
             total += len(targets)
 
-        return np.around(tensor2numpy(correct) / total, decimals=3)
+        return np.around(tensor2numpy(correct)*100 / total, decimals=2)
 
 
 def _KD_loss(pred, soft, T):
