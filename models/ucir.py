@@ -6,7 +6,7 @@ from torch import optim
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from models.base import BaseLearner
-from utils.inc_net import ModifiedIncrementalNet
+from utils.inc_net import CosineIncrementalNet
 from utils.toolkit import tensor2numpy, target2onehot
 
 EPSILON = 1e-8
@@ -17,7 +17,7 @@ lrate = 0.1
 milestones = [80, 120]
 lrate_decay = 0.1
 batch_size = 128
-samples_per_class = 20  # Save 20 samples per class!
+memory_per_class = 20  # Save 20 samples per class!
 lamda_base = 5
 K = 2
 margin = 0.5
@@ -26,7 +26,7 @@ margin = 0.5
 class UCIR(BaseLearner):
     def __init__(self, args):
         super().__init__()
-        self._network = ModifiedIncrementalNet(args['convnet_type'], pretrained=False)
+        self._network = CosineIncrementalNet(args['convnet_type'], pretrained=False)
         self._device = args['device']
         self._class_means = None
 
@@ -50,7 +50,7 @@ class UCIR(BaseLearner):
 
         # Procedure
         self._train(self.train_loader, self.test_loader)
-        self._construct_exemplar_unified(data_manager, samples_per_class)
+        self._construct_exemplar_unified(data_manager, memory_per_class)
 
     def _train(self, train_loader, test_loader):
         '''
@@ -96,20 +96,21 @@ class UCIR(BaseLearner):
             correct, total = 0, 0
             for i, (_, inputs, targets) in enumerate(train_loader):
                 inputs, targets = inputs.to(self._device), targets.to(self._device)
-                logits = self._network(inputs)  # Final outputs after scaling  (bs, nb_classes)
-                features = self._network.get_features()  # Features before fc layer  (bs, 64)
+                outputs = self._network(inputs)
+                logits = outputs['logits']  # Final outputs after scaling  (bs, nb_classes)
+                features = outputs['features']  # Features before fc layer  (bs, 64)
                 ce_loss = F.cross_entropy(logits, targets)  # Cross entropy loss
 
                 lf_loss = 0.  # Less forgetting loss
                 is_loss = 0.  # Inter-class speration loss
                 if self._old_network is not None:
-                    old_logits = self._old_network(inputs)  # Final outputs after scaling
-                    old_features = self._old_network.get_features()  # Features before fc layer
+                    old_outputs = self._old_network(inputs)
+                    old_features = old_outputs['features']  # Features before fc layer
                     lf_loss = F.cosine_embedding_loss(features, old_features.detach(),
                                                       torch.ones(inputs.shape[0]).to(self._device)) * self.lamda
 
-                    scores = self._network.fc.get_new_scores()  # Scores before scaling  (bs, nb_new)
-                    old_scores = self._network.fc.get_old_scores()  # Scores before scaling  (bs, nb_old)
+                    scores = outputs['new_scores']  # Scores before scaling  (bs, nb_new)
+                    old_scores = outputs['old_scores']  # Scores before scaling  (bs, nb_old)
                     old_classes_mask = np.where(tensor2numpy(targets) < self._known_classes)[0]
                     if len(old_classes_mask) != 0:
                         scores = scores[old_classes_mask]  # (n, nb_new)

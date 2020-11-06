@@ -102,7 +102,7 @@ class End2End(BaseLearner):
             correct, total = 0, 0
             for i, (_, inputs, targets) in enumerate(train_loader):
                 inputs, targets = inputs.to(self._device), targets.to(self._device)
-                logits = self._network(inputs)
+                logits = self._network(inputs)['logits']
 
                 # CELoss
                 clf_loss = F.cross_entropy(logits, targets)
@@ -112,7 +112,7 @@ class End2End(BaseLearner):
                 else:
                     finetuning_task = (self._cur_task + 1) if self._is_finetuning else self._cur_task
                     distill_loss = 0.
-                    old_logits = self._old_network(inputs)
+                    old_logits = self._old_network(inputs)['logits']
                     for i in range(1, finetuning_task+1):
                         lo = sum(self._seen_classes[:i-1])
                         hi = sum(self._seen_classes[:i])

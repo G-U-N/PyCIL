@@ -68,7 +68,7 @@ class BaseLearner(object):
         for i, (_, inputs, targets) in enumerate(loader):
             inputs = inputs.to(self._device)
             with torch.no_grad():
-                outputs = model(inputs)
+                outputs = model(inputs)['logits']
             predicts = torch.max(outputs, dim=1)[1]
             correct += (predicts.cpu() == targets).sum()
             total += len(targets)
@@ -81,7 +81,7 @@ class BaseLearner(object):
         for _, (_, inputs, targets) in enumerate(loader):
             inputs = inputs.to(self._device)
             with torch.no_grad():
-                outputs = self._network(inputs)
+                outputs = self._network(inputs)['logits']
             predicts = torch.topk(outputs, k=self.topk, dim=1, largest=True, sorted=True)[1]  # [bs, topk]
             y_pred.append(predicts.cpu().numpy())
             y_true.append(targets.cpu().numpy())

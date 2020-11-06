@@ -2,6 +2,7 @@ from models.icarl import iCaRL
 from models.end2end import End2End
 from models.dr import DR
 from models.ucir import UCIR
+from models.bic import BiC
 
 
 def get_model(model_name, args):
@@ -14,3 +15,5 @@ def get_model(model_name, args):
         return DR(args)
     elif name == 'ucir':
         return UCIR(args)
+    elif name == 'bic':
+        return BiC(args)

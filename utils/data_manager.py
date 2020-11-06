@@ -60,6 +60,50 @@ class DataManager(object):
         else:
             return DummyDataset(data, targets, trsf, self.use_path)
 
+    def get_dataset_with_split(self, indices, source, mode, appendent=None, val_samples_per_class=0):
+        if source == 'train':
+            x, y = self._train_data, self._train_targets
+        elif source == 'test':
+            x, y = self._test_data, self._test_targets
+        else:
+            raise ValueError('Unknown data source {}.'.format(source))
+
+        if mode == 'train':
+            trsf = transforms.Compose([*self._train_trsf, *self._common_trsf])
+        elif mode == 'test':
+            trsf = transforms.Compose([*self._test_trsf, *self._common_trsf])
+        else:
+            raise ValueError('Unknown mode {}.'.format(mode))
+
+        train_data, train_targets = [], []
+        val_data, val_targets = [], []
+        for idx in indices:
+            class_data, class_targets = self._select(x, y, low_range=idx, high_range=idx+1)
+            val_indx = np.random.choice(len(class_data), val_samples_per_class, replace=False)
+            train_indx = list(set(np.arange(len(class_data))) - set(val_indx))
+            val_data.append(class_data[val_indx])
+            val_targets.append(class_targets[val_indx])
+            train_data.append(class_data[train_indx])
+            train_targets.append(class_targets[train_indx])
+
+        if appendent is not None:
+            appendent_data, appendent_targets = appendent
+            for idx in range(0, int(np.max(appendent_targets))+1):
+                append_data, append_targets = self._select(appendent_data, appendent_targets,
+                                                           low_range=idx, high_range=idx+1)
+                val_indx = np.random.choice(len(append_data), val_samples_per_class, replace=False)
+                train_indx = list(set(np.arange(len(append_data))) - set(val_indx))
+                val_data.append(append_data[val_indx])
+                val_targets.append(append_targets[val_indx])
+                train_data.append(append_data[train_indx])
+                train_targets.append(append_targets[train_indx])
+
+        train_data, train_targets = np.concatenate(train_data), np.concatenate(train_targets)
+        val_data, val_targets = np.concatenate(val_data), np.concatenate(val_targets)
+
+        return DummyDataset(train_data, train_targets, trsf, self.use_path), \
+            DummyDataset(val_data, val_targets, trsf, self.use_path)
+
     def _setup_data(self, dataset_name, shuffle, seed):
         idata = _get_idata(dataset_name)
         idata.download_data()

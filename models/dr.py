@@ -88,9 +88,9 @@ class DR(BaseLearner):
             correct, total = 0, 0
             for i, (_, inputs, targets) in enumerate(train_loader):
                 inputs, targets = inputs.to(self._device), targets.to(self._device)
-                logits = self._network(inputs)
-                exp_logits = self.expert(inputs)
-                old_logits = self._old_network(inputs)
+                logits = self._network(inputs)['logits']
+                exp_logits = self.expert(inputs)['logits']
+                old_logits = self._old_network(inputs)['logits']
 
                 # Distillation
                 dist_term = _KD_loss(logits[:, self._known_classes:], exp_logits, T1)
@@ -132,7 +132,7 @@ class DR(BaseLearner):
             losses = 0.
             for i, (_, inputs, targets) in enumerate(train_loader):
                 inputs, targets = inputs.to(self._device), (targets - self._known_classes).to(self._device)
-                logits = self.expert(inputs)
+                logits = self.expert(inputs)['logits']
 
                 loss = F.cross_entropy(logits, targets)
                 losses += loss.item()
@@ -157,7 +157,7 @@ class DR(BaseLearner):
             inputs = inputs.to(self._device)
             targets -= offset
             with torch.no_grad():
-                outputs = model(inputs)
+                outputs = model(inputs)['logits']
             predicts = torch.max(outputs, dim=1)[1]
             correct += (predicts.cpu() == targets).sum()
             total += len(targets)

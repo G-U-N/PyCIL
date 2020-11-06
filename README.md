@@ -7,7 +7,8 @@ Especially the methods based on **memory replay**.
 - [x] End2End: End-to-End Incremental Learning. [[paper](https://arxiv.org/abs/1807.09536)]
 - [x] DR: Lifelong Learning via Progressive Distillation and Retrospection. [[paper](http://openaccess.thecvf.com/content_ECCV_2018/html/Saihui_Hou_Progressive_Lifelong_Learning_ECCV_2018_paper.html)]
 - [x] UCIR: Learning a Unified Classifier Incrementally via Rebalancing. [[paper](https://openaccess.thecvf.com/content_CVPR_2019/html/Hou_Learning_a_Unified_Classifier_Incrementally_via_Rebalancing_CVPR_2019_paper.html)]
-- [ ] BiC: Large Scale Incremental Learning. [[paper](https://arxiv.org/abs/1905.13260)]
+- [x] BiC: Large Scale Incremental Learning. [[paper](https://arxiv.org/abs/1905.13260)]
+- [ ] LwM: Learning without Memorizing. [[paper](https://arxiv.org/abs/1811.08051)]
 
 ## Dependencies
 1. torch 1.4.0

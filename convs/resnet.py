@@ -206,16 +206,19 @@ class ResNet(nn.Module):
         x = self.relu(x)
         x = self.maxpool(x)
 
-        x = self.layer1(x)  # [bs, 128, 32, 32]
-        x = self.layer2(x)  # [bs, 256, 16, 16]
-        x = self.layer3(x)  # [bs, 512, 8, 8]
-        x = self.layer4(x)  # [bs, 512, 4, 4]
+        x_1 = self.layer1(x)  # [bs, 128, 32, 32]
+        x_2 = self.layer2(x_1)  # [bs, 256, 16, 16]
+        x_3 = self.layer3(x_2)  # [bs, 512, 8, 8]
+        x_4 = self.layer4(x_3)  # [bs, 512, 4, 4]
 
-        x = self.avgpool(x)  # [bs, 512, 1, 1]
-        x = torch.flatten(x, 1)  # [bs, 512]
+        pooled = self.avgpool(x_4)  # [bs, 512, 1, 1]
+        features = torch.flatten(pooled, 1)  # [bs, 512]
         # x = self.fc(x)
 
-        return x
+        return {
+            'maps': [x_1, x_2, x_3, x_4],
+            'features': features
+        }
 
     def forward(self, x):
         return self._forward_impl(x)

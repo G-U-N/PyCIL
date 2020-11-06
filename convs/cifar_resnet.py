@@ -138,14 +138,18 @@ class CifarResNet(nn.Module):
     def forward(self, x):
         x = self.conv_1_3x3(x)  # [bs, 16, 32, 32]
         x = F.relu(self.bn_1(x), inplace=True)
-        e_map1 = self.stage_1(x)  # [bs, 16, 32, 32]
-        e_map2 = self.stage_2(e_map1)  # [bs, 32, 16, 16]
-        e_map3 = self.stage_3(e_map2)  # [bs, 64, 8, 8]
 
-        pool = self.avgpool(e_map3)  # [bs, 64, 1, 1]
-        vector = pool.view(pool.size(0), -1)  # [bs, 64]
+        x_1 = self.stage_1(x)  # [bs, 16, 32, 32]
+        x_2 = self.stage_2(x_1)  # [bs, 32, 16, 16]
+        x_3 = self.stage_3(x_2)  # [bs, 64, 8, 8]
 
-        return vector
+        pooled = self.avgpool(x_3)  # [bs, 64, 1, 1]
+        features = pooled.view(pooled.size(0), -1)  # [bs, 64]
+
+        return {
+            'maps': [x_1, x_2, x_3],
+            'features': features
+        }
 
 
 def resnet20mnist():

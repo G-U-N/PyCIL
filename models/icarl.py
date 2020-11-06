@@ -75,13 +75,13 @@ class iCaRL(BaseLearner):
             correct, total = 0, 0
             for i, (_, inputs, targets) in enumerate(train_loader):
                 inputs, targets = inputs.to(self._device), targets.to(self._device)
-                logits = self._network(inputs)
+                logits = self._network(inputs)['logits']
                 onehots = target2onehot(targets, self._total_classes)
 
                 if self._old_network is None:
                     loss = F.binary_cross_entropy_with_logits(logits, onehots)
                 else:
-                    old_onehots = torch.sigmoid(self._old_network(inputs).detach())
+                    old_onehots = torch.sigmoid(self._old_network(inputs)['logits'].detach())
                     new_onehots = onehots.clone()
                     new_onehots[:, :self._known_classes] = old_onehots
                     loss = F.binary_cross_entropy_with_logits(logits, new_onehots)
