@@ -2,7 +2,7 @@ import copy
 import torch
 from torch import nn
 from convs.cifar_resnet import resnet32
-from convs.resnet import resnet18, resnet50
+from convs.resnet import resnet18, resnet34, resnet50
 from convs.ucir_cifar_resnet import resnet32 as cosine_resnet32
 from convs.ucir_resnet import resnet18 as cosine_resnet18
 from convs.ucir_resnet import resnet34 as cosine_resnet34
@@ -16,6 +16,8 @@ def get_convnet(convnet_type, pretrained=False):
         return resnet32()
     elif name == 'resnet18':
         return resnet18(pretrained=pretrained)
+    elif name == 'resnet34':
+        return resnet34(pretrained=pretrained)
     elif name == 'resnet50':
         return resnet50(pretrained=pretrained)
     elif name == 'cosine_resnet18':
@@ -48,7 +50,6 @@ class BaseNet(nn.Module):
     def forward(self, x):
         x = self.convnet(x)
         out = self.fc(x['features'])
-
         '''
         {
             'fmaps': [x_1, x_2, ..., x_n],
@@ -79,8 +80,12 @@ class BaseNet(nn.Module):
 
 class IncrementalNet(BaseNet):
 
-    def __init__(self, convnet_type, pretrained):
+    def __init__(self, convnet_type, pretrained, gradcam=False):
         super().__init__(convnet_type, pretrained)
+        self.gradcam = gradcam
+        if hasattr(self, 'gradcam') and self.gradcam:
+            self._gradcam_hooks = [None, None]
+            self.set_gradcam_hook()
 
     def update_fc(self, nb_classes):
         fc = self.generate_fc(self.feature_dim, nb_classes)
@@ -98,6 +103,37 @@ class IncrementalNet(BaseNet):
         fc = SimpleLinear(in_dim, out_dim)
 
         return fc
+
+    def forward(self, x):
+        x = self.convnet(x)
+        out = self.fc(x['features'])
+        out.update(x)
+        if hasattr(self, 'gradcam') and self.gradcam:
+            out['gradcam_gradients'] = self._gradcam_gradients
+            out['gradcam_activations'] = self._gradcam_activations
+
+        return out
+
+    def unset_gradcam_hook(self):
+        self._gradcam_hooks[0].remove()
+        self._gradcam_hooks[1].remove()
+        self._gradcam_hooks[0] = None
+        self._gradcam_hooks[1] = None
+        self._gradcam_gradients, self._gradcam_activations = [None], [None]
+
+    def set_gradcam_hook(self):
+        self._gradcam_gradients, self._gradcam_activations = [None], [None]
+
+        def backward_hook(module, grad_input, grad_output):
+            self._gradcam_gradients[0] = grad_output[0]
+            return None
+
+        def forward_hook(module, input, output):
+            self._gradcam_activations[0] = output
+            return None
+
+        self._gradcam_hooks[0] = self.convnet.last_conv.register_backward_hook(backward_hook)
+        self._gradcam_hooks[1] = self.convnet.last_conv.register_forward_hook(forward_hook)
 
 
 class CosineIncrementalNet(BaseNet):

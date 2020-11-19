@@ -45,10 +45,13 @@ class BaseLearner(object):
         y_pred, y_true = self._eval_cnn(self.test_loader)
         cnn_accy = self._evaluate(y_pred, y_true)
 
-        y_pred, y_true = self._eval_ncm(self.test_loader, self._class_means)
-        ncm_accy = self._evaluate(y_pred, y_true)
+        if hasattr(self, '_class_means'):
+            y_pred, y_true = self._eval_nme(self.test_loader, self._class_means)
+            nme_accy = self._evaluate(y_pred, y_true)
+        else:
+            nme_accy = None
 
-        return cnn_accy, ncm_accy
+        return cnn_accy, nme_accy
 
     def incremental_train(self):
         pass
@@ -88,7 +91,7 @@ class BaseLearner(object):
 
         return np.concatenate(y_pred), np.concatenate(y_true)  # [N, topk]
 
-    def _eval_ncm(self, loader, class_means):
+    def _eval_nme(self, loader, class_means):
         self._network.eval()
         vectors, y_true = self._extract_vectors(loader)
         vectors = (vectors.T / (np.linalg.norm(vectors.T, axis=0) + EPSILON)).T

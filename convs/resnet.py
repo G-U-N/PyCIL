@@ -223,6 +223,13 @@ class ResNet(nn.Module):
     def forward(self, x):
         return self._forward_impl(x)
 
+    @property
+    def last_conv(self):
+        if hasattr(self.layer4[-1], 'conv3'):
+            return self.layer4[-1].conv3
+        else:
+            return self.layer4[-1].conv2
+
 
 def _resnet(arch, block, layers, pretrained, progress, **kwargs):
     model = ResNet(block, layers, **kwargs)

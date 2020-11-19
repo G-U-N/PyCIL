@@ -7,5 +7,5 @@
     "model_name": "UCIR",
     "convnet_type": "cosine_resnet32",
     "device": 0,
-    "seed": [5, 30, 57]
+    "seed": [30, 1993]
 }

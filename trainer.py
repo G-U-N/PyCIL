@@ -37,27 +37,37 @@ def _train(args):
     data_manager = DataManager(args['dataset'], args['shuffle'], args['seed'], args['init_cls'], args['increment'])
     model = factory.get_model(args['model_name'], args)
 
-    cnn_curve, ncm_curve = {'top1': [], 'top5': []}, {'top1': [], 'top5': []}
+    cnn_curve, nme_curve = {'top1': [], 'top5': []}, {'top1': [], 'top5': []}
     for task in range(data_manager.nb_tasks):
         logging.info('All params: {}'.format(count_parameters(model._network)))
         logging.info('Trainable params: {}'.format(count_parameters(model._network, True)))
         model.incremental_train(data_manager)
-        cnn_accy, ncm_accy = model.eval_task()
+        cnn_accy, nme_accy = model.eval_task()
         model.after_task()
 
-        logging.info('CNN: {}'.format(cnn_accy['grouped']))
-        logging.info('NCM: {}'.format(ncm_accy['grouped']))
+        if nme_accy is not None:
+            logging.info('CNN: {}'.format(cnn_accy['grouped']))
+            logging.info('NME: {}'.format(nme_accy['grouped']))
 
-        cnn_curve['top1'].append(cnn_accy['top1'])
-        cnn_curve['top5'].append(cnn_accy['top5'])
+            cnn_curve['top1'].append(cnn_accy['top1'])
+            cnn_curve['top5'].append(cnn_accy['top5'])
 
-        ncm_curve['top1'].append(ncm_accy['top1'])
-        ncm_curve['top5'].append(ncm_accy['top5'])
+            nme_curve['top1'].append(nme_accy['top1'])
+            nme_curve['top5'].append(nme_accy['top5'])
 
-        logging.info('CNN top1 curve: {}'.format(cnn_curve['top1']))
-        logging.info('CNN top5 curve: {}'.format(cnn_curve['top5']))
-        logging.info('NCM top1 curve: {}'.format(ncm_curve['top1']))
-        logging.info('NCM top5 curve: {}\n'.format(ncm_curve['top5']))
+            logging.info('CNN top1 curve: {}'.format(cnn_curve['top1']))
+            logging.info('CNN top5 curve: {}'.format(cnn_curve['top5']))
+            logging.info('NME top1 curve: {}'.format(nme_curve['top1']))
+            logging.info('NME top5 curve: {}\n'.format(nme_curve['top5']))
+        else:
+            logging.info('No NME accuracy.')
+            logging.info('CNN: {}'.format(cnn_accy['grouped']))
+
+            cnn_curve['top1'].append(cnn_accy['top1'])
+            cnn_curve['top5'].append(cnn_accy['top5'])
+
+            logging.info('CNN top1 curve: {}'.format(cnn_curve['top1']))
+            logging.info('CNN top5 curve: {}\n'.format(cnn_curve['top5']))
 
 
 def _set_device(args):

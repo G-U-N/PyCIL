@@ -157,6 +157,10 @@ class CifarResNet(nn.Module):
             'features': features
         }
 
+    @property
+    def last_conv(self):
+        return self.stage_3[-1].conv_b
+
 
 def resnet20mnist():
     """Constructs a ResNet-20 model for MNIST."""

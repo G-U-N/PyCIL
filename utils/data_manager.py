@@ -48,7 +48,7 @@ class DataManager(object):
             data.append(class_data)
             targets.append(class_targets)
 
-        if appendent is not None:
+        if appendent is not None and len(appendent) != 0:
             appendent_data, appendent_targets = appendent
             data.append(appendent_data)
             targets.append(appendent_targets)

@@ -3,6 +3,7 @@ from models.end2end import End2End
 from models.dr import DR
 from models.ucir import UCIR
 from models.bic import BiC
+from models.lwm import LwM
 
 
 def get_model(model_name, args):
@@ -17,3 +18,5 @@ def get_model(model_name, args):
         return UCIR(args)
     elif name == 'bic':
         return BiC(args)
+    elif name == 'lwm':
+        return LwM(args)

@@ -26,7 +26,8 @@ epochs = 70
 lrate = 2.0
 milestones = [49, 63]
 lrate_decay = 0.2
-batch_size = 64
+batch_size = 128
+# batch_size = 64
 memory_size = 2000
 
 
@@ -63,7 +64,7 @@ class iCaRL(BaseLearner):
         self._network.to(self._device)
         if self._old_network is not None:
             self._old_network.to(self._device)
-        optimizer = optim.SGD(self._network.parameters(), lr=lrate, momentum=0.9, weight_decay=1e-5)
+        optimizer = optim.SGD(self._network.parameters(), lr=lrate, momentum=0.9, weight_decay=5e-5)  # 1e-5
         scheduler = optim.lr_scheduler.MultiStepLR(optimizer=optimizer, milestones=milestones, gamma=lrate_decay)
         self._update_representation(train_loader, test_loader, optimizer, scheduler)
 
