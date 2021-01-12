@@ -8,7 +8,7 @@ Especially the methods based on **memory replay**.
 - [x] DR: Lifelong Learning via Progressive Distillation and Retrospection. [[paper](http://openaccess.thecvf.com/content_ECCV_2018/html/Saihui_Hou_Progressive_Lifelong_Learning_ECCV_2018_paper.html)]
 - [x] UCIR: Learning a Unified Classifier Incrementally via Rebalancing. [[paper](https://openaccess.thecvf.com/content_CVPR_2019/html/Hou_Learning_a_Unified_Classifier_Incrementally_via_Rebalancing_CVPR_2019_paper.html)]
 - [x] BiC: Large Scale Incremental Learning. [[paper](https://arxiv.org/abs/1905.13260)]
-- [ ] LwM: Learning without Memorizing. [[paper](https://arxiv.org/abs/1811.08051)]
+- [x] LwM: Learning without Memorizing. [[paper](https://arxiv.org/abs/1811.08051)]
 
 ## Dependencies
 1. torch 1.4.0
@@ -18,14 +18,24 @@ Especially the methods based on **memory replay**.
 5. scipy
 
 ## Usage
-1. Edit the *config.json* file.
-2. Run:
+
+### Run experiment
+1. Edit the `config.json` file for global settings.
+2. Edit the hyperparameters in the corresponding `.py` file (e.g. `models/icarl.py`).
+3. Run:
 ```bash
 python main.py
 ```
 
+### Add datasets
+1. Add corresponding classes to `utils/data.py`.
+2. Modify the `_get_idata` function in `utils/data_manager.py`.
+
 ## Results
-**iCaRL**
+
+### iCaRL
+
+**CIFAR100**
 
 <img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/iCaRL_cifar100_10.png" width = "325"/><img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/iCaRL_cifar100_20.png" width = "325"/><img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/iCaRL_cifar100_50.png" width = "325"/>
 
@@ -36,7 +46,9 @@ Average accuracies of CIFAR-100 (iCaRL):
 | 20 classes | 67.2           | 66.24     |
 | 50 classes | 68.6           | 67.65     |
 
-**UCIR**
+### UCIR
+
+**CIFAR100**
 
 <img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/UCIR_CNN_cifar100_5.png" width = "325"/><img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/UCIR_NCM_cifar100_5.png" width = "325"/><img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/UCIR_CNN_cifar100_10.png" width = "325"/><img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/UCIR_NCM_cifar100_10.png" width = "325"/>
 

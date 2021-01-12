@@ -7,6 +7,20 @@ from torch.utils.data import DataLoader
 from models.base import BaseLearner
 from utils.inc_net import IncrementalNetWithBias
 
+# ImageNet1000, ResNet18
+'''
+epochs = 100
+lrate = 0.1
+milestones = [30, 60, 80, 90]
+lrate_decay = 0.1
+batch_size = 256
+memory_size = 20000
+split_ratio = 0.1
+T = 2
+weight_decay = 1e-4
+num_workers = 16
+'''
+
 # CIFAR100, ResNet32, 10 base
 epochs = 250
 lrate = 0.1
@@ -16,6 +30,8 @@ batch_size = 128
 memory_size = 2000
 split_ratio = 0.1
 T = 2
+weight_decay = 2e-4
+num_workers = 4
 
 
 class BiC(BaseLearner):
@@ -44,7 +60,7 @@ class BiC(BaseLearner):
                                                                        appendent=self._get_memory(),
                                                                        val_samples_per_class=int(
                                                                            split_ratio*memory_size/self._known_classes))
-            self.val_loader = DataLoader(val_dset, batch_size=batch_size, shuffle=True, num_workers=4)
+            self.val_loader = DataLoader(val_dset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
             logging.info('Stage1 dset: {}, Stage2 dset: {}'.format(len(train_dset), len(val_dset)))
             self.lamda = self._known_classes / self._total_classes
             logging.info('Lambda: {:.3f}'.format(self.lamda))
@@ -54,8 +70,8 @@ class BiC(BaseLearner):
                                                   appendent=self._get_memory())
         test_dset = data_manager.get_dataset(np.arange(0, self._total_classes), source='test', mode='test')
 
-        self.train_loader = DataLoader(train_dset, batch_size=batch_size, shuffle=True, num_workers=4)
-        self.test_loader = DataLoader(test_dset, batch_size=batch_size, shuffle=False, num_workers=4)
+        self.train_loader = DataLoader(train_dset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
+        self.test_loader = DataLoader(test_dset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
         # Procedure
         self._stage1_training(self.train_loader, self.test_loader)
@@ -117,9 +133,9 @@ class BiC(BaseLearner):
         # Freeze bias layer and train stage1 layer
         ignored_params = list(map(id, self._network.bias_layers.parameters()))
         base_params = filter(lambda p: id(p) not in ignored_params, self._network.parameters())
-        network_params = [{'params': base_params, 'lr': lrate, 'weight_decay': 2e-4},
+        network_params = [{'params': base_params, 'lr': lrate, 'weight_decay': weight_decay},
                           {'params': self._network.bias_layers.parameters(), 'lr': 0, 'weight_decay': 0}]
-        optimizer = optim.SGD(network_params, lr=lrate, momentum=0.9, weight_decay=2e-4)
+        optimizer = optim.SGD(network_params, lr=lrate, momentum=0.9, weight_decay=weight_decay)
         scheduler = optim.lr_scheduler.MultiStepLR(optimizer=optimizer, milestones=milestones, gamma=lrate_decay)
 
         self._log_bias_params()
@@ -130,8 +146,9 @@ class BiC(BaseLearner):
         self._network.to(self._device)
 
         # Freeze stage1 layer and train bias layer
-        network_params = [{'params': self._network.bias_layers[-1].parameters(), 'lr': 0.001, 'weight_decay': 2e-4}]
-        optimizer = optim.SGD(network_params, lr=lrate, momentum=0.9, weight_decay=2e-4)
+        network_params = [{'params': self._network.bias_layers[-1].parameters(), 'lr': 0.001,
+                           'weight_decay': weight_decay}]
+        optimizer = optim.SGD(network_params, lr=lrate, momentum=0.9, weight_decay=weight_decay)
         scheduler = optim.lr_scheduler.MultiStepLR(optimizer=optimizer, milestones=milestones, gamma=lrate_decay)
 
         self._log_bias_params()

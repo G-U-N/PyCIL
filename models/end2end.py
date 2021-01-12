@@ -11,6 +11,9 @@ from utils.toolkit import tensor2numpy
 
 EPSILON = 1e-8
 
+# ImageNet1000, ResNet18
+
+
 # CIFAR100, ResNet32
 epochs_init = 90
 lrate_init = 0.1
@@ -28,6 +31,8 @@ lrate_decay = 0.1
 batch_size = 128
 memory_size = 2000
 T = 2
+weight_decay = 1e-3
+num_workers = 4
 
 
 class End2End(BaseLearner):
@@ -53,9 +58,9 @@ class End2End(BaseLearner):
         # Loader
         train_dataset = data_manager.get_dataset(np.arange(self._known_classes, self._total_classes), source='train',
                                                  mode='train', appendent=self._get_memory())
-        self.train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=4)
+        self.train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
         test_dataset = data_manager.get_dataset(np.arange(0, self._total_classes), source='test', mode='test')
-        self.test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
+        self.test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
         # Procedure
         self._train(data_manager, self.train_loader, self.test_loader)
@@ -67,7 +72,7 @@ class End2End(BaseLearner):
         if self._old_network is not None:
             self._old_network.to(self._device)
         if self._cur_task == 0:
-            optimizer = optim.SGD(self._network.parameters(), lr=lrate_init, momentum=0.9, weight_decay=1e-3)
+            optimizer = optim.SGD(self._network.parameters(), lr=lrate_init, momentum=0.9, weight_decay=weight_decay)
             scheduler = optim.lr_scheduler.MultiStepLR(optimizer=optimizer, milestones=milestones_init,
                                                        gamma=lrate_decay)
             self._is_finetuning = False
@@ -75,7 +80,7 @@ class End2End(BaseLearner):
             return
 
         # New + exemplars
-        optimizer = optim.SGD(self._network.parameters(), lr=lrate, momentum=0.9, weight_decay=1e-3)
+        optimizer = optim.SGD(self._network.parameters(), lr=lrate, momentum=0.9, weight_decay=weight_decay)
         scheduler = optim.lr_scheduler.MultiStepLR(optimizer=optimizer, milestones=milestones, gamma=lrate_decay)
         self._is_finetuning = False
         self._run(self.train_loader, self.test_loader, epochs, optimizer, scheduler, 'Training')
@@ -87,8 +92,9 @@ class End2End(BaseLearner):
         self._old_network = self._network.copy().freeze()
         finetune_train_dataset = data_manager.get_dataset([], source='train', mode='train',
                                                           appendent=self._get_memory())
-        finetune_train_loader = DataLoader(finetune_train_dataset, batch_size=batch_size, shuffle=True, num_workers=4)
-        optimizer = optim.SGD(self._network.parameters(), lr=lrate_finetune, momentum=0.9, weight_decay=1e-3)
+        finetune_train_loader = DataLoader(finetune_train_dataset, batch_size=batch_size,
+                                           shuffle=True, num_workers=num_workers)
+        optimizer = optim.SGD(self._network.parameters(), lr=lrate_finetune, momentum=0.9, weight_decay=weight_decay)
         scheduler = optim.lr_scheduler.MultiStepLR(optimizer=optimizer, milestones=milestones_finetune,
                                                    gamma=lrate_decay)
         self._is_finetuning = True

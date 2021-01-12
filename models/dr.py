@@ -26,6 +26,8 @@ batch_size = 128
 memory_size = 2000
 T1 = 2
 T2 = 2
+weight_decay = 1e-5
+num_workers = 4
 
 
 class DR(BaseLearner):
@@ -51,16 +53,18 @@ class DR(BaseLearner):
         # Loader
         train_dataset = data_manager.get_dataset(np.arange(self._known_classes, self._total_classes), source='train',
                                                  mode='train', appendent=self._get_memory())
-        self.train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=4)
+        self.train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
         test_dataset = data_manager.get_dataset(np.arange(0, self._total_classes), source='test', mode='test')
-        self.test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
+        self.test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
         expert_train_dataset = data_manager.get_dataset(np.arange(self._known_classes, self._total_classes),
                                                         source='train', mode='train')
-        self.expert_train_loader = DataLoader(expert_train_dataset, batch_size=batch_size, shuffle=True, num_workers=4)
+        self.expert_train_loader = DataLoader(expert_train_dataset, batch_size=batch_size,
+                                              shuffle=True, num_workers=num_workers)
         expert_test_dataset = data_manager.get_dataset(np.arange(self._known_classes, self._total_classes),
                                                        source='test', mode='test')
-        self.expert_test_loader = DataLoader(expert_test_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
+        self.expert_test_loader = DataLoader(expert_test_dataset, batch_size=batch_size,
+                                             shuffle=False, num_workers=num_workers)
 
         # Procedure
         logging.info('Training the expert CNN...')
@@ -78,7 +82,7 @@ class DR(BaseLearner):
         self._network.to(self._device)
         if self._old_network is not None:
             self._old_network.to(self._device)
-        optimizer = optim.SGD(self._network.parameters(), lr=lrate, momentum=0.9, weight_decay=1e-5)
+        optimizer = optim.SGD(self._network.parameters(), lr=lrate, momentum=0.9, weight_decay=weight_decay)
         scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=milestones, gamma=lrate_decay)
 
         prog_bar = tqdm(range(epochs))
@@ -123,7 +127,7 @@ class DR(BaseLearner):
         self.expert = IncrementalNet(self.convnet_type, False)
         self.expert.update_fc(self.task_size)
         self.expert.to(self._device)
-        optimizer = optim.SGD(self.expert.parameters(), lr=lrate_expert, momentum=0.9, weight_decay=1e-5)
+        optimizer = optim.SGD(self.expert.parameters(), lr=lrate_expert, momentum=0.9, weight_decay=weight_decay)
         scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=milestones_expert, gamma=lrate_decay_expert)
 
         prog_bar = tqdm(range(epochs_expert))

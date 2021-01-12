@@ -20,6 +20,8 @@ batch_size = 128
 memory_size = 0
 distill_ratio = 1
 attention_ratio = 1
+weight_decay = 1e-5
+num_workers = 4
 
 
 class LwM(BaseLearner):
@@ -47,9 +49,9 @@ class LwM(BaseLearner):
         # Loader
         train_dataset = data_manager.get_dataset(np.arange(self._known_classes, self._total_classes), source='train',
                                                  mode='train', appendent=self._get_memory())
-        self.train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=4)
+        self.train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
         test_dataset = data_manager.get_dataset(np.arange(0, self._total_classes), source='test', mode='test')
-        self.test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
+        self.test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
         # Procedure
         self._train(self.train_loader, self.test_loader)
@@ -58,7 +60,7 @@ class LwM(BaseLearner):
         self._network.to(self._device)
         if self._old_network is not None:
             self._old_network.to(self._device)
-        optimizer = optim.SGD(self._network.parameters(), lr=lrate, momentum=0.9, weight_decay=5e-5)
+        optimizer = optim.SGD(self._network.parameters(), lr=lrate, momentum=0.9, weight_decay=weight_decay)
         # optimizer = optim.Adam(self._network.parameters(), lr=lrate, weight_decay=1e-5)
         scheduler = optim.lr_scheduler.MultiStepLR(optimizer=optimizer, milestones=milestones, gamma=lrate_decay)
         self._run(train_loader, test_loader, optimizer, scheduler)
