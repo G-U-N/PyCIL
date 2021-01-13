@@ -52,6 +52,10 @@ Average accuracies of CIFAR-100 (iCaRL):
 
 <img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/UCIR_CNN_cifar100_5.png" width = "325"/><img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/UCIR_NCM_cifar100_5.png" width = "325"/><img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/UCIR_CNN_cifar100_10.png" width = "325"/><img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/UCIR_NCM_cifar100_10.png" width = "325"/>
 
+**ImageNet-Subset**
+
+<img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/UCIR_CNN_imagenet_subset_5.png" width = "325"/><img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/UCIR_NME_imagenet_subset_5.png" width = "325"/><img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/UCIR_CNN_imagenet_subset_10.png" width = "325"/><img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/UCIR_NME_imagenet_subset_10.png" width = "325"/>
+
 ## Change log
 - [x] (2020.6.8) Store the data with list instead of np.array to avoid bugs when the image size is different.
 - [x] (2020.7.15) Avoid duplicative selection in constructing exemplars.
