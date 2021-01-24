@@ -146,7 +146,7 @@ class BiC(BaseLearner):
         self._network.to(self._device)
 
         # Freeze stage1 layer and train bias layer
-        network_params = [{'params': self._network.bias_layers[-1].parameters(), 'lr': 0.001,
+        network_params = [{'params': self._network.bias_layers[-1].parameters(), 'lr': lrate,
                            'weight_decay': weight_decay}]
         optimizer = optim.SGD(network_params, lr=lrate, momentum=0.9, weight_decay=weight_decay)
         scheduler = optim.lr_scheduler.MultiStepLR(optimizer=optimizer, milestones=milestones, gamma=lrate_decay)

@@ -21,7 +21,7 @@ Especially the methods based on **memory replay**.
 
 ### Run experiment
 1. Edit the `config.json` file for global settings.
-2. Edit the hyperparameters in the corresponding `.py` file (e.g. `models/icarl.py`).
+2. Edit the hyperparameters in the corresponding `.py` file (e.g., `models/icarl.py`).
 3. Run:
 ```bash
 python main.py
@@ -55,6 +55,15 @@ Average accuracies of CIFAR-100 (iCaRL):
 **ImageNet-Subset**
 
 <img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/UCIR_CNN_imagenet_subset_5.png" width = "325"/><img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/UCIR_NME_imagenet_subset_5.png" width = "325"/><img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/UCIR_CNN_imagenet_subset_10.png" width = "325"/><img src="https://github.com/zhchuu/continual-learning-reproduce/blob/master/resources/UCIR_NME_imagenet_subset_10.png" width = "325"/>
+
+### BiC
+
+**ImageNet-1000**
+
+|                          | 100  | 200  | 300  | 400  | 500  | 600  | 700  | 800  | 900  | 100  |
+| ------------------------ | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
+| **Paper reported (BiC)** | 94.1 | 92.5 | 89.6 | 89.1 | 85.7 | 83.2 | 80.2 | 77.5 | 75.0 | 73.2 |
+| **Reproduce**            | 94.3 | 91.6 | 89.6 | 87.5 | 85.6 | 84.3 | 82.2 | 79.4 | 76.7 | 74.1 |
 
 ## Change log
 - [x] (2020.6.8) Store the data with list instead of np.array to avoid bugs when the image size is different.

@@ -18,8 +18,8 @@ milestones = [50, 70]
 lrate_decay = 0.1
 batch_size = 128
 memory_size = 0
-distill_ratio = 1
-attention_ratio = 1
+distill_ratio = 2
+attention_ratio = 0.1
 weight_decay = 1e-5
 num_workers = 4
 
@@ -93,9 +93,12 @@ class LwM(BaseLearner):
 
                     # Distillation loss
                     # if no old samples saved, only calculate distillation loss for old logits
+                    '''
                     distill_loss = F.binary_cross_entropy_with_logits(
                         logits[:, :self._known_classes], torch.sigmoid(old_logits.detach())
                     ) * distill_ratio
+                    '''
+                    distill_loss = _KD_loss(logits[:, :self._known_classes], old_logits.detach(), T=2) * distill_ratio
                     distill_losses += distill_loss.item()
 
                     # Attention distillation loss
@@ -156,3 +159,9 @@ def gradcam_distillation(gradients_a, gradients_b, activations_a, activations_b)
 def _compute_gradcam_attention(gradients, activations):
     alpha = F.adaptive_avg_pool2d(gradients, (1, 1))
     return F.relu(alpha * activations)
+
+
+def _KD_loss(pred, soft, T):
+    pred = torch.log_softmax(pred/T, dim=1)
+    soft = torch.softmax(soft/T, dim=1)
+    return -1 * torch.mul(soft, pred).sum() / soft.shape[0]
