@@ -147,7 +147,7 @@ class CifarResNet(nn.Module):
         features = pooled.view(pooled.size(0), -1)  # [bs, 64]
 
         return {
-            'maps': [x_1, x_2, x_3],
+            'fmaps': [x_1, x_2, x_3],
             'features': features
         }
 

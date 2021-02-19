@@ -11,7 +11,7 @@ batch_size = 64
 
 
 class BaseLearner(object):
-    def __init__(self):
+    def __init__(self, args):
         self._cur_task = -1
         self._known_classes = 0
         self._total_classes = 0
@@ -19,6 +19,31 @@ class BaseLearner(object):
         self._old_network = None
         self._data_memory, self._targets_memory = np.array([]), np.array([])
         self.topk = 5
+
+        self._memory_size = args['memory_size']
+        self._memory_per_class = args['memory_per_class']
+        self._fixed_memory = args['fixed_memory']
+        self._device = args['device']
+
+    @property
+    def exemplar_size(self):
+        assert len(self._data_memory) == len(self._targets_memory), 'Exemplar size error.'
+        return len(self._targets_memory)
+
+    @property
+    def samples_per_class(self):
+        if self._fixed_memory:
+            return self._memory_per_class
+        else:
+            assert self._total_classes != 0, 'Total classes is 0'
+            return (self._memory_size // self._total_classes)
+
+    def build_rehearsal_memory(self, data_manager, per_class):
+        if self._fixed_memory:
+            self._construct_exemplar_unified(data_manager, per_class)
+        else:
+            self._reduce_exemplar(data_manager, per_class)
+            self._construct_exemplar(data_manager, per_class)
 
     def save_checkpoint(self, filename):
         self._network.cpu()

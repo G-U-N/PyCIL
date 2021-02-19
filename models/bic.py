@@ -14,7 +14,6 @@ lrate = 0.1
 milestones = [30, 60, 80, 90]
 lrate_decay = 0.1
 batch_size = 256
-memory_size = 20000
 split_ratio = 0.1
 T = 2
 weight_decay = 1e-4
@@ -27,7 +26,6 @@ lrate = 0.1
 milestones = [100, 150, 200]
 lrate_decay = 0.1
 batch_size = 128
-memory_size = 2000
 split_ratio = 0.1
 T = 2
 weight_decay = 2e-4
@@ -36,15 +34,15 @@ num_workers = 4
 
 class BiC(BaseLearner):
     def __init__(self, args):
-        super().__init__()
+        super().__init__(args)
         self._network = IncrementalNetWithBias(args['convnet_type'], False, bias_correction=True)
-        self._device = args['device']
         self._class_means = None
 
     def after_task(self):
         # self.save_checkpoint(logfilename)
         self._old_network = self._network.copy().freeze()
         self._known_classes = self._total_classes
+        logging.info('Exemplar size: {}'.format(self.exemplar_size))
 
     def incremental_train(self, data_manager):
         self._cur_task += 1
@@ -59,7 +57,8 @@ class BiC(BaseLearner):
                                                                        source='train', mode='train',
                                                                        appendent=self._get_memory(),
                                                                        val_samples_per_class=int(
-                                                                           split_ratio*memory_size/self._known_classes))
+                                                                           split_ratio *
+                                                                           self._memory_size/self._known_classes))
             self.val_loader = DataLoader(val_dset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
             logging.info('Stage1 dset: {}, Stage2 dset: {}'.format(len(train_dset), len(val_dset)))
             self.lamda = self._known_classes / self._total_classes
@@ -79,8 +78,7 @@ class BiC(BaseLearner):
             self._stage2_bias_correction(self.val_loader, self.test_loader)
 
         # Exemplars
-        self._reduce_exemplar(data_manager, memory_size//self._total_classes)
-        self._construct_exemplar(data_manager, memory_size//self._total_classes)
+        self.build_rehearsal_memory(data_manager, self.samples_per_class)
 
     def _run(self, train_loader, test_loader, optimizer, scheduler, stage):
         for epoch in range(1, epochs+1):

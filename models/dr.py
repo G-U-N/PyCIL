@@ -23,7 +23,6 @@ milestones = [50, 70]
 lrate_decay = 0.2
 
 batch_size = 128
-memory_size = 2000
 T1 = 2
 T2 = 2
 weight_decay = 1e-5
@@ -32,9 +31,8 @@ num_workers = 4
 
 class DR(BaseLearner):
     def __init__(self, args):
-        super().__init__()
+        super().__init__(args)
         self._network = IncrementalNet(args['convnet_type'], False)
-        self._device = args['device']
 
         self.convnet_type = args['convnet_type']
         self.expert = None
@@ -42,6 +40,7 @@ class DR(BaseLearner):
     def after_task(self):
         self._old_network = self._network.copy().freeze()
         self._known_classes = self._total_classes
+        logging.info('Exemplar size: {}'.format(self.exemplar_size))
 
     def incremental_train(self, data_manager):
         self._cur_task += 1
@@ -75,8 +74,7 @@ class DR(BaseLearner):
             self.expert = self.expert.freeze()
             logging.info('Training the updated CNN...')
             self._train(self.train_loader, self.test_loader)
-        self._reduce_exemplar(data_manager, memory_size//self._total_classes)
-        self._construct_exemplar(data_manager, memory_size//self._total_classes)
+        self.build_rehearsal_memory(data_manager, self.samples_per_class)
 
     def _train(self, train_loader, test_loader):
         self._network.to(self._device)

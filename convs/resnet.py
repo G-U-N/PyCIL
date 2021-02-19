@@ -216,7 +216,7 @@ class ResNet(nn.Module):
         # x = self.fc(x)
 
         return {
-            'maps': [x_1, x_2, x_3, x_4],
+            'fmaps': [x_1, x_2, x_3, x_4],
             'features': features
         }
 

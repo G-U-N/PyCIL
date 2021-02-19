@@ -4,6 +4,7 @@ from models.dr import DR
 from models.ucir import UCIR
 from models.bic import BiC
 from models.lwm import LwM
+from models.podnet import PODNet
 
 
 def get_model(model_name, args):
@@ -20,3 +21,5 @@ def get_model(model_name, args):
         return BiC(args)
     elif name == 'lwm':
         return LwM(args)
+    elif name == 'podnet':
+        return PODNet(args)

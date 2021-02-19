@@ -27,9 +27,8 @@ num_workers = 4
 class LwM(BaseLearner):
 
     def __init__(self, args):
-        super().__init__()
+        super().__init__(args)
         self._network = IncrementalNet(args['convnet_type'], pretrained=False, gradcam=True)
-        self._device = args['device']
 
     def after_task(self):
         self._network.zero_grad()
@@ -39,6 +38,7 @@ class LwM(BaseLearner):
         self._old_network.set_gradcam_hook()
 
         self._known_classes = self._total_classes
+        logging.info('Exemplar size: {}'.format(self.exemplar_size))
 
     def incremental_train(self, data_manager):
         self._cur_task += 1

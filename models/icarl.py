@@ -18,7 +18,6 @@ lrate = 2.0
 milestones = [20, 30, 40, 50]
 lrate_decay = 0.2
 batch_size = 128
-memory_size = 20000
 weight_decay = 1e-5
 num_workers = 16
 '''
@@ -29,7 +28,6 @@ lrate = 2.0
 milestones = [49, 63]
 lrate_decay = 0.2
 batch_size = 128
-memory_size = 2000
 weight_decay = 1e-5
 num_workers = 4
 
@@ -37,13 +35,13 @@ num_workers = 4
 class iCaRL(BaseLearner):
 
     def __init__(self, args):
-        super().__init__()
+        super().__init__(args)
         self._network = IncrementalNet(args['convnet_type'], False)
-        self._device = args['device']
 
     def after_task(self):
         self._old_network = self._network.copy().freeze()
         self._known_classes = self._total_classes
+        logging.info('Exemplar size: {}'.format(self.exemplar_size))
 
     def incremental_train(self, data_manager):
         self._cur_task += 1
@@ -60,8 +58,7 @@ class iCaRL(BaseLearner):
 
         # Procedure
         self._train(self.train_loader, self.test_loader)
-        self._reduce_exemplar(data_manager, memory_size//self._total_classes)
-        self._construct_exemplar(data_manager, memory_size//self._total_classes)
+        self.build_rehearsal_memory(data_manager, self.samples_per_class)
 
     def _train(self, train_loader, test_loader):
         self._network.to(self._device)

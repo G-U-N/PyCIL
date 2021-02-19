@@ -29,11 +29,8 @@ def _train(args):
         ]
     )
 
-    logging.info('Seed: {}'.format(args['seed']))
-    logging.info('Model: {}'.format(args['model_name']))
-    logging.info('Convnet: {}'.format(args['convnet_type']))
-    logging.info('Dataset: {}'.format(args['dataset']))
     _set_device(args)
+    print_args(args)
     data_manager = DataManager(args['dataset'], args['shuffle'], args['seed'], args['init_cls'], args['increment'])
     model = factory.get_model(args['model_name'], args)
 
@@ -79,3 +76,8 @@ def _set_device(args):
         device = torch.device('cuda:{}'.format(device_type))
 
     args['device'] = device
+
+
+def print_args(args):
+    for key, value in args.items():
+        logging.info('{}: {}'.format(key, value))

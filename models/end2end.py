@@ -29,7 +29,6 @@ milestones_finetune = [10, 20]
 
 lrate_decay = 0.1
 batch_size = 128
-memory_size = 2000
 T = 2
 weight_decay = 1e-3
 num_workers = 4
@@ -38,21 +37,21 @@ num_workers = 4
 class End2End(BaseLearner):
 
     def __init__(self, args):
-        super().__init__()
+        super().__init__(args)
         self._network = IncrementalNet(args['convnet_type'], False)
-        self._device = args['device']
         self._seen_classes = []
 
     def after_task(self):
         self._old_network = self._network.copy().freeze()
         self._known_classes = self._total_classes
+        logging.info('Exemplar size: {}'.format(self.exemplar_size))
 
     def incremental_train(self, data_manager):
         self._cur_task += 1
-        task_size = data_manager.get_task_size(self._cur_task)
-        self._total_classes = self._known_classes + task_size
+        self.task_size = data_manager.get_task_size(self._cur_task)
+        self._total_classes = self._known_classes + self.task_size
         self._network.update_fc(self._total_classes)
-        self._seen_classes.append(task_size)
+        self._seen_classes.append(self.task_size)
         logging.info('Learning on {}-{}'.format(self._known_classes, self._total_classes))
 
         # Loader
@@ -64,8 +63,7 @@ class End2End(BaseLearner):
 
         # Procedure
         self._train(data_manager, self.train_loader, self.test_loader)
-        self._reduce_exemplar(data_manager, memory_size//self._total_classes)
-        self._construct_exemplar(data_manager, memory_size//self._total_classes)
+        self.build_rehearsal_memory(data_manager, self.samples_per_class)
 
     def _train(self, data_manager, train_loader, test_loader):
         self._network.to(self._device)
@@ -86,9 +84,14 @@ class End2End(BaseLearner):
         self._run(self.train_loader, self.test_loader, epochs, optimizer, scheduler, 'Training')
 
         # Finetune
-        samples_per_class = memory_size//self._known_classes
-        self._reduce_exemplar(data_manager, samples_per_class)
-        self._construct_exemplar(data_manager, samples_per_class)
+        if self._fixed_memory:
+            finetune_samples_per_class = self._memory_per_class
+            self._construct_exemplar_unified(data_manager, finetune_samples_per_class)
+        else:
+            finetune_samples_per_class = self._memory_size//self._known_classes
+            self._reduce_exemplar(data_manager, finetune_samples_per_class)
+            self._construct_exemplar(data_manager, finetune_samples_per_class)
+
         self._old_network = self._network.copy().freeze()
         finetune_train_dataset = data_manager.get_dataset([], source='train', mode='train',
                                                           appendent=self._get_memory())
@@ -99,6 +102,13 @@ class End2End(BaseLearner):
                                                    gamma=lrate_decay)
         self._is_finetuning = True
         self._run(finetune_train_loader, self.test_loader, epochs_finetune, optimizer, scheduler, 'Finetuning')
+
+        # Remove the temporary exemplars of new classes
+        if self._fixed_memory:
+            self._data_memory = self._data_memory[:-self._memory_per_class*self.task_size]
+            self._targets_memory = self._targets_memory[:-self._memory_per_class*self.task_size]
+            # Check
+            assert len(np.setdiff1d(self._targets_memory, np.arange(0, self._known_classes))) == 0, 'Exemplar error!'
 
     def _run(self, train_loader, test_loader, epochs_, optimizer, scheduler, process):
         prog_bar = tqdm(range(epochs_))

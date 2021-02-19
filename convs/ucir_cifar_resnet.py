@@ -153,7 +153,7 @@ class CifarResNet(nn.Module):
         # out = self.fc(vector)
 
         return {
-            'maps': [x_1, x_2, x_3],
+            'fmaps': [x_1, x_2, x_3],
             'features': features
         }
 

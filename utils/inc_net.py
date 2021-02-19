@@ -138,8 +138,9 @@ class IncrementalNet(BaseNet):
 
 class CosineIncrementalNet(BaseNet):
 
-    def __init__(self, convnet_type, pretrained):
+    def __init__(self, convnet_type, pretrained, nb_proxy=1):
         super().__init__(convnet_type, pretrained)
+        self.nb_proxy = nb_proxy
 
     def update_fc(self, nb_classes, task_num):
         fc = self.generate_fc(self.feature_dim, nb_classes)
@@ -158,10 +159,11 @@ class CosineIncrementalNet(BaseNet):
 
     def generate_fc(self, in_dim, out_dim):
         if self.fc is None:
-            fc = CosineLinear(in_dim, out_dim)
+            fc = CosineLinear(in_dim, out_dim, self.nb_proxy, to_reduce=True)
         else:
-            prev_out_features = self.fc.out_features
-            fc = SplitCosineLinear(in_dim, prev_out_features, out_dim - prev_out_features)
+            prev_out_features = self.fc.out_features // self.nb_proxy
+            # prev_out_features = self.fc.out_features
+            fc = SplitCosineLinear(in_dim, prev_out_features, out_dim - prev_out_features, self.nb_proxy)
 
         return fc
 
