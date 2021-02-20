@@ -1,6 +1,7 @@
 import logging
 import numpy as np
 import torch
+from torch import nn
 from tqdm import tqdm
 from torch import optim
 from torch.nn import functional as F
@@ -62,8 +63,12 @@ class End2End(BaseLearner):
         self.test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
         # Procedure
+        if len(self._multiple_gpus) > 1:
+            self._network = nn.DataParallel(self._network, self._multiple_gpus)
         self._train(data_manager, self.train_loader, self.test_loader)
         self.build_rehearsal_memory(data_manager, self.samples_per_class)
+        if len(self._multiple_gpus) > 1:
+            self._network = self._network.module
 
     def _train(self, data_manager, train_loader, test_loader):
         self._network.to(self._device)
@@ -92,7 +97,10 @@ class End2End(BaseLearner):
             self._reduce_exemplar(data_manager, finetune_samples_per_class)
             self._construct_exemplar(data_manager, finetune_samples_per_class)
 
-        self._old_network = self._network.copy().freeze()
+        if len(self._multiple_gpus) > 1:
+            self._old_network = self._network.module.copy().freeze()
+        else:
+            self._old_network = self._network.copy().freeze()
         finetune_train_dataset = data_manager.get_dataset([], source='train', mode='train',
                                                           appendent=self._get_memory())
         finetune_train_loader = DataLoader(finetune_train_dataset, batch_size=batch_size,

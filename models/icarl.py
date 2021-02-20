@@ -2,6 +2,7 @@ import logging
 import numpy as np
 from tqdm import tqdm
 import torch
+from torch import nn
 from torch import optim
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
@@ -57,8 +58,12 @@ class iCaRL(BaseLearner):
         self.test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
         # Procedure
+        if len(self._multiple_gpus) > 1:
+            self._network = nn.DataParallel(self._network, self._multiple_gpus)
         self._train(self.train_loader, self.test_loader)
         self.build_rehearsal_memory(data_manager, self.samples_per_class)
+        if len(self._multiple_gpus) > 1:
+            self._network = self._network.module
 
     def _train(self, train_loader, test_loader):
         self._network.to(self._device)

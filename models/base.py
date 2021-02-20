@@ -2,6 +2,7 @@ import copy
 import logging
 import numpy as np
 import torch
+from torch import nn
 from torch.utils.data import DataLoader
 from utils.toolkit import tensor2numpy, accuracy
 from scipy.spatial.distance import cdist
@@ -23,7 +24,8 @@ class BaseLearner(object):
         self._memory_size = args['memory_size']
         self._memory_per_class = args['memory_per_class']
         self._fixed_memory = args['fixed_memory']
-        self._device = args['device']
+        self._device = args['device'][0]
+        self._multiple_gpus = args['device']
 
     @property
     def exemplar_size(self):
@@ -37,6 +39,13 @@ class BaseLearner(object):
         else:
             assert self._total_classes != 0, 'Total classes is 0'
             return (self._memory_size // self._total_classes)
+
+    @property
+    def feature_dim(self):
+        if isinstance(self._network, nn.DataParallel):
+            return self._network.module.feature_dim
+        else:
+            return self._network.feature_dim
 
     def build_rehearsal_memory(self, data_manager, per_class):
         if self._fixed_memory:
@@ -131,7 +140,10 @@ class BaseLearner(object):
         vectors, targets = [], []
         for _, _inputs, _targets in loader:
             _targets = _targets.numpy()
-            _vectors = tensor2numpy(self._network.extract_vector(_inputs.to(self._device)))
+            if isinstance(self._network, nn.DataParallel):
+                _vectors = tensor2numpy(self._network.module.extract_vector(_inputs.to(self._device)))
+            else:
+                _vectors = tensor2numpy(self._network.extract_vector(_inputs.to(self._device)))
 
             vectors.append(_vectors)
             targets.append(_targets)
@@ -141,7 +153,7 @@ class BaseLearner(object):
     def _reduce_exemplar(self, data_manager, m):
         logging.info('Reducing exemplars...({} per classes)'.format(m))
         dummy_data, dummy_targets = copy.deepcopy(self._data_memory), copy.deepcopy(self._targets_memory)
-        self._class_means = np.zeros((self._total_classes, self._network.feature_dim))
+        self._class_means = np.zeros((self._total_classes, self.feature_dim))
         self._data_memory, self._targets_memory = np.array([]), np.array([])
 
         for class_idx in range(self._known_classes):
@@ -205,7 +217,7 @@ class BaseLearner(object):
 
     def _construct_exemplar_unified(self, data_manager, m):
         logging.info('Constructing exemplars for new classes...({} per classes)'.format(m))
-        _class_means = np.zeros((self._total_classes, self._network.feature_dim))
+        _class_means = np.zeros((self._total_classes, self.feature_dim))
 
         # Calculate the means of old classes with newly trained network
         for class_idx in range(self._known_classes):

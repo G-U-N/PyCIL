@@ -1,6 +1,7 @@
 import logging
 import numpy as np
 import torch
+from torch import nn
 from tqdm import tqdm
 from torch import optim
 from torch.nn import functional as F
@@ -73,8 +74,12 @@ class DR(BaseLearner):
         else:
             self.expert = self.expert.freeze()
             logging.info('Training the updated CNN...')
+            if len(self._multiple_gpus) > 1:
+                self._network = nn.DataParallel(self._network, self._multiple_gpus)
             self._train(self.train_loader, self.test_loader)
         self.build_rehearsal_memory(data_manager, self.samples_per_class)
+        if len(self._multiple_gpus) > 1 and self._cur_task > 0:
+            self._network = self._network.module
 
     def _train(self, train_loader, test_loader):
         self._network.to(self._device)
@@ -124,6 +129,8 @@ class DR(BaseLearner):
     def _train_expert(self, train_loader, test_loader):
         self.expert = IncrementalNet(self.convnet_type, False)
         self.expert.update_fc(self.task_size)
+        if len(self._multiple_gpus) > 1:
+            self.expert = nn.DataParallel(self.expert, self._multiple_gpus)
         self.expert.to(self._device)
         optimizer = optim.SGD(self.expert.parameters(), lr=lrate_expert, momentum=0.9, weight_decay=weight_decay)
         scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=milestones_expert, gamma=lrate_decay_expert)
@@ -151,6 +158,8 @@ class DR(BaseLearner):
             prog_bar.set_description(info)
 
         logging.info(info)
+        if len(self._multiple_gpus) > 1:
+            self.expert = self.expert.module
 
     def _compute_accuracy(self, model, loader, offset=0):
         model.eval()

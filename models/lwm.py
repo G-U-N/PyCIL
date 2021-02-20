@@ -1,6 +1,7 @@
 import logging
 import numpy as np
 import torch
+from torch import nn
 from torch import optim
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
@@ -12,6 +13,7 @@ EPSILON = 1e-8
 
 # CIFAR100, ResNet32
 # Have not found suitable hyperparameters to reproduce the paper's result yet
+# Does not support multiple gpus training yet
 epochs = 90
 lrate = 0.01
 milestones = [50, 70]
@@ -54,7 +56,11 @@ class LwM(BaseLearner):
         self.test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
         # Procedure
+        if len(self._multiple_gpus) > 1:
+            self._network = nn.DataParallel(self._network, self._multiple_gpus)
         self._train(self.train_loader, self.test_loader)
+        if len(self._multiple_gpus) > 1:
+            self._network = self._network.module
 
     def _train(self, train_loader, test_loader):
         self._network.to(self._device)

@@ -1,6 +1,7 @@
 import logging
 import numpy as np
 import torch
+from torch import nn
 from torch import optim
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
@@ -73,12 +74,18 @@ class BiC(BaseLearner):
         self.test_loader = DataLoader(test_dset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
         # Procedure
+        self._log_bias_params()
         self._stage1_training(self.train_loader, self.test_loader)
         if self._cur_task >= 1:
             self._stage2_bias_correction(self.val_loader, self.test_loader)
 
         # Exemplars
         self.build_rehearsal_memory(data_manager, self.samples_per_class)
+
+        # Extract from DataParallel
+        if len(self._multiple_gpus) > 1:
+            self._network = self._network.module
+        self._log_bias_params()
 
     def _run(self, train_loader, test_loader, optimizer, scheduler, stage):
         for epoch in range(1, epochs+1):
@@ -124,10 +131,6 @@ class BiC(BaseLearner):
             return
         '''
 
-        self._network.to(self._device)
-        if self._old_network is not None:
-            self._old_network.to(self._device)
-
         # Freeze bias layer and train stage1 layer
         ignored_params = list(map(id, self._network.bias_layers.parameters()))
         base_params = filter(lambda p: id(p) not in ignored_params, self._network.parameters())
@@ -136,22 +139,28 @@ class BiC(BaseLearner):
         optimizer = optim.SGD(network_params, lr=lrate, momentum=0.9, weight_decay=weight_decay)
         scheduler = optim.lr_scheduler.MultiStepLR(optimizer=optimizer, milestones=milestones, gamma=lrate_decay)
 
-        self._log_bias_params()
+        if len(self._multiple_gpus) > 1:
+            self._network = nn.DataParallel(self._network, self._multiple_gpus)
+        self._network.to(self._device)
+        if self._old_network is not None:
+            self._old_network.to(self._device)
+
         self._run(train_loader, test_loader, optimizer, scheduler, stage='training')
-        self._log_bias_params()
 
     def _stage2_bias_correction(self, val_loader, test_loader):
-        self._network.to(self._device)
-
+        if isinstance(self._network, nn.DataParallel):
+            self._network = self._network.module
         # Freeze stage1 layer and train bias layer
         network_params = [{'params': self._network.bias_layers[-1].parameters(), 'lr': lrate,
                            'weight_decay': weight_decay}]
         optimizer = optim.SGD(network_params, lr=lrate, momentum=0.9, weight_decay=weight_decay)
         scheduler = optim.lr_scheduler.MultiStepLR(optimizer=optimizer, milestones=milestones, gamma=lrate_decay)
 
-        self._log_bias_params()
+        if len(self._multiple_gpus) > 1:
+            self._network = nn.DataParallel(self._network, self._multiple_gpus)
+        self._network.to(self._device)
+
         self._run(val_loader, test_loader, optimizer, scheduler, stage='bias_correction')
-        self._log_bias_params()
 
     def _log_bias_params(self):
         logging.info('Parameters of bias layer:')

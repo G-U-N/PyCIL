@@ -2,6 +2,7 @@ import math
 import logging
 import numpy as np
 import torch
+from torch import nn
 from torch import optim
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
@@ -66,6 +67,8 @@ class UCIR(BaseLearner):
         # Procedure
         self._train(self.train_loader, self.test_loader)
         self.build_rehearsal_memory(data_manager, self.samples_per_class)
+        if len(self._multiple_gpus) > 1:
+            self._network = self._network.module
 
     def _train(self, train_loader, test_loader):
         '''
@@ -85,10 +88,6 @@ class UCIR(BaseLearner):
             self.lamda = lamda_base * math.sqrt(self._known_classes / (self._total_classes - self._known_classes))
         logging.info('Adaptive lambda: {}'.format(self.lamda))
 
-        self._network.to(self._device)
-        if self._old_network is not None:
-            self._old_network.to(self._device)
-
         # Fix the embedding of old classes
         if self._cur_task == 0:
             network_params = self._network.parameters()
@@ -99,6 +98,12 @@ class UCIR(BaseLearner):
                               {'params': self._network.fc.fc1.parameters(), 'lr': 0, 'weight_decay': 0}]
         optimizer = optim.SGD(network_params, lr=lrate, momentum=0.9, weight_decay=weight_decay)
         scheduler = optim.lr_scheduler.MultiStepLR(optimizer=optimizer, milestones=milestones, gamma=lrate_decay)
+
+        if len(self._multiple_gpus) > 1:
+            self._network = nn.DataParallel(self._network, self._multiple_gpus)
+        self._network.to(self._device)
+        if self._old_network is not None:
+            self._old_network.to(self._device)
 
         self._run(train_loader, test_loader, optimizer, scheduler)
 
