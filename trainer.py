@@ -29,6 +29,7 @@ def _train(args):
         ]
     )
 
+    _set_random()
     _set_device(args)
     print_args(args)
     data_manager = DataManager(args['dataset'], args['shuffle'], args['seed'], args['init_cls'], args['increment'])
@@ -80,6 +81,14 @@ def _set_device(args):
         gpus.append(device)
 
     args['device'] = gpus
+
+
+def _set_random():
+    torch.manual_seed(1)
+    torch.cuda.manual_seed(1)
+    torch.cuda.manual_seed_all(1)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
 
 
 def print_args(args):

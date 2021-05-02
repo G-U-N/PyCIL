@@ -12,8 +12,8 @@ from utils.toolkit import tensor2numpy
 # CIFAR100, ResNet32, 50 base
 epochs = 160
 lrate = 0.1
-milestones = [80, 120]
-lrate_decay = 0.1
+ft_epochs = 20
+ft_lrate = 0.05
 batch_size = 128
 lambda_c_base = 5
 lambda_f_base = 1
@@ -21,16 +21,48 @@ nb_proxy = 10
 weight_decay = 5e-4
 num_workers = 4
 
+'''
+Distillation losses: POD-flat (lambda_f=1) + POD-spatial (lambda_c=5)
++--------------------+--------------------+--------------------+--------------------+--------------------+
+|        Type        |     Classifier     |       Steps        |      CNN (%)       |      NME (%)       |
++--------------------+--------------------+--------------------+--------------------+--------------------+
+|      reported      |    Cosine(k=1)     |         50         |       55.72        |       56.69        |
++--------------------+--------------------+--------------------+--------------------+--------------------+
+|     reproduced     |    Cosine(k=1)     |         50         |       52.73        |       55.32        |
++--------------------+--------------------+--------------------+--------------------+--------------------+
+|      reported      |    LSC-CE(k=10)    |         50         |       57.45        |       59.86        |
++--------------------+--------------------+--------------------+--------------------+--------------------+
+|     reproduced     |    LSC-CE(k=10)    |         50         |       53.37        |       56.33        |
++--------------------+--------------------+--------------------+--------------------+--------------------+
+|      reported      |     LSC(k=10)      |         50         |       57.98        |       61.40        |
++--------------------+--------------------+--------------------+--------------------+--------------------+
+|     reproduced     |     LSC(k=10)      |         50         |        ***         |        ***         |
++--------------------+--------------------+--------------------+--------------------+--------------------+
+|      reported      |     LSC(k=10)      |         25         |       60.72        |       62.71        |
++--------------------+--------------------+--------------------+--------------------+--------------------+
+|     reproduced     |     LSC(k=10)      |         25         |        ***         |        ***         |
++--------------------+--------------------+--------------------+--------------------+--------------------+
+|      reported      |     LSC(k=10)      |         10         |       63.19        |       64.03        |
++--------------------+--------------------+--------------------+--------------------+--------------------+
+|     reproduced     |     LSC(k=10)      |         10         |        ***         |        ***         |
++--------------------+--------------------+--------------------+--------------------+--------------------+
+|      reported      |     LSC(k=10)      |         10         |       64.83        |       64.48        |
++--------------------+--------------------+--------------------+--------------------+--------------------+
+|     reproduced     |     LSC(k=10)      |         10         |        ***         |        ***         |
++--------------------+--------------------+--------------------+--------------------+--------------------+
+The above results are obtained without the fine-tuning procedure.
+'''
+
 
 class PODNet(BaseLearner):
 
     def __init__(self, args):
         super().__init__(args)
-        self._network = CosineIncrementalNet(args['convnet_type'], pretrained=False, nb_proxy=10)
+        self._network = CosineIncrementalNet(args['convnet_type'], pretrained=False, nb_proxy=nb_proxy)
         self._class_means = None
 
     def after_task(self):
-        # self.save_checkpoint('podnet')
+        self.save_checkpoint('podnet')
         self._old_network = self._network.copy().freeze()
         self._known_classes = self._total_classes
         logging.info('Exemplar size: {}'.format(self.exemplar_size))
@@ -38,6 +70,7 @@ class PODNet(BaseLearner):
     def incremental_train(self, data_manager):
         self._cur_task += 1
         self._total_classes = self._known_classes + data_manager.get_task_size(self._cur_task)
+        self.task_size = self._total_classes - self._known_classes
         self._network.update_fc(self._total_classes, self._cur_task)
         logging.info('Learning on {}-{}'.format(self._known_classes, self._total_classes))
 
@@ -49,17 +82,15 @@ class PODNet(BaseLearner):
         self.test_loader = DataLoader(test_dset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
         # Procedure
-        self._train(self.train_loader, self.test_loader)
+        self._train(data_manager, self.train_loader, self.test_loader)
         self.build_rehearsal_memory(data_manager, self.samples_per_class)
 
-    def _train(self, train_loader, test_loader):
-        '''
+    def _train(self, data_manager, train_loader, test_loader):
         if self._cur_task == 0:
             loaded_dict = torch.load('./podnet_0.pkl')
             self._network.load_state_dict(loaded_dict['model_state_dict'])
             self._network.to(self._device)
             return
-        '''
         # Adaptive factor
         # Adaptive lambda = base * factor
         # According to the official code: factor = total_clases / task_size
@@ -75,6 +106,7 @@ class PODNet(BaseLearner):
         if self._old_network is not None:
             self._old_network.to(self._device)
 
+        # New + exemplars
         # Fix the embedding of old classes
         if self._cur_task == 0:
             network_params = self._network.parameters()
@@ -84,13 +116,47 @@ class PODNet(BaseLearner):
             network_params = [{'params': base_params, 'lr': lrate, 'weight_decay': weight_decay},
                               {'params': self._network.fc.fc1.parameters(), 'lr': 0, 'weight_decay': 0}]
         optimizer = optim.SGD(network_params, lr=lrate, momentum=0.9, weight_decay=weight_decay)
-        # scheduler = optim.lr_scheduler.MultiStepLR(optimizer=optimizer, milestones=milestones, gamma=lrate_decay)
         scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer=optimizer, T_max=epochs)
+        self._run(train_loader, test_loader, optimizer, scheduler, epochs)
 
-        self._run(train_loader, test_loader, optimizer, scheduler)
+        # Finetune
+        '''
+        if self._cur_task == 0:
+            return
+        logging.info('Finetune the network (classifier part) with the undersampled dataset!')
+        if self._fixed_memory:
+            finetune_samples_per_class = self._memory_per_class
+            self._construct_exemplar_unified(data_manager, finetune_samples_per_class)
+        else:
+            finetune_samples_per_class = self._memory_size//self._known_classes
+            self._reduce_exemplar(data_manager, finetune_samples_per_class)
+            self._construct_exemplar(data_manager, finetune_samples_per_class)
 
-    def _run(self, train_loader, test_loader, optimizer, scheduler):
-        for epoch in range(1, epochs+1):
+        finetune_train_dataset = data_manager.get_dataset([], source='train', mode='train',
+                                                          appendent=self._get_memory())
+        finetune_train_loader = DataLoader(finetune_train_dataset, batch_size=batch_size,
+                                           shuffle=True, num_workers=num_workers)
+        logging.info('The size of finetune dataset: {}'.format(len(finetune_train_dataset)))
+        # Only fintune the classifier (refer to the official code repo)!
+        # According to the official code repo, it is wired to update the new_weights of the classifier
+        # in the training procedure as UCIR does and update the all weights in the finetune procedure.
+        # network_params = self._network.fc.parameters()  # All weights
+        network_params = self._network.fc.fc2.parameters()  # Only the new weights
+        optimizer = optim.SGD(network_params, lr=ft_lrate, momentum=0.9, weight_decay=weight_decay)
+        # scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer=optimizer, T_max=ft_epochs)
+        scheduler = None
+        self._run(finetune_train_loader, test_loader, optimizer, scheduler, ft_epochs)
+
+        # Remove the temporary exemplars of new classes
+        if self._fixed_memory:
+            self._data_memory = self._data_memory[:-self._memory_per_class*self.task_size]
+            self._targets_memory = self._targets_memory[:-self._memory_per_class*self.task_size]
+            # Check
+            assert len(np.setdiff1d(self._targets_memory, np.arange(0, self._known_classes))) == 0, 'Exemplar error!'
+        '''
+
+    def _run(self, train_loader, test_loader, optimizer, scheduler, epk):
+        for epoch in range(1, epk+1):
             self._network.train()
             lsc_losses = 0.  # CE loss
             spatial_losses = 0.  # width + height
@@ -103,6 +169,7 @@ class PODNet(BaseLearner):
                 features = outputs['features']
                 fmaps = outputs['fmaps']
                 lsc_loss = F.cross_entropy(logits, targets)
+                # lsc_loss = nca(logits, targets)
 
                 spatial_loss = 0.
                 flat_loss = 0.
@@ -131,10 +198,12 @@ class PODNet(BaseLearner):
                 correct += preds.eq(targets.expand_as(preds)).cpu().sum()
                 total += len(targets)
 
-            scheduler.step()
+            if scheduler is not None:
+                scheduler.step()
             train_acc = np.around(tensor2numpy(correct)*100 / total, decimals=2)
             test_acc = self._compute_accuracy(self._network, test_loader)
-            info1 = 'Task {}, Epoch {}/{} => '.format(self._cur_task, epoch, epochs)
+            info1 = 'Task {}, Epoch {}/{} (LR {:.5f}) => '.format(
+                self._cur_task, epoch, epk, optimizer.param_groups[0]['lr'])
             info2 = 'LSC_loss {:.2f}, Spatial_loss {:.2f}, Flat_loss {:.2f}, Train_acc {:.2f}, Test_acc {:.2f}'.format(
                 lsc_losses/(i+1), spatial_losses/(i+1), flat_losses/(i+1), train_acc, test_acc)
             logging.info(info1 + info2)
@@ -167,3 +236,61 @@ def pod_spatial_loss(old_fmaps, fmaps, normalize=True):
         loss += layer_loss
 
     return loss / len(fmaps)
+
+
+def nca(
+    similarities,
+    targets,
+    class_weights=None,
+    focal_gamma=None,
+    scale=1.0,
+    margin=0.6,
+    exclude_pos_denominator=True,
+    hinge_proxynca=False,
+    memory_flags=None,
+):
+    """Compute AMS cross-entropy loss.
+    Copied from: https://github.com/arthurdouillard/incremental_learning.pytorch/blob/master/inclearn/lib/losses/base.py
+
+    Reference:
+        * Goldberger et al.
+          Neighbourhood components analysis.
+          NeuriPS 2005.
+        * Feng Wang et al.
+          Additive Margin Softmax for Face Verification.
+          Signal Processing Letters 2018.
+
+    :param similarities: Result of cosine similarities between weights and features.
+    :param targets: Sparse targets.
+    :param scale: Multiplicative factor, can be learned.
+    :param margin: Margin applied on the "right" (numerator) similarities.
+    :param memory_flags: Flags indicating memory samples, although it could indicate
+                         anything else.
+    :return: A float scalar loss.
+    """
+    margins = torch.zeros_like(similarities)
+    margins[torch.arange(margins.shape[0]), targets] = margin
+    similarities = scale * (similarities - margin)
+
+    if exclude_pos_denominator:  # NCA-specific
+        similarities = similarities - similarities.max(1)[0].view(-1, 1)  # Stability
+
+        disable_pos = torch.zeros_like(similarities)
+        disable_pos[torch.arange(len(similarities)),
+                    targets] = similarities[torch.arange(len(similarities)), targets]
+
+        numerator = similarities[torch.arange(similarities.shape[0]), targets]
+        denominator = similarities - disable_pos
+
+        losses = numerator - torch.log(torch.exp(denominator).sum(-1))
+        if class_weights is not None:
+            losses = class_weights[targets] * losses
+
+        losses = -losses
+        if hinge_proxynca:
+            losses = torch.clamp(losses, min=0.)
+
+        loss = torch.mean(losses)
+        return loss
+
+    return F.cross_entropy(similarities, targets, weight=class_weights, reduction="mean")
