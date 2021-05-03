@@ -105,6 +105,8 @@ class End2End(BaseLearner):
                                                           appendent=self._get_memory())
         finetune_train_loader = DataLoader(finetune_train_dataset, batch_size=batch_size,
                                            shuffle=True, num_workers=num_workers)
+        # Update all weights or only the weights of FC layer?
+        # According to the experiment results, fine-tuning all weights is slightly better.
         optimizer = optim.SGD(self._network.parameters(), lr=lrate_finetune, momentum=0.9, weight_decay=weight_decay)
         scheduler = optim.lr_scheduler.MultiStepLR(optimizer=optimizer, milestones=milestones_finetune,
                                                    gamma=lrate_decay)
@@ -140,10 +142,19 @@ class End2End(BaseLearner):
                     for i in range(1, finetuning_task+1):
                         lo = sum(self._seen_classes[:i-1])
                         hi = sum(self._seen_classes[:i])
-                        distill_loss += F.binary_cross_entropy(
-                            F.softmax(logits[:, lo:hi] / T, dim=1),
-                            F.softmax(old_logits[:, lo:hi] / T, dim=1)
-                        )
+
+                        task_prob_new = F.softmax(logits[:, lo:hi], dim=1)
+                        task_prob_old = F.softmax(old_logits[:, lo:hi], dim=1)
+
+                        task_prob_new = task_prob_new ** (1 / T)
+                        task_prob_old = task_prob_old ** (1 / T)
+
+                        task_prob_new = task_prob_new / task_prob_new.sum(1).view(-1, 1)
+                        task_prob_old = task_prob_old / task_prob_old.sum(1).view(-1, 1)
+
+                        distill_loss += F.binary_cross_entropy(task_prob_new, task_prob_old)
+
+                    distill_loss *= 1 / finetuning_task
 
                 loss = clf_loss + distill_loss
                 losses += loss.item()
