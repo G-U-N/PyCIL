@@ -13,7 +13,7 @@ from utils.toolkit import tensor2numpy
 epochs = 160
 lrate = 0.1
 ft_epochs = 20
-ft_lrate = 0.05
+ft_lrate = 0.005
 batch_size = 128
 lambda_c_base = 5
 lambda_f_base = 1
@@ -23,34 +23,30 @@ num_workers = 4
 
 '''
 Distillation losses: POD-flat (lambda_f=1) + POD-spatial (lambda_c=5)
-+--------------------+--------------------+--------------------+--------------------+--------------------+
-|        Type        |     Classifier     |       Steps        |      CNN (%)       |      NME (%)       |
-+--------------------+--------------------+--------------------+--------------------+--------------------+
-|      reported      |    Cosine(k=1)     |         50         |       55.72        |       56.69        |
-+--------------------+--------------------+--------------------+--------------------+--------------------+
-|     reproduced     |    Cosine(k=1)     |         50         |       52.73        |       55.32        |
-+--------------------+--------------------+--------------------+--------------------+--------------------+
-|      reported      |    LSC-CE(k=10)    |         50         |       57.45        |       59.86        |
-+--------------------+--------------------+--------------------+--------------------+--------------------+
-|     reproduced     |    LSC-CE(k=10)    |         50         |       53.37        |       56.33        |
-+--------------------+--------------------+--------------------+--------------------+--------------------+
-|      reported      |     LSC(k=10)      |         50         |       57.98        |       61.40        |
-+--------------------+--------------------+--------------------+--------------------+--------------------+
-|     reproduced     |     LSC(k=10)      |         50         |        ***         |        ***         |
-+--------------------+--------------------+--------------------+--------------------+--------------------+
-|      reported      |     LSC(k=10)      |         25         |       60.72        |       62.71        |
-+--------------------+--------------------+--------------------+--------------------+--------------------+
-|     reproduced     |     LSC(k=10)      |         25         |        ***         |        ***         |
-+--------------------+--------------------+--------------------+--------------------+--------------------+
-|      reported      |     LSC(k=10)      |         10         |       63.19        |       64.03        |
-+--------------------+--------------------+--------------------+--------------------+--------------------+
-|     reproduced     |     LSC(k=10)      |         10         |        ***         |        ***         |
-+--------------------+--------------------+--------------------+--------------------+--------------------+
-|      reported      |     LSC(k=10)      |         10         |       64.83        |       64.48        |
-+--------------------+--------------------+--------------------+--------------------+--------------------+
-|     reproduced     |     LSC(k=10)      |         10         |        ***         |        ***         |
-+--------------------+--------------------+--------------------+--------------------+--------------------+
-The above results are obtained without the fine-tuning procedure.
+NME results are shown.
+The reproduced results are not in line with the reported results.
+Maybe I missed something...
++--------------------+--------------------+--------------------+--------------------+
+|     Classifier     |       Steps        |    Reported (%)    |   Reproduced (%)   |
++--------------------+--------------------+--------------------+--------------------+
+|    Cosine (k=1)    |         50         |       56.69        |       55.49        |
++--------------------+--------------------+--------------------+--------------------+
+|    LSC-CE (k=10)   |         50         |       59.86        |       55.69        |
++--------------------+--------------------+--------------------+--------------------+
+|   LSC-NCA (k=10)   |         50         |       61.40        |       56.50        |
++--------------------+--------------------+--------------------+--------------------+
+|    LSC-CE (k=10)   |         25         |       -----        |       59.16        |
++--------------------+--------------------+--------------------+--------------------+
+|   LSC-NCA (k=10)   |         25         |       62.71        |       59.79        |
++--------------------+--------------------+--------------------+--------------------+
+|    LSC-CE (k=10)   |         10         |       -----        |       62.59        |
++--------------------+--------------------+--------------------+--------------------+
+|   LSC-NCA (k=10)   |         10         |       64.03        |       62.81        |
++--------------------+--------------------+--------------------+--------------------+
+|    LSC-CE (k=10)   |         5          |       -----        |       64.16        |
++--------------------+--------------------+--------------------+--------------------+
+|   LSC-NCA (k=10)   |         5          |       64.48        |       64.37        |
++--------------------+--------------------+--------------------+--------------------+
 '''
 
 
@@ -62,7 +58,7 @@ class PODNet(BaseLearner):
         self._class_means = None
 
     def after_task(self):
-        self.save_checkpoint('podnet')
+        # self.save_checkpoint('podnet')
         self._old_network = self._network.copy().freeze()
         self._known_classes = self._total_classes
         logging.info('Exemplar size: {}'.format(self.exemplar_size))
@@ -86,11 +82,13 @@ class PODNet(BaseLearner):
         self.build_rehearsal_memory(data_manager, self.samples_per_class)
 
     def _train(self, data_manager, train_loader, test_loader):
+        '''
         if self._cur_task == 0:
             loaded_dict = torch.load('./podnet_0.pkl')
             self._network.load_state_dict(loaded_dict['model_state_dict'])
             self._network.to(self._device)
             return
+        '''
         # Adaptive factor
         # Adaptive lambda = base * factor
         # According to the official code: factor = total_clases / task_size
@@ -120,7 +118,6 @@ class PODNet(BaseLearner):
         self._run(train_loader, test_loader, optimizer, scheduler, epochs)
 
         # Finetune
-        '''
         if self._cur_task == 0:
             return
         logging.info('Finetune the network (classifier part) with the undersampled dataset!')
@@ -137,14 +134,21 @@ class PODNet(BaseLearner):
         finetune_train_loader = DataLoader(finetune_train_dataset, batch_size=batch_size,
                                            shuffle=True, num_workers=num_workers)
         logging.info('The size of finetune dataset: {}'.format(len(finetune_train_dataset)))
-        # Only fintune the classifier (refer to the official code repo)!
-        # According to the official code repo, it is wired to update the new_weights of the classifier
-        # in the training procedure as UCIR does and update the all weights in the finetune procedure.
-        # network_params = self._network.fc.parameters()  # All weights
-        network_params = self._network.fc.fc2.parameters()  # Only the new weights
+        # According to the official code repo, only the classifier is fine-tuned. However, it is
+        # strange to update the new weights of the classifier in the training procedure (as UCIR does)
+        # but update the all weights of the classifier in the finetune procedure.
+        # And my results show that only fine-tuning the classifier part does not improve the performance.
+        # Thus all parameters except the old weights of the classifier are fine-tuned in my code.
+        # Which one to choose?
+        # network_params = self._network.fc.parameters()  # All fc weights
+        # network_params = self._network.fc.fc2.parameters()  # Only the new weights of fc
+        ignored_params = list(map(id, self._network.fc.fc1.parameters()))
+        base_params = filter(lambda p: id(p) not in ignored_params, self._network.parameters())
+        network_params = [{'params': base_params, 'lr': ft_lrate, 'weight_decay': weight_decay},
+                          {'params': self._network.fc.fc1.parameters(), 'lr': 0, 'weight_decay': 0}]
         optimizer = optim.SGD(network_params, lr=ft_lrate, momentum=0.9, weight_decay=weight_decay)
-        # scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer=optimizer, T_max=ft_epochs)
-        scheduler = None
+        scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer=optimizer, T_max=ft_epochs)
+        # scheduler = None
         self._run(finetune_train_loader, test_loader, optimizer, scheduler, ft_epochs)
 
         # Remove the temporary exemplars of new classes
@@ -153,7 +157,6 @@ class PODNet(BaseLearner):
             self._targets_memory = self._targets_memory[:-self._memory_per_class*self.task_size]
             # Check
             assert len(np.setdiff1d(self._targets_memory, np.arange(0, self._known_classes))) == 0, 'Exemplar error!'
-        '''
 
     def _run(self, train_loader, test_loader, optimizer, scheduler, epk):
         for epoch in range(1, epk+1):
@@ -168,8 +171,8 @@ class PODNet(BaseLearner):
                 logits = outputs['logits']
                 features = outputs['features']
                 fmaps = outputs['fmaps']
-                lsc_loss = F.cross_entropy(logits, targets)
-                # lsc_loss = nca(logits, targets)
+                # lsc_loss = F.cross_entropy(logits, targets)
+                lsc_loss = nca(logits, targets)
 
                 spatial_loss = 0.
                 flat_loss = 0.

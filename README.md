@@ -9,6 +9,7 @@ Especially the methods based on **memory replay**.
 - [x] UCIR: Learning a Unified Classifier Incrementally via Rebalancing. [[paper](https://openaccess.thecvf.com/content_CVPR_2019/html/Hou_Learning_a_Unified_Classifier_Incrementally_via_Rebalancing_CVPR_2019_paper.html)]
 - [x] BiC: Large Scale Incremental Learning. [[paper](https://arxiv.org/abs/1905.13260)]
 - [x] LwM: Learning without Memorizing. [[paper](https://arxiv.org/abs/1811.08051)]
+- [x] PODNet: PODNet: Pooled Outputs Distillation for Small-Tasks Incremental Learning. [[paper](https://arxiv.org/abs/2004.13513)]
 
 ## Dependencies
 1. torch 1.4.0
@@ -64,6 +65,24 @@ Average accuracies of CIFAR-100 (iCaRL):
 | ------------------------ | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
 | **Paper reported (BiC)** | 94.1 | 92.5 | 89.6 | 89.1 | 85.7 | 83.2 | 80.2 | 77.5 | 75.0 | 73.2 |
 | **Reproduce**            | 94.3 | 91.6 | 89.6 | 87.5 | 85.6 | 84.3 | 82.2 | 79.4 | 76.7 | 74.1 |
+
+### PODNet
+
+**CIFAR100**
+
+NME results are shown and the reproduced results are not in line with the reported results. Maybe I missed something...
+
+|     Classifier     |       Steps        |    Reported (%)    |   Reproduced (%)   |
+|:-------------------|:------------------:|:------------------:|:------------------:|
+|    Cosine (k=1)    |         50         |       56.69        |       55.49        |
+|    LSC-CE (k=10)   |         50         |       59.86        |       55.69        |
+|   LSC-NCA (k=10)   |         50         |       61.40        |       56.50        |
+|    LSC-CE (k=10)   |         25         |       -----        |       59.16        |
+|   LSC-NCA (k=10)   |         25         |       62.71        |       59.79        |
+|    LSC-CE (k=10)   |         10         |       -----        |       62.59        |
+|   LSC-NCA (k=10)   |         10         |       64.03        |       62.81        |
+|    LSC-CE (k=10)   |         5          |       -----        |       64.16        |
+|   LSC-NCA (k=10)   |         5          |       64.48        |       64.37        |
 
 ## Change log
 - [x] (2020.6.8) Store the data with list instead of np.array to avoid bugs when the image size is different.
