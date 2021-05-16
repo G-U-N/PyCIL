@@ -12,8 +12,8 @@ Especially the methods based on **memory replay**.
 - [x] PODNet: PODNet: Pooled Outputs Distillation for Small-Tasks Incremental Learning. [[paper](https://arxiv.org/abs/2004.13513)]
 
 ## Dependencies
-1. torch 1.4.0
-2. torchvision 0.5.0
+1. torch 1.7.1
+2. torchvision 0.8.2
 3. tqdm
 4. numpy
 5. scipy
@@ -43,9 +43,9 @@ python main.py
 Average accuracies of CIFAR-100 (iCaRL):
 | Increments | Paper reported | Reproduce |
 | :--------: | :------------: | :-------: |
-| 10 classes | 64.1           | 61.93     |
-| 20 classes | 67.2           | 66.24     |
-| 50 classes | 68.6           | 67.65     |
+| 10 classes | 64.1           | 63.10     |
+| 20 classes | 67.2           | 65.25     |
+| 50 classes | 68.6           | 67.69     |
 
 ### UCIR
 

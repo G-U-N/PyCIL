@@ -29,7 +29,7 @@ lrate = 2.0
 milestones = [49, 63]
 lrate_decay = 0.2
 batch_size = 128
-weight_decay = 1e-5
+weight_decay = 5e-5
 num_workers = 4
 
 
