@@ -91,7 +91,7 @@ where [MODEL NAME] should be chosen from: `finetune`, `ewc`, `lwf`, `replay`, `g
 
 When using PyCIL, you can edit the global parameters and algorithm-specific hyper-parameter in the corresponding json file. 
 
-These methods include:
+These parameters include:
 
 - **memory-size**: The total exemplar number in the incremental learning process. Assuming there are $K$ classes at current stage, the model will preserve $\left[\frac{memory-size}{K}\right]$ exemplar per class.
 - **init-cls**: The number of classes in the first incremental stage. Since there are different settings in CIL with a different number of classes in the first stage, our framework enables different choices to define the initial stage.
