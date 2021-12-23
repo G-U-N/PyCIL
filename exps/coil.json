@@ -1,0 +1,18 @@
+{
+    "prefix": "reproduce",
+    "dataset": "cifar100",
+    "memory_size": 2000,
+    "memory_per_class": 20,
+    "fixed_memory": false,
+    "shuffle": true,
+    "init_cls": 5,
+    "increment": 5,
+    "sinkhorn":0.464,
+    "calibration_term":1.5,
+    "norm_term":3.0,
+    "reg_term":1e-3,
+    "model_name": "coil",
+    "convnet_type": "cosine_resnet32",
+    "device": ["0","1","2","3"],
+    "seed": [1993]
+}

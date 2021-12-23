@@ -1,0 +1,136 @@
+
+
+
+
+# PyCIL: A Python Toolbox for Class-Incremental Learning
+
+---
+<p align="center">
+  <a href="#Introduction">Introduction</a> •
+  <a href="#Methods Reproduced">Methods Reproduced</a> •
+  <a href="#Results">Results</a> •  
+  <a href="#how-to-use">How To Use</a> •
+  <a href="#license">License</a> •
+  <a href="#Acknowledgements">Acknowledgements</a> •
+  <a href="#Cite">Citation</a>
+</p>
+
+
+---
+
+[![LICENSE](https://img.shields.io/badge/license-MIT-green?style=flat-square)](https://github.com/yaoyao-liu/class-incremental-learning/blob/master/LICENSE)[![Python](https://img.shields.io/badge/python-3.8-blue.svg?style=flat-square&logo=python&color=3776AB&logoColor=3776AB)](https://www.python.org/) [![PyTorch](https://img.shields.io/badge/pytorch-1.8-%237732a8?style=flat-square&logo=PyTorch&color=EE4C2C)](https://pytorch.org/) [![method](https://img.shields.io/badge/Reproduced-11-success)]() [![CIL](https://img.shields.io/badge/Class Incremental Learning-SOTA-success??style=for-the-badge&logo=appveyor)](https://paperswithcode.com/task/incremental-learning)
+
+
+## Introduction
+
+Traditional machine learning systems are deployed under the closed-world setting, which requires the entire training data before the offline training process. However, real-world applications often face the incoming new classes, and a model should incorporate them continually. The learning paradigm is called Class-Incremental Learning (CIL). We propose a Python toolbox that implements several key algorithms for class-incremental learning to ease the burden of researchers in the machine learning community. The toolbox contains implementations of a number of founding works of CIL such as EWC and iCaRL, but also provides current state-of-the-art algorithms that can be used for conducting novel fundamental research.
+ This toolbox, named PyCIL for Python Class-Incremental Learning, is open source with an MIT license.
+
+
+## Methods Reproduced
+- [x] `FineTune`: Baseline method which simply updates parameters on new task, suffering from Catastrophic Forgetting. By default, weights corresponding to the outputs of previous classes are not updated.
+- [x] `EWC`: Gradient Episodic Memory for Continual Learning. [[paper](https://arxiv.org/abs/1612.00796)]
+- [x] `LwF`:  Learning without Forgetting. [[paper](https://arxiv.org/abs/1606.09282)]
+- [x] `Replay`: Baseline method with exemplars.
+- [x] `GEM`: Gradient Episodic Memory for Continual Learning. [[paper](https://arxiv.org/abs/1706.08840)]
+- [x] `iCaRL`: Incremental Classifier and Representation Learning. [[paper](https://arxiv.org/abs/1611.07725)]
+- [x] `BiC`: Large Scale Incremental Learning. [[paper](https://arxiv.org/abs/1905.13260)]
+- [x] `WA`: Maintaining Discrimination and Fairness in Class Incremental Learning. [[paper](https://arxiv.org/abs/1911.07053)]
+- [x] `PODNet`: PODNet: Pooled Outputs Distillation for Small-Tasks Incremental Learning. [[paper](https://arxiv.org/abs/2004.13513)]
+- [x] `DER`: DER: Dynamically Expandable Representation for Class Incremental Learning. [[paper](https://arxiv.org/abs/2103.16788)]
+- [x] `Coil`: Co-Transport for Class-Incremental Learning. [[paper](https://arxiv.org/abs/2107.12654)]
+
+## Reproduced Results
+
+#### CIFAR100
+
+<div align="center">
+<img src="./resources/cifar10s.png" width="500px">
+</div>
+
+#### Imagenet100
+
+<div align="center">
+<img src="./resources/imagenet20st5.png" width="500px">
+</div>
+
+> More experimental details and results are shown in our [paper]().
+
+## How To Use
+
+### Clone
+
+Clone this github repository:
+```
+git clone https://github.com/G-U-N/PyCIL.git
+cd PyCIL
+```
+
+### Dependencies
+
+1. [torch 1.81](https://github.com/pytorch/pytorch)
+2. [torchvision 0.6.0](s://github.com/pytorch/vision)
+3. [tqdm](https://github.com/tqdm/tqdm)
+4. [numpy](https://github.com/numpy/numpy)
+5. [scipy](https://github.com/scipy/scipy)
+6. [quadprog](https://github.com/quadprog/quadprog)
+
+
+### Run experiment
+1. Edit the `[MODEL NAME].json` file for global settings.
+2. Edit the hyperparameters in the corresponding `[MODEL NAME].py` file (e.g., `models/icarl.py`).
+3. Run:
+```bash
+python main.py --config=./exps/[MODEL NAME].json
+```
+where [MODEL NAME] should be chosen from: `finetune`, `ewc`, `lwf`, `replay`, `gem`,  `icarl`, `bic`, `wa`, `podnet`, `der`.  
+
+4. `hyper-parameters`
+
+When using PyCIL, you can edit the global parameters and algorithm-specific hyper-parameter in the corresponding json file. 
+
+These methods include:
+
+- **memory-size**: The total exemplar number in the incremental learning process. Assuming there are $K$ classes at current stage, the model will preserve $\left[\frac{memory-size}{K}\right]$ exemplar per class.
+- **init-cls**: The number of classes in the first incremental stage. Since there are different settings in CIL with a different number of classes in the first stage, our framework enables different choices to define the initial stage.
+- **increment**: The number of classes in each incremental stage $i$, $i$ > 1. By default, the number of classes per incremental stage is equivalent per stage.
+- **convnet-type**: The backbone network for the incremental model. According to the benchmark setting, `ResNet32` is utilized for `CIFAR100`, and `ResNet18` is utilized for `ImageNet`.
+- **seed**: The random seed adopted for shuffling the class order. According to the benchmark setting, it is set to 1993 by default.
+
+Other parameters in terms of model optimization, e.g., batch size, optimization epoch, learning rate, learning rate decay, weight decay, milestone, temperature, can be modified in the corresponding Python file.
+
+
+
+### Datasets
+
+We have implemented the pre-processing of `CIFAR100`, `imagenet100` and `imagenet1000`. When training on `CIFAR100`, this framework will automatically download it.  When training on `imagenet100/1000`, you should specify the folder of your dataset in `utils/data.py`.
+
+```python
+    def download_data(self):
+        assert 0,"You should specify the folder of your dataset"
+        train_dir = '[DATA-PATH]/train/'
+        test_dir = '[DATA-PATH]/val/'
+```
+
+
+
+
+## License
+
+Please check the MIT  [license](./LICENSE) that is listed in this repository.
+
+## Acknowledgements
+
+We thank the following repos providing helpful components/functions in our work.
+
+- [Continual-Learning-Reproduce](https://github.com/zhchuu/continual-learning-reproduce)
+
+- [GEM](https://github.com/hursung1/GradientEpisodicMemory)
+- [Proser](https://github.com/zhoudw-zdw/CVPR21-Proser)
+- [Coil](https://github.com/zhoudw-zdw/MM21-Coil)
+- [FACIL](https://github.com/mmasana/FACIL)
+
+## Citation
+
+If there are any questions, please feel free to  propose new features by opening an issue  or contact with the author: **Da-Wei Zhou**([zhoudw@lamda.nju.edu.cn](mailto:zhoudw@lamda.nju.edu.cn)) and **Fu-Yun Wang**(wangfuyun@smail.nju.edu.cn). Enjoy the code.
+
