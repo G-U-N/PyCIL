@@ -8,12 +8,13 @@
 <p align="center">
   <a href="#Introduction">Introduction</a> •
   <a href="#Methods Reproduced">Methods Reproduced</a> •
-  <a href="#Results">Results</a> •  
+  <a href="#Reproduced Results">Reproduced Results</a> •  
   <a href="#how-to-use">How To Use</a> •
   <a href="#license">License</a> •
   <a href="#Acknowledgements">Acknowledgements</a> •
-  <a href="#Cite">Citation</a>
+  <a href="#Citation">Citation</a>
 </p>
+
 
 
 ---
@@ -91,7 +92,7 @@ When using PyCIL, you can edit the global parameters and algorithm-specific hype
 
 These methods include:
 
-- **memory-size**: The total exemplar number in the incremental learning process. Assuming there are $K$ classes at current stage, the model will preserve $\left[\frac{memory-size}{K}\right]$ exemplar per class.
+- **memory-size**: The total exemplar number in the incremental learning process. Assuming there are $K$ classes at current stage, the model will preserve $\left[\frac{memory-size}{K}\right]$ exemplar per class.
 - **init-cls**: The number of classes in the first incremental stage. Since there are different settings in CIL with a different number of classes in the first stage, our framework enables different choices to define the initial stage.
 - **increment**: The number of classes in each incremental stage $i$, $i$ > 1. By default, the number of classes per incremental stage is equivalent per stage.
 - **convnet-type**: The backbone network for the incremental model. According to the benchmark setting, `ResNet32` is utilized for `CIFAR100`, and `ResNet18` is utilized for `ImageNet`.
