@@ -12,7 +12,7 @@
   <a href="#how-to-use">How To Use</a> •
   <a href="#license">License</a> •
   <a href="#Acknowledgements">Acknowledgements</a> •
-  <a href="#Citation">Citation</a>
+  <a href="#Contact">Contact</a>
 </p>
 
 
@@ -23,10 +23,22 @@
 [![LICENSE](https://img.shields.io/badge/license-MIT-green?style=flat-square)](https://github.com/yaoyao-liu/class-incremental-learning/blob/master/LICENSE)[![Python](https://img.shields.io/badge/python-3.8-blue.svg?style=flat-square&logo=python&color=3776AB&logoColor=3776AB)](https://www.python.org/) [![PyTorch](https://img.shields.io/badge/pytorch-1.8-%237732a8?style=flat-square&logo=PyTorch&color=EE4C2C)](https://pytorch.org/) [![method](https://img.shields.io/badge/Reproduced-11-success)]() [![CIL](https://img.shields.io/badge/ClassIncrementalLearning-SOTA-success??style=for-the-badge&logo=appveyor)](https://paperswithcode.com/task/incremental-learning)
 
 
+The code repository for "PyCIL: A Python Toolbox for Class-Incremental Learning" [[paper]](https://arxiv.org/abs/2112.12533) in PyTorch. If you use any content of this repo for your work, please cite the following bib entry:
+
+    @misc{zhou2021pycil,
+      title={PyCIL: A Python Toolbox for Class-Incremental Learning}, 
+      author={Da-Wei Zhou and Fu-Yun Wang and Han-Jia Ye and De-Chuan Zhan},
+      year={2021},
+      eprint={2112.12533},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG}
+    }
+    
 ## Introduction
 
-Traditional machine learning systems are deployed under the closed-world setting, which requires the entire training data before the offline training process. However, real-world applications often face the incoming new classes, and a model should incorporate them continually. The learning paradigm is called Class-Incremental Learning (CIL). We propose a Python toolbox that implements several key algorithms for class-incremental learning to ease the burden of researchers in the machine learning community. The toolbox contains implementations of a number of founding works of CIL such as EWC and iCaRL, but also provides current state-of-the-art algorithms that can be used for conducting novel fundamental research.
- This toolbox, named PyCIL for Python Class-Incremental Learning, is open source with an MIT license.
+Traditional machine learning systems are deployed under the closed-world setting, which requires the entire training data before the offline training process. However, real-world applications often face the incoming new classes, and a model should incorporate them continually. The learning paradigm is called Class-Incremental Learning (CIL). We propose a Python toolbox that implements several key algorithms for class-incremental learning to ease the burden of researchers in the machine learning community. The toolbox contains implementations of a number of founding works of CIL such as EWC and iCaRL, but also provides current state-of-the-art algorithms that can be used for conducting novel fundamental research. This toolbox, named PyCIL for Python Class-Incremental Learning, is open source with an MIT license.
+
+
 
 
 ## Methods Reproduced
@@ -56,7 +68,7 @@ Traditional machine learning systems are deployed under the closed-world setting
 <img src="./resources/imagenet20st5.png" width="500px">
 </div>
 
-> More experimental details and results are shown in our [paper]().
+> More experimental details and results are shown in our [paper](https://arxiv.org/abs/2112.12533).
 
 ## How To Use
 
@@ -132,7 +144,7 @@ We thank the following repos providing helpful components/functions in our work.
 - [Coil](https://github.com/zhoudw-zdw/MM21-Coil)
 - [FACIL](https://github.com/mmasana/FACIL)
 
-## Citation
+## Contact
 
 If there are any questions, please feel free to  propose new features by opening an issue  or contact with the author: **Da-Wei Zhou**([zhoudw@lamda.nju.edu.cn](mailto:zhoudw@lamda.nju.edu.cn)) and **Fu-Yun Wang**(wangfuyun@smail.nju.edu.cn). Enjoy the code.
 
