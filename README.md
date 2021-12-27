@@ -43,16 +43,16 @@ Traditional machine learning systems are deployed under the closed-world setting
 
 ## Methods Reproduced
 - [x] `FineTune`: Baseline method which simply updates parameters on new task, suffering from Catastrophic Forgetting. By default, weights corresponding to the outputs of previous classes are not updated.
-- [x] `EWC`: Gradient Episodic Memory for Continual Learning. [[paper](https://arxiv.org/abs/1612.00796)]
-- [x] `LwF`:  Learning without Forgetting. [[paper](https://arxiv.org/abs/1606.09282)]
+- [x] `EWC`: Overcoming catastrophic forgetting in neural networks. PNAS2017 [[paper](https://arxiv.org/abs/1612.00796)]
+- [x] `LwF`:  Learning without Forgetting. ECCV2016 [[paper](https://arxiv.org/abs/1606.09282)]
 - [x] `Replay`: Baseline method with exemplars.
-- [x] `GEM`: Gradient Episodic Memory for Continual Learning. [[paper](https://arxiv.org/abs/1706.08840)]
-- [x] `iCaRL`: Incremental Classifier and Representation Learning. [[paper](https://arxiv.org/abs/1611.07725)]
-- [x] `BiC`: Large Scale Incremental Learning. [[paper](https://arxiv.org/abs/1905.13260)]
-- [x] `WA`: Maintaining Discrimination and Fairness in Class Incremental Learning. [[paper](https://arxiv.org/abs/1911.07053)]
-- [x] `PODNet`: PODNet: Pooled Outputs Distillation for Small-Tasks Incremental Learning. [[paper](https://arxiv.org/abs/2004.13513)]
-- [x] `DER`: DER: Dynamically Expandable Representation for Class Incremental Learning. [[paper](https://arxiv.org/abs/2103.16788)]
-- [x] `Coil`: Co-Transport for Class-Incremental Learning. [[paper](https://arxiv.org/abs/2107.12654)]
+- [x] `GEM`: Gradient Episodic Memory for Continual Learning. NIPS2017 [[paper](https://arxiv.org/abs/1706.08840)]
+- [x] `iCaRL`: Incremental Classifier and Representation Learning. CVPR2017 [[paper](https://arxiv.org/abs/1611.07725)]
+- [x] `BiC`: Large Scale Incremental Learning. CVPR2019 [[paper](https://arxiv.org/abs/1905.13260)]
+- [x] `WA`: Maintaining Discrimination and Fairness in Class Incremental Learning. CVPR2020 [[paper](https://arxiv.org/abs/1911.07053)]
+- [x] `PODNet`: PODNet: Pooled Outputs Distillation for Small-Tasks Incremental Learning. ECCV2020 [[paper](https://arxiv.org/abs/2004.13513)]
+- [x] `DER`: DER: Dynamically Expandable Representation for Class Incremental Learning. CVPR2021 [[paper](https://arxiv.org/abs/2103.16788)]
+- [x] `Coil`: Co-Transport for Class-Incremental Learning. ACM MM2021 [[paper](https://arxiv.org/abs/2107.12654)]
 
 ## Reproduced Results
 
