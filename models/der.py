@@ -139,7 +139,7 @@ class DER(BaseLearner):
                 logits,aux_logits=outputs["logits"],outputs["aux_logits"]
                 loss_clf=F.cross_entropy(logits,targets)
                 aux_targets = targets.clone()
-                aux_targets=torch.where(aux_targets-self._known_classes-1>0,aux_targets-self._known_classes-1,0)
+                aux_targets=torch.where(aux_targets-self._known_classes+1>0,aux_targets-self._known_classes+1,0)
                 loss_aux=F.cross_entropy(aux_logits,aux_targets)
                 loss=loss_clf+loss_aux
 
