@@ -5,6 +5,7 @@ import torch
 from utils import factory
 from utils.data_manager import DataManager
 from utils.toolkit import count_parameters
+import os
 
 
 def train(args):
@@ -18,7 +19,11 @@ def train(args):
 
 
 def _train(args):
-    logfilename = 'logs/{}_{}_{}_{}_{}_{}_{}'.format(args['prefix'], args['seed'], args['model_name'], args['convnet_type'],
+    try:
+        os.mkdir("logs/{}".format(args['model_name']))
+    except:
+        pass
+    logfilename = 'logs/{}/{}_{}_{}_{}_{}_{}_{}'.format(args['model_name'], args['prefix'], args['seed'], args['model_name'], args['convnet_type'],
                                                 args['dataset'], args['init_cls'], args['increment'])
     logging.basicConfig(
         level=logging.INFO,
