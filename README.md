@@ -39,7 +39,7 @@ The code repository for "PyCIL: A Python Toolbox for Class-Incremental Learning"
 Traditional machine learning systems are deployed under the closed-world setting, which requires the entire training data before the offline training process. However, real-world applications often face the incoming new classes, and a model should incorporate them continually. The learning paradigm is called Class-Incremental Learning (CIL). We propose a Python toolbox that implements several key algorithms for class-incremental learning to ease the burden of researchers in the machine learning community. The toolbox contains implementations of a number of founding works of CIL such as EWC and iCaRL, but also provides current state-of-the-art algorithms that can be used for conducting novel fundamental research. This toolbox, named PyCIL for Python Class-Incremental Learning, is open source with an MIT license.
 
 
-
+ An introduction (in Chinese) about CIL is also available at [here](https://zhuanlan.zhihu.com/p/490308909)
 
 ## Methods Reproduced
 - [x] `FineTune`: Baseline method which simply updates parameters on new task, suffering from Catastrophic Forgetting. By default, weights corresponding to the outputs of previous classes are not updated.
