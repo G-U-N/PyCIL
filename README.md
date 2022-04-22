@@ -15,7 +15,9 @@
   <a href="#Contact">Contact</a>
 </p>
 
-
+<div align="center">
+<img src="./resources/logo.png" width="200px">
+</div>
 
 
 ---
