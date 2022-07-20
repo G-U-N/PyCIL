@@ -103,7 +103,7 @@ class GEM(BaseLearner):
                 inputs, targets = inputs.to(self._device), targets.to(self._device)
                 logits = self._network(inputs)['logits']
 
-                loss=F.cross_entropy(logits,targets) #crossEntropy 一般学习率比较小 BCE一般学习率比较大。
+                loss=F.cross_entropy(logits,targets)
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()
@@ -134,7 +134,7 @@ class GEM(BaseLearner):
         grad_numels = []
         for params in self._network.parameters():
             grad_numels.append(params.data.numel())
-        G = torch.zeros((sum(grad_numels), self._cur_task+1)).to(self._device)#用于存储每个task的gradient。
+        G = torch.zeros((sum(grad_numels), self._cur_task+1)).to(self._device)
             
 
         for _, epoch in enumerate(prog_bar):
