@@ -35,7 +35,7 @@ The code repository for "PyCIL: A Python Toolbox for Class-Incremental Learning"
       archivePrefix={arXiv},
       primaryClass={cs.LG}
     }
-    
+
 ## Introduction
 
 Traditional machine learning systems are deployed under the closed-world setting, which requires the entire training data before the offline training process. However, real-world applications often face the incoming new classes, and a model should incorporate them continually. The learning paradigm is called Class-Incremental Learning (CIL). We propose a Python toolbox that implements several key algorithms for class-incremental learning to ease the burden of researchers in the machine learning community. The toolbox contains implementations of a number of founding works of CIL such as EWC and iCaRL, but also provides current state-of-the-art algorithms that can be used for conducting novel fundamental research. This toolbox, named PyCIL for Python Class-Incremental Learning, is open source with an MIT license.
@@ -55,6 +55,7 @@ Traditional machine learning systems are deployed under the closed-world setting
 - [x] `PODNet`: PODNet: Pooled Outputs Distillation for Small-Tasks Incremental Learning. ECCV2020 [[paper](https://arxiv.org/abs/2004.13513)]
 - [x] `DER`: DER: Dynamically Expandable Representation for Class Incremental Learning. CVPR2021 [[paper](https://arxiv.org/abs/2103.16788)]
 - [x] `Coil`: Co-Transport for Class-Incremental Learning. ACM MM2021 [[paper](https://arxiv.org/abs/2107.12654)]
+- [x] `FOSTER`: Feature Boosting and Compression for Class-incremental Learning. ECCV 2022 [[paper](https://arxiv.org/abs/2204.04662)]
 
 ## Reproduced Results
 
@@ -114,8 +115,6 @@ These parameters include:
 - **seed**: The random seed adopted for shuffling the class order. According to the benchmark setting, it is set to 1993 by default.
 
 Other parameters in terms of model optimization, e.g., batch size, optimization epoch, learning rate, learning rate decay, weight decay, milestone, temperature, can be modified in the corresponding Python file.
-
-
 
 ### Datasets
 

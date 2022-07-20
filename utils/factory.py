@@ -2,6 +2,7 @@ from models.coil import COIL
 from models.der import DER
 from models.ewc import EWC
 from models.finetune import Finetune
+from models.foster import FOSTER
 from models.gem import GEM
 from models.icarl import iCaRL
 from models.lwf import LwF
@@ -35,5 +36,7 @@ def get_model(model_name, args):
         return GEM(args)
     elif name == "coil":
         return COIL(args)
+    elif name == "foster":
+        return FOSTER(args)
     else:
         assert 0

@@ -135,6 +135,9 @@ class DataManager(object):
     def _select(self, x, y, low_range, high_range):
         idxes = np.where(np.logical_and(y >= low_range, y < high_range))[0]
         return x[idxes], y[idxes]
+    def getlen(self,index):
+        y=self._train_targets
+        return np.sum(np.where(y==index))
 
 
 class DummyDataset(Dataset):
