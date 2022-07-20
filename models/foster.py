@@ -10,6 +10,7 @@ from models.base import BaseLearner
 from utils.inc_net import FOSTERNet
 from utils.toolkit import count_parameters, target2onehot, tensor2numpy
 
+# Please refer to https://github.com/G-U-N/ECCV22-FOSTER for the full source code to reproduce foster.
 
 EPSILON = 1e-8
 
