@@ -11,9 +11,10 @@
   <a href="#Reproduced-Results">Reproduced Results</a> •  
   <a href="#how-to-use">How To Use</a> •
   <a href="#license">License</a> •
-  <a href="#Acknowledgements">Acknowledgements</a> •
+  <a href="#Acknowledgements">Acknowledgments</a> •
   <a href="#Contact">Contact</a>
 </p>
+
 
 <div align="center">
 <img src="./resources/logo.png" width="200px">
@@ -38,13 +39,13 @@ The code repository for "PyCIL: A Python Toolbox for Class-Incremental Learning"
 
 ## Introduction
 
-Traditional machine learning systems are deployed under the closed-world setting, which requires the entire training data before the offline training process. However, real-world applications often face the incoming new classes, and a model should incorporate them continually. The learning paradigm is called Class-Incremental Learning (CIL). We propose a Python toolbox that implements several key algorithms for class-incremental learning to ease the burden of researchers in the machine learning community. The toolbox contains implementations of a number of founding works of CIL such as EWC and iCaRL, but also provides current state-of-the-art algorithms that can be used for conducting novel fundamental research. This toolbox, named PyCIL for Python Class-Incremental Learning, is open source with an MIT license.
+Traditional machine learning systems are deployed under the closed-world setting, which requires the entire training data before the offline training process. However, real-world applications often face the incoming new classes, and a model should incorporate them continually. The learning paradigm is called Class-Incremental Learning (CIL). We propose a Python toolbox that implements several key algorithms for class-incremental learning to ease the burden of researchers in the machine learning community. The toolbox contains implementations of a number of founding works of CIL, such as EWC and iCaRL, but also provides current state-of-the-art algorithms that can be used for conducting novel fundamental research. This toolbox, named PyCIL for Python Class-Incremental Learning, is open source with an MIT license.
 
 
  An introduction (in Chinese) about CIL is also available [here](https://zhuanlan.zhihu.com/p/490308909).
 
 ## Methods Reproduced
-- [x] `FineTune`: Baseline method which simply updates parameters on new task, suffering from Catastrophic Forgetting. By default, weights corresponding to the outputs of previous classes are not updated.
+- [x] `FineTune`: Baseline method which simply updates parameters on new tasks, suffering from Catastrophic Forgetting. By default, weights corresponding to the outputs of previous classes are not updated.
 - [x] `EWC`: Overcoming catastrophic forgetting in neural networks. PNAS2017 [[paper](https://arxiv.org/abs/1612.00796)]
 - [x] `LwF`:  Learning without Forgetting. ECCV2016 [[paper](https://arxiv.org/abs/1606.09282)]
 - [x] `Replay`: Baseline method with exemplars.
@@ -59,13 +60,18 @@ Traditional machine learning systems are deployed under the closed-world setting
 
 ## Reproduced Results
 
-#### CIFAR100
+#### CIFAR-100
 
 <div align="center">
 <img src="./resources/cifar10s.png" width="500px">
 </div>
+#### ImageNet-100 Top-1 Accuracy
 
-#### Imagenet100
+<div align="center">
+<img src="./resources/ImageNet100.png" width="900px">
+</div>
+
+#### ImageNet-100 Top-5 Accuracy
 
 <div align="center">
 <img src="./resources/imagenet20st5.png" width="500px">
@@ -77,7 +83,7 @@ Traditional machine learning systems are deployed under the closed-world setting
 
 ### Clone
 
-Clone this github repository:
+Clone this GitHub repository:
 ```
 git clone https://github.com/G-U-N/PyCIL.git
 cd PyCIL
@@ -100,7 +106,7 @@ cd PyCIL
 ```bash
 python main.py --config=./exps/[MODEL NAME].json
 ```
-where [MODEL NAME] should be chosen from: `finetune`, `ewc`, `lwf`, `replay`, `gem`,  `icarl`, `bic`, `wa`, `podnet`, `der`.  
+where [MODEL NAME] should be chosen from `finetune`, `ewc`, `lwf`, `replay`, `gem`,  `icarl`, `bic`, `wa`, `podnet`, `der`.  
 
 4. `hyper-parameters`
 
@@ -108,17 +114,17 @@ When using PyCIL, you can edit the global parameters and algorithm-specific hype
 
 These parameters include:
 
-- **memory-size**: The total exemplar number in the incremental learning process. Assuming there are $K$ classes at current stage, the model will preserve $\left[\frac{memory-size}{K}\right]$ exemplar per class.
+- **memory-size**: The total exemplar number in the incremental learning process. Assuming there are $K$ classes at the current stage, the model will preserve $\left[\frac{memory-size}{K}\right]$ exemplar per class.
 - **init-cls**: The number of classes in the first incremental stage. Since there are different settings in CIL with a different number of classes in the first stage, our framework enables different choices to define the initial stage.
 - **increment**: The number of classes in each incremental stage $i$, $i$ > 1. By default, the number of classes per incremental stage is equivalent per stage.
-- **convnet-type**: The backbone network for the incremental model. According to the benchmark setting, `ResNet32` is utilized for `CIFAR100`, and `ResNet18` is utilized for `ImageNet`.
+- **convnet-type**: The backbone network for the incremental model. According to the benchmark setting, `ResNet32` is utilized for `CIFAR100`, and `ResNet18` is used for `ImageNet`.
 - **seed**: The random seed adopted for shuffling the class order. According to the benchmark setting, it is set to 1993 by default.
 
-Other parameters in terms of model optimization, e.g., batch size, optimization epoch, learning rate, learning rate decay, weight decay, milestone, temperature, can be modified in the corresponding Python file.
+Other parameters in terms of model optimization, e.g., batch size, optimization epoch, learning rate, learning rate decay, weight decay, milestone, and temperature, can be modified in the corresponding Python file.
 
 ### Datasets
 
-We have implemented the pre-processing of `CIFAR100`, `imagenet100` and `imagenet1000`. When training on `CIFAR100`, this framework will automatically download it.  When training on `imagenet100/1000`, you should specify the folder of your dataset in `utils/data.py`.
+We have implemented the pre-processing of `CIFAR100`, `imagenet100,` and `imagenet1000`. When training on `CIFAR100`, this framework will automatically download it.  When training on `imagenet100/1000`, you should specify the folder of your dataset in `utils/data.py`.
 
 ```python
     def download_data(self):
@@ -134,7 +140,7 @@ We have implemented the pre-processing of `CIFAR100`, `imagenet100` and `imagene
 
 Please check the MIT  [license](./LICENSE) that is listed in this repository.
 
-## Acknowledgements
+## Acknowledgments
 
 We thank the following repos providing helpful components/functions in our work.
 
