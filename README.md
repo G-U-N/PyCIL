@@ -11,7 +11,7 @@
   <a href="#Reproduced-Results">Reproduced Results</a> •  
   <a href="#how-to-use">How To Use</a> •
   <a href="#license">License</a> •
-  <a href="#Acknowledgements">Acknowledgments</a> •
+  <a href="#Acknowledgments">Acknowledgments</a> •
   <a href="#Contact">Contact</a>
 </p>
 
