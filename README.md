@@ -65,6 +65,7 @@ Traditional machine learning systems are deployed under the closed-world setting
 <div align="center">
 <img src="./resources/cifar10s.png" width="500px">
 </div>
+
 #### ImageNet-100 Top-1 Accuracy
 
 <div align="center">
