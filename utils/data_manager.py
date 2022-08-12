@@ -24,6 +24,9 @@ class DataManager(object):
 
     def get_task_size(self, task):
         return self._increments[task]
+    
+    def get_total_classnum(self):
+        return len(self._class_order)
 
     def get_dataset(self, indices, source, mode, appendent=None, ret_data=False):
         if source == 'train':
