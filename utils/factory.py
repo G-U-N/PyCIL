@@ -9,16 +9,17 @@ from models.lwf import LwF
 from models.replay import Replay
 from models.bic import BiC
 from models.podnet import PODNet
+from models.rmm import RMM_FOSTER, RMM_iCaRL
 from models.wa import WA
 
 
 def get_model(model_name, args):
     name = model_name.lower()
-    if name == 'icarl':
+    if name == "icarl":
         return iCaRL(args)
-    elif name == 'bic':
+    elif name == "bic":
         return BiC(args)
-    elif name == 'podnet':
+    elif name == "podnet":
         return PODNet(args)
     elif name == "lwf":
         return LwF(args)
@@ -38,5 +39,9 @@ def get_model(model_name, args):
         return COIL(args)
     elif name == "foster":
         return FOSTER(args)
+    elif name == "rmm-icarl":
+        return RMM_iCaRL(args)
+    elif name == "rmm-foster":
+        return RMM_FOSTER(args)
     else:
         assert 0

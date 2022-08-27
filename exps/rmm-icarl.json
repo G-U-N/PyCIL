@@ -1,0 +1,15 @@
+{
+    "prefix": "reproduce",
+    "dataset": "cifar100",
+    "m_rate_list":[0.8, 0.8, 0.6, 0.6, 0.6, 0.6],
+    "c_rate_list":[0.0, 0.0, 0.1, 0.1, 0.1, 0.0],
+    "memory_size": 2000,
+    "shuffle": true,
+    "init_cls": 50,
+    "increment": 10,
+    "model_name": "rmm-icarl",
+    "convnet_type": "resnet32",
+    "device": ["0"],
+    "seed": [1993]
+}
+
