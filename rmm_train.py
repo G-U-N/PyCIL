@@ -1,3 +1,10 @@
+'''
+We implemented `iCaRL+RMM`, `FOSTER+RMM` in [rmm.py](models/rmm.py).  We implemented the `Pretraining Stage` of `RMM` in [rmm_train.py](rmm_train.py). 
+Use the following training script to run it.
+```bash
+python rmm_train.py --config=./exps/rmm-pretrain.json
+```
+'''
 import json
 import argparse
 from trainer import train
