@@ -62,11 +62,6 @@ Traditional machine learning systems are deployed under the closed-world setting
 
 - [X] `RMM`: RMM: Reinforced Memory Management for Class-Incremental Learning. NeurIPS2021 [[paper](https://proceedings.neurips.cc/paper/2021/hash/1cbcaa5abbb6b70f378a3a03d0c26386-Abstract.html)] 
 
-We implemented `iCaRL+RMM`, `FOSTER+RMM` in [rmm.py](models/rmm.py).  We implemented the `Pretraining Stage` of `RMM` in [rmm_train.py](rmm_train.py). 
-Use the following training script to run it.
-```bash
-python rmm_train.py --config=./exps/rmm-pretrain.json
-```
 
 - [X] `Coil`: Co-Transport for Class-Incremental Learning. ACM MM2021 [[paper](https://arxiv.org/abs/2107.12654)]
 
