@@ -124,7 +124,7 @@ These parameters include:
 
 Other parameters in terms of model optimization, e.g., batch size, optimization epoch, learning rate, learning rate decay, weight decay, milestone, and temperature, can be modified in the corresponding Python file.
 
-5. To run RMM pretraining Stage
+5. To run `RMM` `Pretraining Stage`
 
 ```bash
 python rmm_train.py --config=./exps/rmm-[Model NAME].json
