@@ -11,7 +11,10 @@ from models.base import BaseLearner
 from utils.inc_net import IncrementalNet
 from utils.inc_net import CosineIncrementalNet
 from utils.toolkit import target2onehot, tensor2numpy
-from quadprog import solve_qp
+try:
+    from quadprog import solve_qp
+else:
+    pass
 
 
 EPSILON = 1e-8

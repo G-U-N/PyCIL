@@ -24,23 +24,40 @@ num_workers = 8
 class RMMBase(BaseLearner):
     def __init__(self, args):
         self._args = args
-        self._m_rate_list = args["m_rate_list"]
-        self._c_rate_list = args["c_rate_list"]
+        self._m_rate_list = args.get("m_rate_list", [])
+        self._c_rate_list = args.get("c_rate_list", [])
 
     @property
     def samples_per_class(self):
+        return self.memory_size // self._total_classes
+
+    @property
+    def memory_size(self):
+        if self._args["dataset"] == "cifar100":
+            img_per_cls = 500
+        else:
+            img_per_cls = 1300
+
+        if self._m_rate_list[self._cur_task] != 0:
+            print(self._total_classes)
+            self._memory_size = min(self._total_classes*img_per_cls*(1-abs(self._c_rate_list[self._cur_task])),self._args["memory_size"] + int(
+                self._m_rate_list[self._cur_task]
+                * self._args["increment"]
+                * img_per_cls
+            ))
+        return self._memory_size
+
+    @property
+    def new_memory_size(self):
         if self._args["dataset"] == "cifar100":
             img_pre_cls = 500
         else:
             img_pre_cls = 1300
-
-        if self._m_rate_list[self._cur_task] != 0:
-            self._memory_size = self._args["memory_size"] + int(
-                self._m_rate_list[self._cur_task]
-                * self._args["increment"]
-                * img_pre_cls
-            )
-        return self._memory_size // self._total_classes
+        return int(
+            (1 - self._m_rate_list[self._cur_task])
+            * self._args["increment"]
+            * img_pre_cls
+        )
 
     def build_rehearsal_memory(self, data_manager, per_class):
         self._reduce_exemplar(data_manager, per_class)

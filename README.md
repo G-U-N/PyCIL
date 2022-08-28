@@ -50,7 +50,7 @@ Traditional machine learning systems are deployed under the closed-world setting
 - [X] `WA`: Maintaining Discrimination and Fairness in Class Incremental Learning. CVPR2020 [[paper](https://arxiv.org/abs/1911.07053)]
 - [X] `PODNet`: PODNet: Pooled Outputs Distillation for Small-Tasks Incremental Learning. ECCV2020 [[paper](https://arxiv.org/abs/2004.13513)]
 - [X] `DER`: DER: Dynamically Expandable Representation for Class Incremental Learning. CVPR2021 [[paper](https://arxiv.org/abs/2103.16788)]
-- [X] `RMM`: RMM: Reinforced Memory Management for Class-Incremental Learning. NeurIPS2021 [[paper](https://proceedings.neurips.cc/paper/2021/hash/1cbcaa5abbb6b70f378a3a03d0c26386-Abstract.html)] (We already implemented `iCaRL+RMM`, `FOSTER+RMM` in [rmm.py](models/rmm.py).)
+- [X] `RMM`: RMM: Reinforced Memory Management for Class-Incremental Learning. NeurIPS2021 [[paper](https://proceedings.neurips.cc/paper/2021/hash/1cbcaa5abbb6b70f378a3a03d0c26386-Abstract.html)] (We already implemented `iCaRL+RMM`, `FOSTER+RMM` in [rmm.py](models/rmm.py).  We implemented the `Pretraining Stage` of `RMM` in [rmm_train.py](rmm_train.py)))
 - [X] `Coil`: Co-Transport for Class-Incremental Learning. ACM MM2021 [[paper](https://arxiv.org/abs/2107.12654)]
 - [X] `FOSTER`: Feature Boosting and Compression for Class-incremental Learning. ECCV 2022 [[paper](https://arxiv.org/abs/2204.04662)]
 
@@ -123,6 +123,13 @@ These parameters include:
 - **seed**: The random seed adopted for shuffling the class order. According to the benchmark setting, it is set to 1993 by default.
 
 Other parameters in terms of model optimization, e.g., batch size, optimization epoch, learning rate, learning rate decay, weight decay, milestone, and temperature, can be modified in the corresponding Python file.
+
+5. To run RMM pretraining Stage
+
+```bash
+python rmm_train.py --config=./exps/rmm-[Model NAME].json
+```
+
 
 ### Datasets
 

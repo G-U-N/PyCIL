@@ -1,0 +1,10 @@
+{
+    "prefix": "pretrain-rmm",
+    "dataset": "cifar100",
+    "memory_size": 2000,
+    "shuffle": true,
+    "model_name": "rmm-icarl",
+    "convnet_type": "resnet32",
+    "device": ["0"],
+    "seed": [1993]
+}
