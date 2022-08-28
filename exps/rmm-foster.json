@@ -12,7 +12,7 @@
     "device": ["0"],
     "seed": [1993],
     "beta1":0.97,
-    "beta2":0.985,
+    "beta2":0.97,
     "oofc":"ft",
     "is_teacher_wa":false,
     "is_student_wa":false,
