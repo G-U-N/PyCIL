@@ -80,7 +80,7 @@ class CILEnv:
                     / (self.model.memory_size + self.model.new_memory_size),
                 ]
             ),
-            cnn_accy["top1"],
+            cnn_accy["top1"]/100,
             done,
             info,
         )
