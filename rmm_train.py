@@ -82,7 +82,7 @@ class CILEnv:
         return (
             np.array(
                 [
-                    self.get_task_size(self.cur_task+1)/100 if not done else None,
+                    self.get_task_size(self.cur_task+1)/100 if not done else 0.,
                     self.model.memory_size
                     / (self.model.memory_size + self.model.new_memory_size),
                 ]
