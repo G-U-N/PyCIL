@@ -129,7 +129,7 @@ def _train(args):
     buffer_size = 1000
     minimal_size = 50
     batch_size = 32
-    sigma = 0.01
+    sigma = 0.2 # action noise, encouraging the off-policy algo to explore.
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
     env = CILEnv(args)
     replay_buffer = ReplayBuffer(buffer_size)
