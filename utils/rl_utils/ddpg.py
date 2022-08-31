@@ -68,7 +68,7 @@ class TwoLayerFC(torch.nn.Module):
 
 
 class DDPG:
-    """DDPG算法"""
+    """DDPG algo"""
 
     def __init__(
         self,
@@ -134,6 +134,8 @@ class DDPG:
         action = self.actor(state)[0].detach().cpu().numpy()
 
         action = action + self.sigma * np.random.randn(self.action_dim)
+        action[0]=np.clip(action[0],0,1)
+        action[1]=np.clip(action[1],-1,1)
         return action
     def save_state_dict(self,name):
         dicts = {
@@ -193,7 +195,6 @@ class DDPG:
 
         actor_loss = -torch.mean(
             self.critic(
-                # 策略网络就是为了使得Q值最大化
                 torch.cat([states, self.actor(states)], dim=1)
             )
         )
@@ -201,5 +202,5 @@ class DDPG:
         actor_loss.backward()
         self.actor_optimizer.step()
         logging.info(f"update DDPG: actor loss {actor_loss.item():.3f}, critic loss {critic_loss.item():.3f},  ")
-        self.soft_update(self.actor, self.target_actor)  # 软更新策略网络
-        self.soft_update(self.critic, self.target_critic)  # 软更新价值网络
+        self.soft_update(self.actor, self.target_actor)  # soft-update the target policy net
+        self.soft_update(self.critic, self.target_critic)  # soft-update the target Q value net
