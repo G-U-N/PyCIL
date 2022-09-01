@@ -40,7 +40,7 @@ class RMMBase(BaseLearner):
 
         if self._m_rate_list[self._cur_task] != 0:
             print(self._total_classes)
-            self._memory_size = min(int(self._total_classes*img_per_cls*(1-abs(self._c_rate_list[self._cur_task]))),self._args["memory_size"] + int(
+            self._memory_size = min(int(self._total_classes*img_per_cls-1),self._args["memory_size"] + int(
                 self._m_rate_list[self._cur_task]
                 * self._args["increment"]
                 * img_per_cls
