@@ -50,9 +50,9 @@ class RMMBase(BaseLearner):
     @property
     def new_memory_size(self):
         if self._args["dataset"] == "cifar100":
-            img_pre_cls = 500
+            img_per_cls = 500
         else:
-            img_pre_cls = 1300
+            img_per_cls = 1300
         return int(
             (1 - self._m_rate_list[self._cur_task])
             * self._args["increment"]
@@ -64,9 +64,13 @@ class RMMBase(BaseLearner):
         self._construct_exemplar(data_manager, per_class)
 
     def _construct_exemplar(self, data_manager, m):
+        if self._args["dataset"] == "cifar100":
+            img_per_cls = 500
+        else:
+            img_per_cls = 1300
         ns = [
             int(m * (1 - self._c_rate_list[self._cur_task])),
-            int(m * (1 + self._c_rate_list[self._cur_task])),
+            min(img_per_cls,int(m * (1 + self._c_rate_list[self._cur_task]))),
         ]
         logging.info(
             "Constructing exemplars...({} or {} per classes)".format(ns[0], ns[1])
