@@ -69,7 +69,7 @@ class RMMBase(BaseLearner):
         else:
             img_per_cls = 1300
         ns = [
-            int(m * (1 - self._c_rate_list[self._cur_task])),
+            min(img_per_cls,int(m * (1 - self._c_rate_list[self._cur_task]))),
             min(img_per_cls,int(m * (1 + self._c_rate_list[self._cur_task]))),
         ]
         logging.info(
