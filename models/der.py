@@ -83,7 +83,7 @@ class DER(BaseLearner):
 
     def train(self):
         self._network.train()
-        if len(self._multiple_gpus) > 0 :
+        if len(self._multiple_gpus) > 1 :
             self._network_module_ptr = self._network.module
         else:
             self._network_module_ptr = self._network
