@@ -83,10 +83,14 @@ class DER(BaseLearner):
 
     def train(self):
         self._network.train()
-        self._network.module.convnets[-1].train()
+        if len(self._multiple_gpus) > 0 :
+            self._network_module_ptr = self._network.module
+        else:
+            self._network_module_ptr = self._network
+        self._network_module_ptr.convnets[-1].train()
         if self._cur_task >= 1:
             for i in range(self._cur_task):
-                self._network.module.convnets[i].eval()
+                self._network_module_ptr.convnets[i].eval()
 
     def _train(self, train_loader, test_loader):
         self._network.to(self._device)
