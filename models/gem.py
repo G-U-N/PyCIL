@@ -13,7 +13,7 @@ from utils.inc_net import CosineIncrementalNet
 from utils.toolkit import target2onehot, tensor2numpy
 try:
     from quadprog import solve_qp
-else:
+except:
     pass
 
 
