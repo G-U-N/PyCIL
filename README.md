@@ -114,6 +114,7 @@ cd PyCIL
 4. [numpy](https://github.com/numpy/numpy)
 5. [scipy](https://github.com/scipy/scipy)
 6. [quadprog](https://github.com/quadprog/quadprog)
+7. [POT](https://github.com/PythonOT/POT)
 
 ### Run experiment
 
