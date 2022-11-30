@@ -11,7 +11,7 @@ from models.bic import BiC
 from models.podnet import PODNet
 from models.rmm import RMM_FOSTER, RMM_iCaRL
 from models.wa import WA
-
+from models.fetril import FeTrIL 
 
 def get_model(model_name, args):
     name = model_name.lower()
@@ -43,5 +43,7 @@ def get_model(model_name, args):
         return RMM_iCaRL(args)
     elif name == "rmm-foster":
         return RMM_FOSTER(args)
+    elif name == "fetril":
+        return FeTrIL(args)
     else:
         assert 0
