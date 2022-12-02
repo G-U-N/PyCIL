@@ -14,6 +14,7 @@ from models.wa import WA
 from models.fetril import FeTrIL 
 from models.pa2s import PASS
 from models.il2a import IL2A
+
 def get_model(model_name, args):
     name = model_name.lower()
     if name == "icarl":

@@ -1,5 +1,5 @@
 {
-    "prefix": "class-balance train",
+    "prefix": "train",
     "dataset": "cifar100",
     "memory_size": 0,
     "shuffle": true,
