@@ -33,7 +33,7 @@ T = 2
 class WA(BaseLearner):
     def __init__(self, args):
         super().__init__(args)
-        self._network = IncrementalNet(args["convnet_type"], False)
+        self._network = IncrementalNet(args, False)
 
     def after_task(self):
         if self._cur_task > 0:

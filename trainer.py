@@ -20,19 +20,20 @@ def train(args):
 
 def _train(args):
 
-    logs_name = "logs/{}/".format(args["model_name"])
+    init_cls = 0 if args ["init_cls"] == args["increment"] else args["init_cls"]
+    logs_name = "logs/{}/{}/{}/{}".format(args["model_name"],args["dataset"], init_cls, args['increment'])
+
     if not os.path.exists(logs_name):
         os.makedirs(logs_name)
 
-    logfilename = "logs/{}/{}_{}_{}_{}_{}_{}_{}".format(
+    logfilename = "logs/{}/{}/{}/{}/{}_{}_{}".format(
         args["model_name"],
+        args["dataset"],
+        init_cls,
+        args["increment"],
         args["prefix"],
         args["seed"],
-        args["model_name"],
         args["convnet_type"],
-        args["dataset"],
-        args["init_cls"],
-        args["increment"],
     )
     logging.basicConfig(
         level=logging.INFO,

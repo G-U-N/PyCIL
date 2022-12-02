@@ -32,7 +32,7 @@ T = 2
 class DER(BaseLearner):
     def __init__(self, args):
         super().__init__(args)
-        self._network = DERNet(args["convnet_type"], False)
+        self._network = DERNet(args, False)
 
     def after_task(self):
         self._known_classes = self._total_classes

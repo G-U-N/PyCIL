@@ -53,7 +53,7 @@ class PODNet(BaseLearner):
     def __init__(self, args):
         super().__init__(args)
         self._network = CosineIncrementalNet(
-            args["convnet_type"], pretrained=False, nb_proxy=nb_proxy
+            args, pretrained=False, nb_proxy=nb_proxy
         )
         self._class_means = None
 

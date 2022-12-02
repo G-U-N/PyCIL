@@ -32,7 +32,7 @@ lamda = 3
 class LwF(BaseLearner):
     def __init__(self, args):
         super().__init__(args)
-        self._network = IncrementalNet(args["convnet_type"], False)
+        self._network = IncrementalNet(args, False)
 
     def after_task(self):
         self._old_network = self._network.copy().freeze()

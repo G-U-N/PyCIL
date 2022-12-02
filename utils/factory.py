@@ -11,8 +11,9 @@ from models.bic import BiC
 from models.podnet import PODNet
 from models.rmm import RMM_FOSTER, RMM_iCaRL
 from models.wa import WA
-
-
+from models.fetril import FeTrIL 
+from models.pa2s import PASS
+from models.il2a import IL2A
 def get_model(model_name, args):
     name = model_name.lower()
     if name == "icarl":
@@ -43,5 +44,11 @@ def get_model(model_name, args):
         return RMM_iCaRL(args)
     elif name == "rmm-foster":
         return RMM_FOSTER(args)
+    elif name == "fetril":
+        return FeTrIL(args)
+    elif name == "pass":
+        return PASS(args)
+    elif name == "il2a":
+        return IL2A(args)
     else:
         assert 0

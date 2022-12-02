@@ -11,33 +11,33 @@ from convs.ucir_resnet import resnet50 as cosine_resnet50
 from convs.linears import SimpleLinear, SplitCosineLinear, CosineLinear
 
 
-def get_convnet(convnet_type, pretrained=False):
-    name = convnet_type.lower()
+def get_convnet(args, pretrained=False):
+    name = args["convnet_type"].lower()
     if name == "resnet32":
         return resnet32()
     elif name == "resnet18":
-        return resnet18(pretrained=pretrained)
+        return resnet18(pretrained=pretrained,args=args)
     elif name == "resnet34":
-        return resnet34(pretrained=pretrained)
+        return resnet34(pretrained=pretrained,args=args)
     elif name == "resnet50":
-        return resnet50(pretrained=pretrained)
+        return resnet50(pretrained=pretrained,args=args)
     elif name == "cosine_resnet18":
-        return cosine_resnet18(pretrained=pretrained)
+        return cosine_resnet18(pretrained=pretrained,args=args)
     elif name == "cosine_resnet32":
         return cosine_resnet32()
     elif name == "cosine_resnet34":
-        return cosine_resnet34(pretrained=pretrained)
+        return cosine_resnet34(pretrained=pretrained,args=args)
     elif name == "cosine_resnet50":
-        return cosine_resnet50(pretrained=pretrained)
+        return cosine_resnet50(pretrained=pretrained,args=args)
     else:
-        raise NotImplementedError("Unknown type {}".format(convnet_type))
+        raise NotImplementedError("Unknown type {}".format(name))
 
 
 class BaseNet(nn.Module):
-    def __init__(self, convnet_type, pretrained):
+    def __init__(self, args, pretrained):
         super(BaseNet, self).__init__()
 
-        self.convnet = get_convnet(convnet_type, pretrained)
+        self.convnet = get_convnet(args, pretrained)
         self.fc = None
 
     @property
@@ -79,8 +79,8 @@ class BaseNet(nn.Module):
 
 
 class IncrementalNet(BaseNet):
-    def __init__(self, convnet_type, pretrained, gradcam=False):
-        super().__init__(convnet_type, pretrained)
+    def __init__(self, args, pretrained, gradcam=False):
+        super().__init__(args, pretrained)
         self.gradcam = gradcam
         if hasattr(self, "gradcam") and self.gradcam:
             self._gradcam_hooks = [None, None]
@@ -148,10 +148,21 @@ class IncrementalNet(BaseNet):
             forward_hook
         )
 
+class IL2ANet(IncrementalNet):
+
+    def update_fc(self, num_old, num_total, num_aux):
+        fc = self.generate_fc(self.feature_dim, num_total+num_aux)
+        if self.fc is not None:
+            weight = copy.deepcopy(self.fc.weight.data)
+            bias = copy.deepcopy(self.fc.bias.data)
+            fc.weight.data[:num_old] = weight[:num_old]
+            fc.bias.data[:num_old] = bias[:num_old]
+        del self.fc
+        self.fc = fc
 
 class CosineIncrementalNet(BaseNet):
-    def __init__(self, convnet_type, pretrained, nb_proxy=1):
-        super().__init__(convnet_type, pretrained)
+    def __init__(self, args, pretrained, nb_proxy=1):
+        super().__init__(args, pretrained)
         self.nb_proxy = nb_proxy
 
     def update_fc(self, nb_classes, task_num):
@@ -200,8 +211,8 @@ class BiasLayer(nn.Module):
 
 
 class IncrementalNetWithBias(BaseNet):
-    def __init__(self, convnet_type, pretrained, bias_correction=False):
-        super().__init__(convnet_type, pretrained)
+    def __init__(self, args, pretrained, bias_correction=False):
+        super().__init__(args, pretrained)
 
         # Bias layer
         self.bias_correction = bias_correction
@@ -257,15 +268,16 @@ class IncrementalNetWithBias(BaseNet):
 
 
 class DERNet(nn.Module):
-    def __init__(self, convnet_type, pretrained):
+    def __init__(self, args, pretrained):
         super(DERNet, self).__init__()
-        self.convnet_type = convnet_type
+        self.convnet_type = args["convnet_type"]
         self.convnets = nn.ModuleList()
         self.pretrained = pretrained
         self.out_dim = None
         self.fc = None
         self.aux_fc = None
         self.task_sizes = []
+        self.args = args
 
     @property
     def feature_dim(self):
@@ -298,9 +310,9 @@ class DERNet(nn.Module):
 
     def update_fc(self, nb_classes):
         if len(self.convnets) == 0:
-            self.convnets.append(get_convnet(self.convnet_type))
+            self.convnets.append(get_convnet(self.args))
         else:
-            self.convnets.append(get_convnet(self.convnet_type))
+            self.convnets.append(get_convnet(self.args))
             self.convnets[-1].load_state_dict(self.convnets[-2].state_dict())
 
         if self.out_dim is None:
@@ -353,8 +365,8 @@ class DERNet(nn.Module):
 
 
 class SimpleCosineIncrementalNet(BaseNet):
-    def __init__(self, convnet_type, pretrained):
-        super().__init__(convnet_type, pretrained)
+    def __init__(self, args, pretrained):
+        super().__init__(args, pretrained)
 
     def update_fc(self, nb_classes, nextperiod_initialization):
         fc = self.generate_fc(self.feature_dim, nb_classes).cuda()
@@ -375,9 +387,9 @@ class SimpleCosineIncrementalNet(BaseNet):
 
 
 class FOSTERNet(nn.Module):
-    def __init__(self, convnet_type, pretrained):
+    def __init__(self, args, pretrained):
         super(FOSTERNet, self).__init__()
-        self.convnet_type = convnet_type
+        self.convnet_type = args["convnet_type"]
         self.convnets = nn.ModuleList()
         self.pretrained = pretrained
         self.out_dim = None
@@ -385,6 +397,7 @@ class FOSTERNet(nn.Module):
         self.fe_fc = None
         self.task_sizes = []
         self.oldfc = None
+        self.args = args
 
     @property
     def feature_dim(self):
@@ -413,7 +426,7 @@ class FOSTERNet(nn.Module):
         return out
 
     def update_fc(self, nb_classes):
-        self.convnets.append(get_convnet(self.convnet_type))
+        self.convnets.append(get_convnet(self.args))
         if self.out_dim is None:
             self.out_dim = self.convnets[-1].out_dim
         fc = self.generate_fc(self.feature_dim, nb_classes)

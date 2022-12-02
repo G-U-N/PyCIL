@@ -39,7 +39,7 @@ num_workers = 4
 class GEM(BaseLearner):
     def __init__(self, args):
         super().__init__(args)
-        self._network = IncrementalNet(args["convnet_type"], False)
+        self._network = IncrementalNet(args, False)
         self.previous_data = None
         self.previous_label = None
 

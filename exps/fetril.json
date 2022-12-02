@@ -1,0 +1,21 @@
+{
+    "prefix": "train",
+    "dataset": "cifar100",
+    "memory_size": 0,
+    "shuffle": true,
+    "init_cls": 40,
+    "increment": 1,
+    "model_name": "fetril",
+    "convnet_type": "resnet32",
+    "device": ["0"],
+    "seed": [1993],
+    "init_epochs": 200,
+    "init_lr" : 0.1,
+    "init_weight_decay" : 5e-4,
+    "epochs" : 50,
+    "lr" : 0.05,
+    "batch_size" : 128,
+    "weight_decay" : 5e-4,
+    "num_workers" : 8,
+    "T" : 2
+}

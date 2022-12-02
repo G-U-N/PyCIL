@@ -1,0 +1,23 @@
+{
+    "prefix": "class-balance train",
+    "dataset": "cifar100",
+    "memory_size": 0,
+    "shuffle": true,
+    "init_cls": 50,
+    "increment": 10,
+    "model_name": "pass",
+    "convnet_type": "resnet18",
+    "device": ["0"],
+    "seed": [1993],
+    "lambda_fkd":10,
+    "lambda_proto":10,
+    "temp":0.1,
+    "epochs" : 101,
+    "lr" : 0.001,
+    "batch_size" : 64,
+    "weight_decay" : 2e-4,
+    "step_size":45,
+    "gamma":0.1,
+    "num_workers" : 8,
+    "T" : 2
+}
