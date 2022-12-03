@@ -161,7 +161,7 @@ class IL2A(BaseLearner):
         N,C,D = self.args["batch_size"], self._total_classes, weight_fc.shape[1]
         
         N_weight = weight_fc.expand(N,C,D) # NCD
-        N_target_weight = torch.gather(N_weight, 1, proto_targets[:,None,None]).expand(N,C,D) # NCD
+        N_target_weight = torch.gather(N_weight, 1, proto_targets[:,None,None].expand(N,C,D)) # NCD
         N_v = N_weight-N_target_weight
         N_cov = torch.from_numpy(np.array(self._covs))[proto_targets].float().to(self._device) # NDD
 
