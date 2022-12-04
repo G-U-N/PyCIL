@@ -6,7 +6,7 @@
     "init_cls": 50,
     "increment": 10,
     "model_name": "pass",
-    "convnet_type": "resnet18",
+    "convnet_type": "resnet18_cbam",
     "device": ["0"],
     "seed": [1993],
     "lambda_fkd":10,
