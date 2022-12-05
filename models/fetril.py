@@ -101,7 +101,7 @@ class FeTrIL(BaseLearner):
                 optimizer=optimizer, T_max=self.args["init_epochs"])
             self._train_function(train_loader, test_loader, optimizer, scheduler)
             self._compute_means()
-            self._build_feature_set()
+            # self._build_feature_set()
         else:
             self._epoch_num = self.args["epochs"]
             self._compute_means()
