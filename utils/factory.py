@@ -10,6 +10,7 @@ from models.replay import Replay
 from models.bic import BiC
 from models.podnet import PODNet
 from models.rmm import RMM_FOSTER, RMM_iCaRL
+from models.ssre import SSRE
 from models.wa import WA
 from models.fetril import FeTrIL 
 from models.pa2s import PASS
@@ -51,5 +52,7 @@ def get_model(model_name, args):
         return PASS(args)
     elif name == "il2a":
         return IL2A(args)
+    elif name == "ssre":
+        return SSRE(args)
     else:
         assert 0

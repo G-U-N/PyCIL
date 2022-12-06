@@ -9,6 +9,7 @@ from convs.ucir_resnet import resnet18 as cosine_resnet18
 from convs.ucir_resnet import resnet34 as cosine_resnet34
 from convs.ucir_resnet import resnet50 as cosine_resnet50
 from convs.linears import SimpleLinear, SplitCosineLinear, CosineLinear
+from convs.modified_represnet import resnet18_rep,resnet34_rep
 
 
 def get_convnet(args, pretrained=False):
@@ -29,6 +30,8 @@ def get_convnet(args, pretrained=False):
         return cosine_resnet34(pretrained=pretrained,args=args)
     elif name == "cosine_resnet50":
         return cosine_resnet50(pretrained=pretrained,args=args)
+    elif name == "resnet18_rep":
+        return resnet18_rep(pretrained=pretrained,args=args)
     else:
         raise NotImplementedError("Unknown type {}".format(name))
 
