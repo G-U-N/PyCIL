@@ -9,7 +9,7 @@
     "convnet_type": "resnet18_rep",
     "device": ["0"],
     "seed": [1993],
-    "lambda_fkd":3,
+    "lambda_fkd":1,
     "lambda_proto":10,
     "temp":0.1,
     "mode": "parallel_adapters",

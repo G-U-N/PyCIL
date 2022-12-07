@@ -159,10 +159,10 @@ class SSRE(BaseLearner):
         logits = self._network(inputs)["logits"]
         loss_clf = F.cross_entropy(logits/self.args["temp"],targets,reduction="none")
         # loss_clf = torch.mean(loss_clf * ~mask)
-        loss_clf =  torch.mean(loss_clf * (1+0.3-mask))
+        loss_clf =  torch.mean(loss_clf * (1-mask))
         
         loss_fkd = torch.norm(features - features_old, p=2, dim=1)
-        loss_fkd = self.args["lambda_fkd"] * torch.mean(loss_fkd * mask)
+        loss_fkd = self.args["lambda_fkd"] * torch.sum(loss_fkd * mask)
         
         index = np.random.choice(range(self._known_classes),size=self.args["batch_size"],replace=True)
         
@@ -195,9 +195,9 @@ class SSRE(BaseLearner):
     
     def _network_expansion(self):
         if self._cur_task > 0:
-            for p in self._network.parameters():
+            for p in self._network.convnet.parameters():
                 p.requires_grad = True
-            for k, v in self._network.named_parameters():
+            for k, v in self._network.convnet.named_parameters():
                 if 'adapter' not in k:
                     v.requires_grad = False 
         # self._network.convnet.re_init_params() # do not use!
