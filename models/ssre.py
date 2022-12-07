@@ -9,6 +9,9 @@ from torch.utils.data import DataLoader,Dataset
 from models.base import BaseLearner
 from utils.inc_net import CosineIncrementalNet, FOSTERNet, IncrementalNet
 from utils.toolkit import count_parameters, target2onehot, tensor2numpy
+from utils.autoaugment import CIFAR10Policy,ImageNetPolicy
+from utils.ops import Cutout
+from torchvision import datasets, transforms
 
 EPSILON = 1e-8
 
@@ -32,6 +35,22 @@ class SSRE(BaseLearner):
         self.save_checkpoint("{}_{}_{}".format(self.args["model_name"],self.args["init_cls"],self.args["increment"]))
     def incremental_train(self, data_manager):
         self.data_manager = data_manager
+        if self._cur_task == 0:
+            self.data_manager._train_trsf = [
+            transforms.RandomCrop(32, padding=4),
+            transforms.RandomHorizontalFlip(),
+            transforms.ColorJitter(brightness=63/255),
+            CIFAR10Policy(),
+            transforms.ToTensor(),
+            Cutout(n_holes=1, length=16)
+            ]
+        else:
+            self.data_manager._train_trsf = [
+            transforms.RandomCrop(32, padding=4),
+            transforms.RandomHorizontalFlip(),
+            transforms.ColorJitter(brightness=63/255),
+            transforms.ToTensor(),        
+            ]
         self._cur_task += 1
         self._total_classes = self._known_classes + \
             data_manager.get_task_size(self._cur_task)
