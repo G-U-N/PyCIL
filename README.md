@@ -3,7 +3,6 @@
 ---
 
 <p align="center">
-  <a href="#Star-History-🚀">Star History</a> •
   <a href="#Introduction">Introduction</a> •
   <a href="#Methods-Reproduced">Methods Reproduced</a> •
   <a href="#Reproduced-Results">Reproduced Results</a> •  
@@ -31,10 +30,6 @@ The code repository for "PyCIL: A Python Toolbox for Class-Incremental Learning"
       archivePrefix={arXiv},
       primaryClass={cs.LG}
     }
-
-## Star History 🚀
-
-[![Star History Chart](https://api.star-history.com/svg?repos=G-U-N/PyCIL&type=Date)](https://star-history.com/#G-U-N/PyCIL&Date)
 
 ## Introduction
 
@@ -163,4 +158,9 @@ We thank the following repos providing helpful components/functions in our work.
 ## Contact
 
 If there are any questions, please feel free to  propose new features by opening an issue  or contact with the author: **Da-Wei Zhou**([zhoudw@lamda.nju.edu.cn](mailto:zhoudw@lamda.nju.edu.cn)) and **Fu-Yun Wang**(wangfuyun@smail.nju.edu.cn). Enjoy the code.
+
+
+## Star History 🚀
+
+[![Star History Chart](https://api.star-history.com/svg?repos=G-U-N/PyCIL&type=Date)](https://star-history.com/#G-U-N/PyCIL&Date)
 
