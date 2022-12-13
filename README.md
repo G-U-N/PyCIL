@@ -35,6 +35,7 @@ The code repository for "PyCIL: A Python Toolbox for Class-Incremental Learning"
 
 Traditional machine learning systems are deployed under the closed-world setting, which requires the entire training data before the offline training process. However, real-world applications often face the incoming new classes, and a model should incorporate them continually. The learning paradigm is called Class-Incremental Learning (CIL). We propose a Python toolbox that implements several key algorithms for class-incremental learning to ease the burden of researchers in the machine learning community. The toolbox contains implementations of a number of founding works of CIL, such as EWC and iCaRL, but also provides current state-of-the-art algorithms that can be used for conducting novel fundamental research. This toolbox, named PyCIL for Python Class-Incremental Learning, is open source with an MIT license.
 
+- 🌟 PyCIL has been accepted to [SCIENCE CHINA Information Sciences](https://www.sciengine.com/SCIS/doi/10.1007/s11432-022-3600-y) (CCF-A journal), check out the [official introduction](https://mp.weixin.qq.com/s/h1qu2LpdvjeHAPLOnG478A) about it!
 - 🌟 Check out our [survey paper](http://www.lamda.nju.edu.cn/zhoudw/file/cil_survey.pdf) about class-incremental learning! This is the **first Chinese survey** about class-incremental learning, which is in press in Chinese Journal of Computers.
 - 🌟 A brief introduction (in Chinese) about CIL is available [here](https://zhuanlan.zhihu.com/p/490308909).
 - 🌟 A PyTorch Tutorial to Class-Incremental Learning (with explicit codes and detailed explanations) is available [here](https://github.com/G-U-N/a-PyTorch-Tutorial-to-Class-Incremental-Learning).
@@ -59,7 +60,7 @@ Traditional machine learning systems are deployed under the closed-world setting
 -  `Coil`: Co-Transport for Class-Incremental Learning. ACM MM2021 [[paper](https://arxiv.org/abs/2107.12654)]
 -  `FOSTER`: Feature Boosting and Compression for Class-incremental Learning. ECCV 2022 [[paper](https://arxiv.org/abs/2204.04662)]
 
-> Intended authors are welcome to contact us to reproduce your methods in our repo.
+> Intended authors are welcome to contact us to reproduce your methods in our repo. Feel free to merge your algorithm into PyCIL if you are using our codebase!
 
 ## Reproduced Results
 
@@ -115,7 +116,7 @@ cd PyCIL
 python main.py --config=./exps/[MODEL NAME].json
 ```
 
-where [MODEL NAME] should be chosen from `finetune`, `ewc`, `lwf`, `replay`, `gem`,  `icarl`, `bic`, `wa`, `podnet`, `der`.
+where [MODEL NAME] should be chosen from `finetune`, `ewc`, `lwf`, `replay`, `gem`,  `icarl`, `bic`, `wa`, `podnet`, `der`, etc.
 
 4. `hyper-parameters`
 
@@ -158,7 +159,7 @@ We thank the following repos providing helpful components/functions in our work.
 
 ## Contact
 
-If there are any questions, please feel free to  propose new features by opening an issue  or contact with the author: **Da-Wei Zhou**([zhoudw@lamda.nju.edu.cn](mailto:zhoudw@lamda.nju.edu.cn)) and **Fu-Yun Wang**(wangfuyun@smail.nju.edu.cn). Enjoy the code.
+If there are any questions, please feel free to  propose new features by opening an issue or contact with the author: **Da-Wei Zhou**([zhoudw@lamda.nju.edu.cn](mailto:zhoudw@lamda.nju.edu.cn)) and **Fu-Yun Wang**(wangfuyun@smail.nju.edu.cn). Enjoy the code.
 
 
 ## Star History 🚀
