@@ -56,7 +56,7 @@ class RMMBase(BaseLearner):
         return int(
             (1 - self._m_rate_list[self._cur_task])
             * self._args["increment"]
-            * img_pre_cls
+            * img_per_cls
         )
 
     def build_rehearsal_memory(self, data_manager, per_class):
