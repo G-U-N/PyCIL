@@ -158,6 +158,7 @@ class WA(BaseLearner):
         logging.info(info)
 
     def _update_representation(self, train_loader, test_loader, optimizer, scheduler):
+        kd_lambda = self._known_classes / self._total_classes
         prog_bar = tqdm(range(epochs))
         for _, epoch in enumerate(prog_bar):
             self._network.train()
@@ -174,7 +175,7 @@ class WA(BaseLearner):
                     T,
                 )
 
-                loss = loss_clf + 2 * loss_kd
+                loss = (1-kd_lambda) * loss_clf + kd_lambda * loss_kd
 
                 optimizer.zero_grad()
                 loss.backward()
