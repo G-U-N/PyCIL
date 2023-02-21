@@ -31,12 +31,14 @@ Welcome to PyCIL, perhaps the toolbox for class-incremental learning with the mo
       primaryClass={cs.LG}
     }
     
-    
+
+
 ## What's New
+- [2023-02]🌟 **Call For Feedback**: We plan to add a section in this repo to introduce awesome works using PyCIL. If you are using PyCIL to publish your work in  top-tier conferences, feel free to [contact us](mailto:zhoudw@lamda.nju.edu.cn) for details!
 - [2023-02]🌟 Check out our [rigorous and unified survey](https://arxiv.org/abs/2302.03648) about class-incremental learning, which introduces some memory-agnostic measures with holistic evaluations from multiple aspects!
 - [2023-01]🌟 Upcoming state-of-the-arts in [ICLR2023](https://iclr.cc/): [MEMO](https://openreview.net/forum?id=S07feAlQHgM) and [3EF](https://openreview.net/forum?id=iP77_axu0h3). Stay tuned!
 - [2022-12]🌟 Add FrTrIL, PASS, IL2A, and SSRE.
-- [2022-10]🌟 PyCIL has been accepted to [SCIENCE CHINA Information Sciences](https://www.sciengine.com/SCIS/doi/10.1007/s11432-022-3600-y) (CCF-A journal), check out the [official introduction](https://mp.weixin.qq.com/s/h1qu2LpdvjeHAPLOnG478A) about it!
+- [2022-10]🌟 PyCIL has been accepted to [SCIENCE CHINA Information Sciences](https://www.sciengine.com/SCIS/doi/10.1007/s11432-022-3600-y) (CCF-A journal). Check out the [official introduction](https://mp.weixin.qq.com/s/h1qu2LpdvjeHAPLOnG478A) about it!
 - [2022-09]🌟 Check out our [survey paper](http://www.lamda.nju.edu.cn/zhoudw/file/cil_survey.pdf) about class-incremental learning! This is the **first Chinese survey** about class-incremental learning, which is in press in Chinese Journal of Computers.
 - [2022-08]🌟 Add RMM.
 - [2022-07]🌟 Add [FOSTER](https://arxiv.org/abs/2204.04662). State-of-the-art method with a single backbone!
