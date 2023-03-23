@@ -41,7 +41,7 @@ Welcome to PyCIL, perhaps the toolbox for class-incremental learning with the **
 
 
 ## What's New
-- [2023-02]🌟 **Call For Feedback**: We plan to add a <a href="##Awesome-Papers-using-PyCIL">section</a> introduce awesome works using PyCIL. If you are using PyCIL to publish your work in  top-tier conferences, feel free to [contact us](mailto:zhoudw@lamda.nju.edu.cn) for details!
+- [2023-02]🌟 **Call For Feedback**: We plan to add a <a href="#Awesome-Papers-using-PyCIL">section</a> introduce awesome works using PyCIL. If you are using PyCIL to publish your work in  top-tier conferences, feel free to [contact us](mailto:zhoudw@lamda.nju.edu.cn) for details!
 - [2023-02]🌟 Check out our [rigorous and unified survey](https://arxiv.org/abs/2302.03648) about class-incremental learning, which introduces some memory-agnostic measures with holistic evaluations from multiple aspects!
 - [2023-01]🌟 Upcoming state-of-the-arts in [ICLR2023](https://iclr.cc/): [MEMO](https://openreview.net/forum?id=S07feAlQHgM) and [3EF](https://openreview.net/forum?id=iP77_axu0h3). Stay tuned!
 - [2022-12]🌟 Add FrTrIL, PASS, IL2A, and SSRE.
