@@ -29,23 +29,25 @@
 
 Welcome to PyCIL, perhaps the toolbox for class-incremental learning with the **most** implemented methods. This is the code repository for "PyCIL: A Python Toolbox for Class-Incremental Learning" [[paper]](https://arxiv.org/abs/2112.12533) in PyTorch. If you use any content of this repo for your work, please cite the following bib entry:
 
-    @misc{zhou2021pycil,
-      title={PyCIL: A Python Toolbox for Class-Incremental Learning},
-      author={Da-Wei Zhou and Fu-Yun Wang and Han-Jia Ye and De-Chuan Zhan},
-      year={2021},
-      eprint={2112.12533},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG}
-    }
+    @article{zhou2023pycil,
+        author = {Da-Wei Zhou and Fu-Yun Wang and Han-Jia Ye and De-Chuan Zhan},
+        title = {PyCIL: a Python toolbox for class-incremental learning},
+        journal = {SCIENCE CHINA Information Sciences},
+        year = {2023},
+        volume = {66},
+        number = {9},
+        pages = {197101-},
+        doi = {https://doi.org/10.1007/s11432-022-3600-y}
+      }
     
 
 
 ## What's New
+- [2023-04]🌟 PyCIL has been published in [SCIENCE CHINA Information Sciences](https://www.sciengine.com/SCIS/doi/10.1007/s11432-022-3600-y) (CCF-A journal). Check out the [official introduction](https://mp.weixin.qq.com/s/h1qu2LpdvjeHAPLOnG478A)!
 - [2023-02]🌟 **Call For Feedback**: We add a <a href="#Awesome-Papers-using-PyCIL">section</a> to introduce awesome works using PyCIL. If you are using PyCIL to publish your work in  top-tier conferences/journals, feel free to [contact us](mailto:zhoudw@lamda.nju.edu.cn) for details!
 - [2023-02]🌟 Check out our [rigorous and unified survey](https://arxiv.org/abs/2302.03648) about class-incremental learning, which introduces some memory-agnostic measures with holistic evaluations from multiple aspects!
 - [2023-01]🌟 Upcoming state-of-the-arts in ICLR2023: [MEMO](https://openreview.net/forum?id=S07feAlQHgM) and [3EF](https://openreview.net/forum?id=iP77_axu0h3). Stay tuned!
 - [2022-12]🌟 Add FrTrIL, PASS, IL2A, and SSRE.
-- [2022-10]🌟 PyCIL has been accepted to [SCIENCE CHINA Information Sciences](https://www.sciengine.com/SCIS/doi/10.1007/s11432-022-3600-y) (CCF-A journal). Check out the [official introduction](https://mp.weixin.qq.com/s/h1qu2LpdvjeHAPLOnG478A) about it!
 - [2022-09]🌟 Check out our [survey paper](http://www.lamda.nju.edu.cn/zhoudw/file/cil_survey.pdf) about class-incremental learning! This is the **first Chinese survey** about class-incremental learning, which is in press in Chinese Journal of Computers.
 - [2022-08]🌟 Add RMM.
 - [2022-07]🌟 Add [FOSTER](https://arxiv.org/abs/2204.04662). State-of-the-art method with a single backbone!
