@@ -205,6 +205,9 @@ We thank the following repos providing helpful components/functions in our work.
 - [Coil](https://github.com/zhoudw-zdw/MM21-Coil)
 - [FACIL](https://github.com/mmasana/FACIL)
 
+The training flow and data configurations are based on Continual-Learning-Reproduce. The original information of the repo is available in the base branch.
+
+
 ## Contact
 
 If there are any questions, please feel free to  propose new features by opening an issue or contact with the author: **Da-Wei Zhou**([zhoudw@lamda.nju.edu.cn](mailto:zhoudw@lamda.nju.edu.cn)) and **Fu-Yun Wang**(wangfuyun@smail.nju.edu.cn). Enjoy the code.
