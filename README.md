@@ -163,6 +163,7 @@ We have implemented the pre-processing of `CIFAR100`, `imagenet100,` and `imagen
         train_dir = '[DATA-PATH]/train/'
         test_dir = '[DATA-PATH]/val/'
 ```
+[Here](https://drive.google.com/drive/folders/1RBrPGrZzd1bHU5YG8PjdfwpHANZR_lhJ?usp=sharing) is the file list of Imagenet100 (or say ImageNet-Sub).
 
 ## Awesome Papers using PyCIL
 
