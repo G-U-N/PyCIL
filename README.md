@@ -40,18 +40,24 @@ Welcome to PyCIL, perhaps the toolbox for class-incremental learning with the **
         doi = {https://doi.org/10.1007/s11432-022-3600-y}
       }
     
+    @article{zhou2023class,
+        author = {Zhou, Da-Wei and Wang, Qi-Wei and Qi, Zhi-Hong and Ye, Han-Jia and Zhan, De-Chuan and Liu, Ziwei},
+        title = {Deep Class-Incremental Learning: A Survey},
+        journal = {arXiv preprint arXiv:2302.03648},
+        year = {2023}
+     }
 
 
 ## What's New
-- [2023-04]🌟 PyCIL has been published in [SCIENCE CHINA Information Sciences](https://www.sciengine.com/SCIS/doi/10.1007/s11432-022-3600-y) (CCF-A journal). Check out the [official introduction](https://mp.weixin.qq.com/s/h1qu2LpdvjeHAPLOnG478A)!
-- [2023-02]🌟 **Call For Feedback**: We add a <a href="#Awesome-Papers-using-PyCIL">section</a> to introduce awesome works using PyCIL. If you are using PyCIL to publish your work in  top-tier conferences/journals, feel free to [contact us](mailto:zhoudw@lamda.nju.edu.cn) for details!
+
+- [2023-05]🌟 Check out our [recent work](https://arxiv.org/abs/2305.19270) about class-incremental learning with vision-language models!
 - [2023-02]🌟 Check out our [rigorous and unified survey](https://arxiv.org/abs/2302.03648) about class-incremental learning, which introduces some memory-agnostic measures with holistic evaluations from multiple aspects!
-- [2023-01]🌟 Upcoming state-of-the-arts in ICLR2023: [MEMO](https://openreview.net/forum?id=S07feAlQHgM) and [3EF](https://openreview.net/forum?id=iP77_axu0h3). Stay tuned!
+- [2023-01]🌟 Upcoming state-of-the-arts in ICLR2023: [MEMO](https://openreview.net/forum?id=S07feAlQHgM) and [BEEF](https://openreview.net/forum?id=iP77_axu0h3). Stay tuned!
 - [2022-12]🌟 Add FrTrIL, PASS, IL2A, and SSRE.
-- [2022-09]🌟 Check out our [survey paper](http://www.lamda.nju.edu.cn/zhoudw/file/cil_survey.pdf) about class-incremental learning! This is the **first Chinese survey** about class-incremental learning, which is in press in Chinese Journal of Computers.
+- [2022-10]🌟 PyCIL has been published in [SCIENCE CHINA Information Sciences](https://link.springer.com/article/10.1007/s11432-022-3600-y) (CCF-A journal). Check out the [official introduction](https://mp.weixin.qq.com/s/h1qu2LpdvjeHAPLOnG478A)!  
 - [2022-08]🌟 Add RMM.
 - [2022-07]🌟 Add [FOSTER](https://arxiv.org/abs/2204.04662). State-of-the-art method with a single backbone!
-
+- [2021-12]🌟 **Call For Feedback**: We add a <a href="#Awesome-Papers-using-PyCIL">section</a> to introduce awesome works using PyCIL. If you are using PyCIL to publish your work in  top-tier conferences/journals, feel free to [contact us](mailto:zhoudw@lamda.nju.edu.cn) for details!
 
 ## Introduction
 
@@ -168,6 +174,8 @@ We have implemented the pre-processing of `CIFAR100`, `imagenet100,` and `imagen
 ## Awesome Papers using PyCIL
 
 ### Our Papers
+
+- Learning without Forgetting for Vision-Language Models (**arXiv 2023**) [[paper](https://arxiv.org/abs/2305.19270)]
 
 - Revisiting Class-Incremental Learning with Pre-Trained Models: Generalizability and Adaptivity are All You Need (**arXiv 2023**) [[paper](https://arxiv.org/abs/2303.07338)] [[code](https://github.com/zhoudw-zdw/RevisitingCIL)]
 
