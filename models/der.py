@@ -1,3 +1,4 @@
+# Please note that the current implementation of DER only contains the dynamic expansion process, since masking and pruning are not implemented by the source repo.
 import logging
 import numpy as np
 from tqdm import tqdm
