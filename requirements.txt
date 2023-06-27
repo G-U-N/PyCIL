@@ -1,0 +1,9 @@
+torch
+torchvision 
+tqdm 
+numpy 
+scipy 
+quadprog
+POT
+wandb
+scikit-learn

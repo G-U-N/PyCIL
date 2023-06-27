@@ -6,7 +6,7 @@ from utils import factory
 from utils.data_manager import DataManager
 from utils.toolkit import count_parameters
 import os
-
+import wandb 
 
 def train(args):
     seed_list = copy.deepcopy(args["seed"])
@@ -22,6 +22,18 @@ def _train(args):
 
     init_cls = 0 if args ["init_cls"] == args["increment"] else args["init_cls"]
     logs_name = "logs/{}/{}/{}/{}".format(args["model_name"],args["dataset"], init_cls, args['increment'])
+    
+    run = wandb.init(
+        project="NSF2023SummerREU", 
+        config={
+            "model_name": args["model_name"],
+            "conv_type": args["convnet_type"],
+            "dataset": args["dataset"],
+            "prefix": args["prefix"]
+        }
+    )
+
+
     
     if not os.path.exists(logs_name):
         os.makedirs(logs_name)
@@ -96,13 +108,13 @@ def _set_device(args):
     gpus = []
 
     for device in device_type:
-        if device_type == -1:
-            device = torch.device("cpu")
+        if device == -1:
+            device = torch.device("mps")
         else:
             device = torch.device("cuda:{}".format(device))
 
         gpus.append(device)
-
+        
     args["device"] = gpus
 
 
