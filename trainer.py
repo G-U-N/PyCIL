@@ -24,7 +24,7 @@ def _train(args):
     logs_name = "logs/{}/{}/{}/{}".format(args["model_name"],args["dataset"], init_cls, args['increment'])
     
     run = wandb.init(
-        project="NSF2023SummerREU", 
+        project=args["wb-project"], 
         config={
             "model_name": args["model_name"],
             "conv_type": args["convnet_type"],
