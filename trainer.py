@@ -24,7 +24,12 @@ def _train(args):
     logs_name = "logs/{}/{}/{}/{}".format(args["model_name"],args["dataset"], init_cls, args['increment'])
     
     run = wandb.init(
-        project=args["wb-project"], 
+        project=args["wb-project"],
+        name=''.join([
+            args["dataset"], "_",
+            args["model_name"], "_seed_",
+            args["seed"]
+        ]), 
         config={
             "model_name": args["model_name"],
             "conv_type": args["convnet_type"],
