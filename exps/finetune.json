@@ -9,6 +9,7 @@
     "increment": 10,
     "model_name": "finetune",
     "convnet_type": "resnet32",
-    "device": ["0","1","2","3"],
-    "seed": [1993]
+    "device": ["0"],
+    "seed": [1993], 
+    "wb-project": "REU-Summer2023"
 }

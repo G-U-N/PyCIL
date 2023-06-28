@@ -27,5 +27,6 @@
     "batch_size" : 128,
     "weight_decay" : 5e-4,
     "num_workers" : 8,
-    "T" : 2
+    "T" : 2,
+    "wb-project": "REU-Summer2023"
 }

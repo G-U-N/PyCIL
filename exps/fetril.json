@@ -3,8 +3,8 @@
     "dataset": "cifar100",
     "memory_size": 0,
     "shuffle": true,
-    "init_cls": 40,
-    "increment": 1,
+    "init_cls": 10,
+    "increment": 10,
     "model_name": "fetril",
     "convnet_type": "resnet32",
     "device": ["0"],
@@ -17,5 +17,6 @@
     "batch_size" : 128,
     "weight_decay" : 5e-4,
     "num_workers" : 8,
-    "T" : 2
+    "T" : 2,
+    "wb-project": "REU-Summer2023"
 }

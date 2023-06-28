@@ -10,6 +10,7 @@
     "model_name": "rmm-icarl",
     "convnet_type": "resnet32",
     "device": ["0"],
-    "seed": [1993]
+    "seed": [1993], 
+    "wb-project": "REU-Summer2023"
 }
 

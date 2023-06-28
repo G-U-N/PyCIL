@@ -9,6 +9,7 @@
     "increment": 10,
     "model_name": "replay",
     "convnet_type": "resnet32",
-    "device": ["0","1","2","3"],
+    "device": ["0"],
+    "wb-project": "REU-Summer2023",
     "seed": [1993]
 }

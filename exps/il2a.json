@@ -20,5 +20,6 @@
     "gamma":0.1,
     "num_workers" : 8,
     "ratio": 2.5,
-    "T" : 2
+    "T" : 2, 
+    "wb-project": "REU-Summer2023"
 }

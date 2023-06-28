@@ -5,14 +5,15 @@
     "memory_per_class": 20,
     "fixed_memory": false,
     "shuffle": true,
-    "init_cls": 5,
-    "increment": 5,
+    "init_cls": 10,
+    "increment": 10,
     "sinkhorn":0.464,
     "calibration_term":1.5,
     "norm_term":3.0,
     "reg_term":1e-3,
     "model_name": "coil",
     "convnet_type": "cosine_resnet32",
-    "device": ["0","1","2","3"],
+    "device": ["0"],
+    "wb-project": "REU-Summer2023", 
     "seed": [1993]
 }

@@ -5,7 +5,7 @@
     "memory_per_class": 20,
     "fixed_memory": true,
     "shuffle": true,
-    "init_cls": 50,
+    "init_cls": 10,
     "increment": 10,
     "model_name": "foster",
     "convnet_type": "resnet32",
@@ -27,5 +27,6 @@
     "batch_size" : 128,
     "weight_decay" : 5e-4,
     "num_workers" : 8,
-    "T" : 2
+    "T" : 2, 
+    "wb-project": "REU-Summer2023"
 }

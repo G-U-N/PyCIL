@@ -19,5 +19,6 @@
     "step_size":45,
     "gamma":0.1,
     "num_workers" : 8,
-    "T" : 2
+    "T" : 2, 
+    "wb-project": "REU-Summer2023"
 }
