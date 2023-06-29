@@ -226,3 +226,9 @@ If there are any questions, please feel free to  propose new features by opening
 
 [![Star History Chart](https://api.star-history.com/svg?repos=G-U-N/PyCIL&type=Date)](https://star-history.com/#G-U-N/PyCIL&Date)
 
+# Running on Lambda Cloud 
+
+```
+$ virtualenv pycil 
+$ pip install 
+```
