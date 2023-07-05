@@ -1,4 +1,5 @@
 '''
+For MEMO implementations of ImageNet-ResNet
 Reference:
 https://github.com/pytorch/vision/blob/master/torchvision/models/resnet.py
 '''
@@ -267,18 +268,18 @@ class SpecializedResNet_imagenet(nn.Module):
         return features
 
 def get_resnet10_imagenet():
-    basenet = GeneralizedResNet_imagenet(BasicBlock,[1,1,1,1])
-    adaptivenet = SpecializedResNet_imagenet(BasicBlock, [1,1,1,1])
+    basenet = GeneralizedResNet_imagenet(BasicBlock,[1, 1, 1, 1])
+    adaptivenet = SpecializedResNet_imagenet(BasicBlock, [1, 1, 1, 1])
     return basenet,adaptivenet
 
 def get_resnet18_imagenet():
-    basenet = GeneralizedResNet_imagenet(BasicBlock,[2,2,2,2])
-    adaptivenet = SpecializedResNet_imagenet(BasicBlock, [2,2,2,2])
+    basenet = GeneralizedResNet_imagenet(BasicBlock,[2, 2, 2, 2])
+    adaptivenet = SpecializedResNet_imagenet(BasicBlock, [2, 2, 2, 2])
     return basenet,adaptivenet
 
 def get_resnet26_imagenet():
-    basenet = GeneralizedResNet_imagenet(Bottleneck,[2,2,2,2])
-    adaptivenet = SpecializedResNet_imagenet(Bottleneck, [2,2,2,2])
+    basenet = GeneralizedResNet_imagenet(Bottleneck,[2, 2, 2, 2])
+    adaptivenet = SpecializedResNet_imagenet(Bottleneck, [2, 2, 2, 2])
     return basenet,adaptivenet
 
 def get_resnet34_imagenet():
