@@ -50,9 +50,9 @@ Welcome to PyCIL, perhaps the toolbox for class-incremental learning with the **
 
 ## What's New
 
-- [2023-05]🌟 Check out our [recent work](https://arxiv.org/abs/2305.19270) about class-incremental learning with vision-language models!
+- [2023-07]🌟 Add [MEMO](https://openreview.net/forum?id=S07feAlQHgM), [BEEF](https://openreview.net/forum?id=iP77_axu0h3), and [SimpleCIL](https://arxiv.org/abs/2303.07338). State-of-the-art methods of 2023!
+- [2023-05]🌟 Check out our recent work about [class-incremental learning with vision-language models](https://arxiv.org/abs/2305.19270)!
 - [2023-02]🌟 Check out our [rigorous and unified survey](https://arxiv.org/abs/2302.03648) about class-incremental learning, which introduces some memory-agnostic measures with holistic evaluations from multiple aspects!
-- [2023-01]🌟 Upcoming state-of-the-arts in ICLR2023: [MEMO](https://openreview.net/forum?id=S07feAlQHgM) and [BEEF](https://openreview.net/forum?id=iP77_axu0h3). Stay tuned!
 - [2022-12]🌟 Add FrTrIL, PASS, IL2A, and SSRE.
 - [2022-10]🌟 PyCIL has been published in [SCIENCE CHINA Information Sciences](https://link.springer.com/article/10.1007/s11432-022-3600-y) (CCF-A journal). Check out the [official introduction](https://mp.weixin.qq.com/s/h1qu2LpdvjeHAPLOnG478A)!  
 - [2022-08]🌟 Add RMM.
@@ -69,10 +69,10 @@ For more information about incremental learning, you can refer to these reading 
 
 ## Methods Reproduced
 
--  `FineTune`: Baseline method which simply updates parameters on new tasks, suffering from Catastrophic Forgetting. By default, weights corresponding to the outputs of previous classes are not updated.
+-  `FineTune`: Baseline method which simply updates parameters on new tasks.
 -  `EWC`: Overcoming catastrophic forgetting in neural networks. PNAS2017 [[paper](https://arxiv.org/abs/1612.00796)]
 -  `LwF`:  Learning without Forgetting. ECCV2016 [[paper](https://arxiv.org/abs/1606.09282)]
--  `Replay`: Baseline method with exemplars.
+-  `Replay`: Baseline method with exemplar replay.
 -  `GEM`: Gradient Episodic Memory for Continual Learning. NIPS2017 [[paper](https://arxiv.org/abs/1706.08840)]
 -  `iCaRL`: Incremental Classifier and Representation Learning. CVPR2017 [[paper](https://arxiv.org/abs/1611.07725)]
 -  `BiC`: Large Scale Incremental Learning. CVPR2019 [[paper](https://arxiv.org/abs/1905.13260)]
@@ -86,6 +86,9 @@ For more information about incremental learning, you can refer to these reading 
 -  `FeTrIL`: Feature Translation for Exemplar-Free Class-Incremental Learning. WACV2023 [[paper](https://arxiv.org/abs/2211.13131)]
 -  `Coil`: Co-Transport for Class-Incremental Learning. ACM MM2021 [[paper](https://arxiv.org/abs/2107.12654)]
 -  `FOSTER`: Feature Boosting and Compression for Class-incremental Learning. ECCV 2022 [[paper](https://arxiv.org/abs/2204.04662)]
+-  `MEMO`: A Model or 603 Exemplars: Towards Memory-Efficient Class-Incremental Learning. ICLR 2023 Spotlight [[paper](https://openreview.net/forum?id=S07feAlQHgM)]
+-  `BEEF`: BEEF: Bi-Compatible Class-Incremental Learning via Energy-Based Expansion and Fusion. ICLR 2023 [[paper](https://openreview.net/forum?id=iP77_axu0h3)]
+-  `SimpleCIL`: Revisiting Class-Incremental Learning with Pre-Trained Models: Generalizability and Adaptivity are All You Need. arXiv 2023 [[paper](https://arxiv.org/abs/2303.07338)]
 
 > Intended authors are welcome to contact us to reproduce your methods in our repo. Feel free to merge your algorithm into PyCIL if you are using our codebase!
 
@@ -110,7 +113,7 @@ For more information about incremental learning, you can refer to these reading 
 <img src="./resources/imagenet20st5.png" width="500px">
 </div>
 
-> More experimental details and results are shown in our [paper](https://arxiv.org/abs/2112.12533).
+> More experimental details and results can be found in our [survey](https://arxiv.org/abs/2302.03648).
 
 ## How To Use
 
@@ -210,8 +213,6 @@ We thank the following repos providing helpful components/functions in our work.
 
 - [Continual-Learning-Reproduce](https://github.com/zhchuu/continual-learning-reproduce)
 - [GEM](https://github.com/hursung1/GradientEpisodicMemory)
-- [Proser](https://github.com/zhoudw-zdw/CVPR21-Proser)
-- [Coil](https://github.com/zhoudw-zdw/MM21-Coil)
 - [FACIL](https://github.com/mmasana/FACIL)
 
 The training flow and data configurations are based on Continual-Learning-Reproduce. The original information of the repo is available in the base branch.
