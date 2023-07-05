@@ -1,3 +1,8 @@
+'''
+Re-implementation of SimpleCIL (https://arxiv.org/abs/2303.07338) without pre-trained weights. 
+The training process is as follows: train the model with cross-entropy in the first stage and replace the classifier with prototypes for all the classes in the subsequent stages. 
+Please refer to the original implementation (https://github.com/zhoudw-zdw/RevisitingCIL) if you are using pre-trained weights.
+'''
 import logging
 import numpy as np
 import torch
