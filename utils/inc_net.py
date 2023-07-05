@@ -3,7 +3,7 @@ import logging
 import torch
 from torch import nn
 from convs.cifar_resnet import resnet32
-from convs.resnet import resnet18, resnet34, resnet50
+from convs.resnet import resnet18, resnet34, resnet50, resnet101, resnet152
 from convs.ucir_cifar_resnet import resnet32 as cosine_resnet32
 from convs.ucir_resnet import resnet18 as cosine_resnet18
 from convs.ucir_resnet import resnet34 as cosine_resnet34
@@ -476,7 +476,7 @@ class DERNet(nn.Module):
         gamma = meanold / meannew
         print("alignweights,gamma=", gamma)
         self.fc.weight.data[-increment:, :] *= gamma
-    
+
     def load_checkpoint(self, args):
         checkpoint_name = f"checkpoints/finetune_{args['csv_name']}_0.pkl"
         model_infos = torch.load(checkpoint_name)
@@ -491,7 +491,7 @@ class SimpleCosineIncrementalNet(BaseNet):
     def __init__(self, args, pretrained):
         super().__init__(args, pretrained)
 
-    def update_fc(self, nb_classes, nextperiod_initialization):
+    def update_fc(self, nb_classes, nextperiod_initialization=None):
         fc = self.generate_fc(self.feature_dim, nb_classes).cuda()
         if self.fc is not None:
             nb_output = self.fc.out_features
@@ -500,6 +500,8 @@ class SimpleCosineIncrementalNet(BaseNet):
             if nextperiod_initialization is not None:
 
                 weight = torch.cat([weight, nextperiod_initialization])
+            else:
+                weight = torch.cat([weight, torch.zeros(nb_classes - nb_output, self.feature_dim).cuda()])
             fc.weight = nn.Parameter(weight)
         del self.fc
         self.fc = fc
