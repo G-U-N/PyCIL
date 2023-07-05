@@ -1,3 +1,8 @@
+'''
+For MEMO implementations of ImageNet-ConvNet
+Reference:
+https://github.com/wangkiw/ICLR23-MEMO/blob/main/convs/conv_imagenet.py
+'''
 import torch.nn as nn
 import torch
 

@@ -269,10 +269,16 @@ def _resnet(arch, block, layers, pretrained, progress, **kwargs):
     return model
 
 def resnet10(pretrained=False, progress=True, **kwargs):
-        return _resnet('resnet10', BasicBlock, [1,1,1,1], pretrained, progress,
+    """
+    For MEMO implementations of ResNet-10
+    """
+    return _resnet('resnet10', BasicBlock, [1, 1, 1, 1], pretrained, progress,
                    **kwargs)
         
 def resnet26(pretrained=False, progress=True, **kwargs):
+    """
+    For MEMO implementations of ResNet-26
+    """
     return _resnet('resnet26', Bottleneck, [2, 2, 2, 2], pretrained, progress,
                    **kwargs)
 
