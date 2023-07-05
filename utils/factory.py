@@ -15,6 +15,9 @@ from models.wa import WA
 from models.fetril import FeTrIL 
 from models.pa2s import PASS
 from models.il2a import IL2A
+from models.memo import MEMO
+from models.beef_iso import BEEFISO
+from models.simplecil import SimpleCIL
 
 def get_model(model_name, args):
     name = model_name.lower()
@@ -54,5 +57,11 @@ def get_model(model_name, args):
         return IL2A(args)
     elif name == "ssre":
         return SSRE(args)
+    elif name == "memo":
+        return MEMO(args)
+    elif name == "beefiso":
+        return BEEFISO(args)
+    elif name == "simplecil":
+        return SimpleCIL(args)
     else:
         assert 0

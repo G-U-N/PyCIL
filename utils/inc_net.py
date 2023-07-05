@@ -3,7 +3,7 @@ import logging
 import torch
 from torch import nn
 from convs.cifar_resnet import resnet32
-from convs.resnet import resnet18, resnet34, resnet50
+from convs.resnet import resnet18, resnet34, resnet50, resnet101, resnet152
 from convs.ucir_cifar_resnet import resnet32 as cosine_resnet32
 from convs.ucir_resnet import resnet18 as cosine_resnet18
 from convs.ucir_resnet import resnet34 as cosine_resnet34
@@ -12,6 +12,33 @@ from convs.linears import SimpleLinear, SplitCosineLinear, CosineLinear
 from convs.modified_represnet import resnet18_rep,resnet34_rep
 from convs.resnet_cbam import resnet18_cbam,resnet34_cbam,resnet50_cbam
 
+# FOR MEMO
+from convs.memo_resnet import  get_resnet18_imagenet as get_memo_resnet18 #for imagenet
+from convs.memo_cifar_resnet import get_resnet32_a2fc as get_memo_resnet32 #for cifar
+
+# FOR AUC & DER
+from convs.conv_cifar import conv2 as conv2_cifar
+from convs.cifar_resnet import resnet14 as resnet14_cifar
+from convs.cifar_resnet import resnet20 as resnet20_cifar
+from convs.cifar_resnet import resnet26 as resnet26_cifar
+
+from convs.conv_imagenet import conv4 as conv4_imagenet
+from convs.resnet import resnet10 as resnet10_imagenet
+from convs.resnet import resnet26 as resnet26_imagenet
+from convs.resnet import resnet34 as resnet34_imagenet
+from convs.resnet import resnet50 as resnet50_imagenet
+
+# FOR AUC & MEMO
+from convs.conv_cifar import get_conv_a2fc as memo_conv2_cifar
+from convs.memo_cifar_resnet import get_resnet14_a2fc as memo_resnet14_cifar
+from convs.memo_cifar_resnet import get_resnet20_a2fc as memo_resnet20_cifar
+from convs.memo_cifar_resnet import get_resnet26_a2fc as memo_resnet26_cifar
+
+from convs.conv_imagenet import conv_a2fc_imagenet as memo_conv4_imagenet
+from convs.memo_resnet import get_resnet10_imagenet as memo_resnet10_imagenet
+from convs.memo_resnet import get_resnet26_imagenet as memo_resnet26_imagenet
+from convs.memo_resnet import get_resnet34_imagenet as memo_resnet34_imagenet
+from convs.memo_resnet import get_resnet50_imagenet as memo_resnet50_imagenet
 
 def get_convnet(args, pretrained=False):
     name = args["convnet_type"].lower()
@@ -39,6 +66,66 @@ def get_convnet(args, pretrained=False):
         return resnet34_cbam(pretrained=pretrained,args=args)
     elif name == "resnet50_cbam":
         return resnet50_cbam(pretrained=pretrained,args=args)
+    
+    # MEMO benchmark backbone
+    elif name == 'memo_resnet18':
+        _basenet, _adaptive_net = get_memo_resnet18()
+        return _basenet, _adaptive_net
+    elif name == 'memo_resnet32':
+        _basenet, _adaptive_net = get_memo_resnet32()
+        return _basenet, _adaptive_net
+    
+    # AUC
+    ## cifar
+    elif name == 'conv2':
+        return conv2_cifar()
+    elif name == 'resnet14_cifar':
+        return resnet14_cifar()
+    elif name == 'resnet20_cifar':
+        return resnet20_cifar()
+    elif name == 'resnet26_cifar':
+        return resnet26_cifar()
+    
+    elif name == 'memo_conv2':
+        g_blocks, s_blocks = memo_conv2_cifar() # generalized/specialized
+        return g_blocks, s_blocks
+    elif name == 'memo_resnet14_cifar':
+        g_blocks, s_blocks = memo_resnet14_cifar() # generalized/specialized
+        return g_blocks, s_blocks
+    elif name == 'memo_resnet20_cifar':
+        g_blocks, s_blocks = memo_resnet20_cifar() # generalized/specialized
+        return g_blocks, s_blocks
+    elif name == 'memo_resnet26_cifar':
+        g_blocks, s_blocks = memo_resnet26_cifar() # generalized/specialized
+        return g_blocks, s_blocks
+    
+    ## imagenet
+    elif name == 'conv4':
+        return conv4_imagenet()
+    elif name == 'resnet10_imagenet':
+        return resnet10_imagenet()
+    elif name == 'resnet26_imagenet':
+        return resnet26_imagenet()
+    elif name == 'resnet34_imagenet':
+        return resnet34_imagenet()
+    elif name == 'resnet50_imagenet':
+        return resnet50_imagenet()
+    
+    elif name == 'memo_conv4':
+        g_blcoks, s_blocks = memo_conv4_imagenet()
+        return g_blcoks, s_blocks
+    elif name == 'memo_resnet10_imagenet':
+        g_blcoks, s_blocks = memo_resnet10_imagenet()
+        return g_blcoks, s_blocks
+    elif name == 'memo_resnet26_imagenet':
+        g_blcoks, s_blocks = memo_resnet26_imagenet()
+        return g_blcoks, s_blocks
+    elif name == 'memo_resnet34_imagenet':
+        g_blocks, s_blocks = memo_resnet34_imagenet()
+        return g_blocks, s_blocks
+    elif name == 'memo_resnet50_imagenet':
+        g_blcoks, s_blocks = memo_resnet50_imagenet()
+        return g_blcoks, s_blocks
     else:
         raise NotImplementedError("Unknown type {}".format(name))
 
@@ -86,7 +173,24 @@ class BaseNet(nn.Module):
         self.eval()
 
         return self
-
+    
+    def load_checkpoint(self, args):
+        if args["init_cls"] == 50:
+            pkl_name = "{}_{}_{}_B{}_Inc{}".format( 
+                args["dataset"],
+                args["seed"],
+                args["convnet_type"],
+                0,
+                args["init_cls"],
+            )
+            checkpoint_name = f"checkpoints/finetune_{pkl_name}_0.pkl"
+        else:
+            checkpoint_name = f"checkpoints/finetune_{args['csv_name']}_0.pkl"
+        model_infos = torch.load(checkpoint_name)
+        self.convnet.load_state_dict(model_infos['convnet'])
+        self.fc.load_state_dict(model_infos['fc'])
+        test_acc = model_infos['test_acc']
+        return test_acc
 
 class IncrementalNet(BaseNet):
     def __init__(self, args, pretrained, gradcam=False):
@@ -373,12 +477,21 @@ class DERNet(nn.Module):
         print("alignweights,gamma=", gamma)
         self.fc.weight.data[-increment:, :] *= gamma
 
+    def load_checkpoint(self, args):
+        checkpoint_name = f"checkpoints/finetune_{args['csv_name']}_0.pkl"
+        model_infos = torch.load(checkpoint_name)
+        assert len(self.convnets) == 1
+        self.convnets[0].load_state_dict(model_infos['convnet'])
+        self.fc.load_state_dict(model_infos['fc'])
+        test_acc = model_infos['test_acc']
+        return test_acc
+
 
 class SimpleCosineIncrementalNet(BaseNet):
     def __init__(self, args, pretrained):
         super().__init__(args, pretrained)
 
-    def update_fc(self, nb_classes, nextperiod_initialization):
+    def update_fc(self, nb_classes, nextperiod_initialization=None):
         fc = self.generate_fc(self.feature_dim, nb_classes).cuda()
         if self.fc is not None:
             nb_output = self.fc.out_features
@@ -387,6 +500,8 @@ class SimpleCosineIncrementalNet(BaseNet):
             if nextperiod_initialization is not None:
 
                 weight = torch.cat([weight, nextperiod_initialization])
+            else:
+                weight = torch.cat([weight, torch.zeros(nb_classes - nb_output, self.feature_dim).cuda()])
             fc.weight = nn.Parameter(weight)
         del self.fc
         self.fc = fc
@@ -488,3 +603,295 @@ class FOSTERNet(nn.Module):
         gamma = meanold / meannew * (value ** (old / increment))
         logging.info("align weights, gamma = {} ".format(gamma))
         self.fc.weight.data[-increment:, :] *= gamma
+    
+    def load_checkpoint(self, args):
+        if args["init_cls"] == 50:
+            pkl_name = "{}_{}_{}_B{}_Inc{}".format( 
+                args["dataset"],
+                args["seed"],
+                args["convnet_type"],
+                0,
+                args["init_cls"],
+            )
+            checkpoint_name = f"checkpoints/finetune_{pkl_name}_0.pkl"
+        else:
+            checkpoint_name = f"checkpoints/finetune_{args['csv_name']}_0.pkl"
+        model_infos = torch.load(checkpoint_name)
+        assert len(self.convnets) == 1
+        self.convnets[0].load_state_dict(model_infos['convnet'])
+        self.fc.load_state_dict(model_infos['fc'])
+        test_acc = model_infos['test_acc']
+        return test_acc
+    
+
+class BiasLayer(nn.Module):
+    def __init__(self):
+        super(BiasLayer, self).__init__()
+        self.alpha = nn.Parameter(torch.zeros(1, requires_grad=True))
+        self.beta = nn.Parameter(torch.zeros(1, requires_grad=True))
+
+    def forward(self, x , bias=True):
+        ret_x = x.clone()
+        ret_x = (self.alpha+1) * x # + self.beta
+        if bias:
+            ret_x = ret_x + self.beta
+        return ret_x
+
+    def get_params(self):
+        return (self.alpha.item(), self.beta.item())
+
+
+class BEEFISONet(nn.Module):
+    def __init__(self, args, pretrained):
+        super(BEEFISONet, self).__init__()
+        self.convnet_type = args["convnet_type"]
+        self.convnets = nn.ModuleList()
+        self.pretrained = pretrained
+        self.out_dim = None
+        self.old_fc = None
+        self.new_fc = None
+        self.task_sizes = []
+        self.forward_prototypes = None
+        self.backward_prototypes = None
+        self.args = args
+        self.biases = nn.ModuleList()
+
+    @property
+    def feature_dim(self):
+        if self.out_dim is None:
+            return 0
+        return self.out_dim * len(self.convnets)
+
+    def extract_vector(self, x):
+        features = [convnet(x)["features"] for convnet in self.convnets]
+        features = torch.cat(features, 1)
+        return features
+
+    def forward(self, x):
+        features = [convnet(x)["features"] for convnet in self.convnets]
+        features = torch.cat(features, 1)
+        
+        if self.old_fc is None:
+            fc = self.new_fc
+            out = fc(features)
+        else:
+            '''
+            merge the weights
+            '''
+            new_task_size = self.task_sizes[-1]
+            fc_weight = torch.cat([self.old_fc.weight,torch.zeros((new_task_size,self.feature_dim-self.out_dim)).cuda()],dim=0)             
+            new_fc_weight = self.new_fc.weight
+            new_fc_bias = self.new_fc.bias
+            for i in range(len(self.task_sizes)-2,-1,-1):
+                new_fc_weight = torch.cat([*[self.biases[i](self.backward_prototypes.weight[i].unsqueeze(0),bias=False) for _ in range(self.task_sizes[i])],new_fc_weight],dim=0)
+                new_fc_bias = torch.cat([*[self.biases[i](self.backward_prototypes.bias[i].unsqueeze(0),bias=True) for _ in range(self.task_sizes[i])], new_fc_bias])
+            fc_weight = torch.cat([fc_weight,new_fc_weight],dim=1)
+            fc_bias = torch.cat([self.old_fc.bias,torch.zeros(new_task_size).cuda()])
+            fc_bias=+new_fc_bias
+            logits = features@fc_weight.permute(1,0)+fc_bias
+            out = {"logits":logits}        
+
+            new_fc_weight = self.new_fc.weight
+            new_fc_bias = self.new_fc.bias
+            for i in range(len(self.task_sizes)-2,-1,-1):
+                new_fc_weight = torch.cat([self.backward_prototypes.weight[i].unsqueeze(0),new_fc_weight],dim=0)
+                new_fc_bias = torch.cat([self.backward_prototypes.bias[i].unsqueeze(0), new_fc_bias])
+            out["train_logits"] = features[:,-self.out_dim:]@new_fc_weight.permute(1,0)+new_fc_bias 
+        out.update({"eval_logits": out["logits"],"energy_logits":self.forward_prototypes(features[:,-self.out_dim:])["logits"]})
+        return out
+
+    def update_fc_before(self, nb_classes):
+        new_task_size = nb_classes - sum(self.task_sizes)
+        self.biases = nn.ModuleList([BiasLayer() for i in range(len(self.task_sizes))])
+        self.convnets.append(get_convnet(self.args))
+        if self.out_dim is None:
+            self.out_dim = self.convnets[-1].out_dim
+        if self.new_fc is not None:
+            self.fe_fc = self.generate_fc(self.out_dim, nb_classes)
+            self.backward_prototypes = self.generate_fc(self.out_dim,len(self.task_sizes))
+            self.convnets[-1].load_state_dict(self.convnets[0].state_dict())
+        self.forward_prototypes = self.generate_fc(self.out_dim, nb_classes)
+        self.new_fc = self.generate_fc(self.out_dim,new_task_size)
+        self.task_sizes.append(new_task_size)
+    def generate_fc(self, in_dim, out_dim):
+        fc = SimpleLinear(in_dim, out_dim)
+        return fc
+    
+    def update_fc_after(self):
+        if self.old_fc is not None:
+            old_fc = self.generate_fc(self.feature_dim, sum(self.task_sizes))
+            new_task_size = self.task_sizes[-1]
+            old_fc.weight.data = torch.cat([self.old_fc.weight.data,torch.zeros((new_task_size,self.feature_dim-self.out_dim)).cuda()],dim=0)             
+            new_fc_weight = self.new_fc.weight.data
+            new_fc_bias = self.new_fc.bias.data
+            for i in range(len(self.task_sizes)-2,-1,-1):
+                new_fc_weight = torch.cat([*[self.biases[i](self.backward_prototypes.weight.data[i].unsqueeze(0),bias=False) for _ in range(self.task_sizes[i])], new_fc_weight],dim=0)
+                new_fc_bias = torch.cat([*[self.biases[i](self.backward_prototypes.bias.data[i].unsqueeze(0),bias=True) for _ in range(self.task_sizes[i])], new_fc_bias])
+            old_fc.weight.data = torch.cat([old_fc.weight.data,new_fc_weight],dim=1)
+            old_fc.bias.data = torch.cat([self.old_fc.bias.data,torch.zeros(new_task_size).cuda()])
+            old_fc.bias.data+=new_fc_bias
+            self.old_fc = old_fc
+        else:
+            self.old_fc  = self.new_fc
+
+    def copy(self):
+        return copy.deepcopy(self)
+
+    def copy_fc(self, fc):
+        weight = copy.deepcopy(fc.weight.data)
+        bias = copy.deepcopy(fc.bias.data)
+        n, m = weight.shape[0], weight.shape[1]
+        self.fc.weight.data[:n, :m] = weight
+        self.fc.bias.data[:n] = bias
+
+    def freeze(self):
+        for param in self.parameters():
+            param.requires_grad = False
+        self.eval()
+        return self
+
+    def freeze_conv(self):
+        for param in self.convnets.parameters():
+            param.requires_grad = False
+        self.convnets.eval()
+
+    def weight_align(self, old, increment, value):
+        weights = self.fc.weight.data
+        newnorm = torch.norm(weights[-increment:, :], p=2, dim=1)
+        oldnorm = torch.norm(weights[:-increment, :], p=2, dim=1)
+        meannew = torch.mean(newnorm)
+        meanold = torch.mean(oldnorm)
+        gamma = meanold / meannew * (value ** (old / increment))
+        logging.info("align weights, gamma = {} ".format(gamma))
+        self.fc.weight.data[-increment:, :] *= gamma
+
+
+class AdaptiveNet(nn.Module):
+    def __init__(self, args, pretrained):
+        super(AdaptiveNet, self).__init__()
+        self.convnet_type = args["convnet_type"]
+        self.TaskAgnosticExtractor , _ = get_convnet(args, pretrained) #Generalized blocks
+        self.TaskAgnosticExtractor.train()
+        self.AdaptiveExtractors = nn.ModuleList() #Specialized Blocks
+        self.pretrained=pretrained
+        self.out_dim=None
+        self.fc = None
+        self.aux_fc=None
+        self.task_sizes = []
+        self.args=args
+
+    @property
+    def feature_dim(self):
+        if self.out_dim is None:
+            return 0
+        return self.out_dim*len(self.AdaptiveExtractors)
+    
+    def extract_vector(self, x):
+        base_feature_map = self.TaskAgnosticExtractor(x)
+        features = [extractor(base_feature_map) for extractor in self.AdaptiveExtractors]
+        features = torch.cat(features, 1)
+        return features
+
+    def forward(self, x):
+        base_feature_map = self.TaskAgnosticExtractor(x)
+        features = [extractor(base_feature_map) for extractor in self.AdaptiveExtractors]
+        features = torch.cat(features, 1)
+        out=self.fc(features) #{logits: self.fc(features)}
+
+        aux_logits=self.aux_fc(features[:,-self.out_dim:])["logits"] 
+
+        out.update({"aux_logits":aux_logits,"features":features})
+        out.update({"base_features":base_feature_map})
+        return out
+                
+        '''
+        {
+            'features': features
+            'logits': logits
+            'aux_logits':aux_logits
+        }
+        '''
+        
+    def update_fc(self,nb_classes):
+        _ , _new_extractor = get_convnet(self.args)
+        if len(self.AdaptiveExtractors)==0:
+            self.AdaptiveExtractors.append(_new_extractor)
+        else:
+            self.AdaptiveExtractors.append(_new_extractor)
+            self.AdaptiveExtractors[-1].load_state_dict(self.AdaptiveExtractors[-2].state_dict())
+
+        if self.out_dim is None:
+            logging.info(self.AdaptiveExtractors[-1])
+            self.out_dim=self.AdaptiveExtractors[-1].feature_dim        
+        fc = self.generate_fc(self.feature_dim, nb_classes)             
+        if self.fc is not None:
+            nb_output = self.fc.out_features
+            weight = copy.deepcopy(self.fc.weight.data)
+            bias = copy.deepcopy(self.fc.bias.data)
+            fc.weight.data[:nb_output,:self.feature_dim-self.out_dim] = weight
+            fc.bias.data[:nb_output] = bias
+
+        del self.fc
+        self.fc = fc
+
+        new_task_size = nb_classes - sum(self.task_sizes)
+        self.task_sizes.append(new_task_size)
+        self.aux_fc=self.generate_fc(self.out_dim,new_task_size+1)
+ 
+    def generate_fc(self, in_dim, out_dim):
+        fc = SimpleLinear(in_dim, out_dim)
+        return fc
+
+    def copy(self):
+        return copy.deepcopy(self)
+
+    def weight_align(self, increment):
+        weights=self.fc.weight.data
+        newnorm=(torch.norm(weights[-increment:,:],p=2,dim=1))
+        oldnorm=(torch.norm(weights[:-increment,:],p=2,dim=1))
+        meannew=torch.mean(newnorm)
+        meanold=torch.mean(oldnorm)
+        gamma=meanold/meannew
+        print('alignweights,gamma=',gamma)
+        self.fc.weight.data[-increment:,:]*=gamma
+    
+    def load_checkpoint(self, args):
+        if args["init_cls"] == 50:
+            pkl_name = "{}_{}_{}_B{}_Inc{}".format( 
+                args["dataset"],
+                args["seed"],
+                args["convnet_type"],
+                0,
+                args["init_cls"],
+            )
+            checkpoint_name = f"checkpoints/finetune_{pkl_name}_0.pkl"
+        else:
+            checkpoint_name = f"checkpoints/finetune_{args['csv_name']}_0.pkl"
+        checkpoint_name = checkpoint_name.replace("memo_", "")
+        model_infos = torch.load(checkpoint_name)
+        model_dict = model_infos['convnet']
+        assert len(self.AdaptiveExtractors) == 1
+
+        base_state_dict = self.TaskAgnosticExtractor.state_dict()
+        adap_state_dict = self.AdaptiveExtractors[0].state_dict()
+
+        pretrained_base_dict = {
+            k:v
+            for k, v in model_dict.items()
+            if k in base_state_dict
+        }
+
+        pretrained_adap_dict = {
+            k:v
+            for k, v in model_dict.items()
+            if k in adap_state_dict
+        }
+
+        base_state_dict.update(pretrained_base_dict)
+        adap_state_dict.update(pretrained_adap_dict)
+
+        self.TaskAgnosticExtractor.load_state_dict(base_state_dict)
+        self.AdaptiveExtractors[0].load_state_dict(adap_state_dict)
+        self.fc.load_state_dict(model_infos['fc'])
+        test_acc = model_infos['test_acc']
+        return test_acc

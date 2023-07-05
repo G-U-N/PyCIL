@@ -4,7 +4,7 @@ from PIL import Image
 from torch.utils.data import Dataset
 from torchvision import transforms
 from utils.data import iCIFAR10, iCIFAR100, iImageNet100, iImageNet1000
-
+from tqdm import tqdm
 
 class DataManager(object):
     def __init__(self, dataset_name, shuffle, seed, init_cls, increment):
@@ -24,7 +24,10 @@ class DataManager(object):
 
     def get_task_size(self, task):
         return self._increments[task]
-
+    
+    def get_accumulate_tasksize(self,task):
+        return sum(self._increments[:task+1])
+    
     def get_total_classnum(self):
         return len(self._class_order)
 
@@ -77,6 +80,52 @@ class DataManager(object):
             return data, targets, DummyDataset(data, targets, trsf, self.use_path)
         else:
             return DummyDataset(data, targets, trsf, self.use_path)
+
+        
+    def get_finetune_dataset(self,known_classes,total_classes,source,mode,appendent,type="ratio"):
+        if source == 'train':
+            x, y = self._train_data, self._train_targets
+        elif source == 'test':
+            x, y = self._test_data, self._test_targets
+        else:
+            raise ValueError('Unknown data source {}.'.format(source))
+
+        if mode == 'train':
+            trsf = transforms.Compose([*self._train_trsf, *self._common_trsf])
+        elif mode == 'test':
+            trsf = transforms.Compose([*self._test_trsf, *self._common_trsf])
+        else:
+            raise ValueError('Unknown mode {}.'.format(mode))
+        val_data = []
+        val_targets = []
+
+        old_num_tot = 0
+        appendent_data, appendent_targets = appendent
+
+        for idx in range(0, known_classes):
+            append_data, append_targets = self._select(appendent_data, appendent_targets,
+                                                       low_range=idx, high_range=idx+1)
+            num=len(append_data)
+            if num == 0:
+                continue
+            old_num_tot += num
+            val_data.append(append_data)
+            val_targets.append(append_targets)
+        if type == "ratio":
+            new_num_tot = int(old_num_tot*(total_classes-known_classes)/known_classes)
+        elif type == "same":
+            new_num_tot = old_num_tot
+        else:
+            assert 0, "not implemented yet"
+        new_num_average = int(new_num_tot/(total_classes-known_classes))
+        for idx in range(known_classes,total_classes):
+            class_data, class_targets = self._select(x, y, low_range=idx, high_range=idx+1)
+            val_indx = np.random.choice(len(class_data),new_num_average, replace=False)
+            val_data.append(class_data[val_indx])
+            val_targets.append(class_targets[val_indx])
+        val_data=np.concatenate(val_data)
+        val_targets = np.concatenate(val_targets)
+        return DummyDataset(val_data, val_targets, trsf, self.use_path)
 
     def get_dataset_with_split(
         self, indices, source, mode, appendent=None, val_samples_per_class=0
@@ -166,7 +215,14 @@ class DataManager(object):
 
     def _select(self, x, y, low_range, high_range):
         idxes = np.where(np.logical_and(y >= low_range, y < high_range))[0]
-        return x[idxes], y[idxes]
+        
+        if isinstance(x,np.ndarray):
+            x_return = x[idxes]
+        else:
+            x_return = []
+            for id in idxes:
+                x_return.append(x[id])
+        return x_return, y[idxes]
 
     def _select_rmm(self, x, y, low_range, high_range, m_rate):
         assert m_rate is not None

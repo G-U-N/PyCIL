@@ -6,6 +6,7 @@ from torch import nn
 from torch.utils.data import DataLoader
 from utils.toolkit import tensor2numpy, accuracy
 from scipy.spatial.distance import cdist
+import os
 
 EPSILON = 1e-8
 batch_size = 64
@@ -13,6 +14,7 @@ batch_size = 64
 
 class BaseLearner(object):
     def __init__(self, args):
+        self.args = args
         self._cur_task = -1
         self._known_classes = 0
         self._total_classes = 0
@@ -79,7 +81,7 @@ class BaseLearner(object):
 
         return ret
 
-    def eval_task(self):
+    def eval_task(self, save_conf=False):
         y_pred, y_true = self._eval_cnn(self.test_loader)
         cnn_accy = self._evaluate(y_pred, y_true)
 
@@ -88,6 +90,19 @@ class BaseLearner(object):
             nme_accy = self._evaluate(y_pred, y_true)
         else:
             nme_accy = None
+
+        if save_conf:
+            _pred = y_pred.T[0]
+            _pred_path = os.path.join(self.args['logfilename'], "pred.npy")
+            _target_path = os.path.join(self.args['logfilename'], "target.npy")
+            np.save(_pred_path, _pred)
+            np.save(_target_path, y_true)
+
+            _save_dir = os.path.join(f"./results/conf_matrix/{self.args['prefix']}")
+            os.makedirs(_save_dir, exist_ok=True)
+            _save_path = os.path.join(_save_dir, f"{self.args['csv_name']}.csv")
+            with open(_save_path, "a+") as f:
+                f.write(f"{self.args['time_str']},{self.args['model_name']},{_pred_path},{_target_path} \n")
 
         return cnn_accy, nme_accy
 
