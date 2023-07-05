@@ -28,7 +28,7 @@ def _train(args):
         name=''.join([
             args["dataset"], "_",
             args["model_name"], "_seed_",
-            args["seed"]
+            str(args["seed"])
         ]), 
         config={
             "model_name": args["model_name"],
