@@ -230,9 +230,9 @@ class CosineIncrementalNet(BaseNet):
         return fc
 
 
-class BiasLayer(nn.Module):
+class BiasLayer_BIC(nn.Module):
     def __init__(self):
-        super(BiasLayer, self).__init__()
+        super(BiasLayer_BIC, self).__init__()
         self.alpha = nn.Parameter(torch.ones(1, requires_grad=True))
         self.beta = nn.Parameter(torch.zeros(1, requires_grad=True))
 
@@ -285,7 +285,7 @@ class IncrementalNetWithBias(BaseNet):
 
         new_task_size = nb_classes - sum(self.task_sizes)
         self.task_sizes.append(new_task_size)
-        self.bias_layers.append(BiasLayer())
+        self.bias_layers.append(BiasLayer_BIC())
 
     def generate_fc(self, in_dim, out_dim):
         fc = SimpleLinear(in_dim, out_dim)
