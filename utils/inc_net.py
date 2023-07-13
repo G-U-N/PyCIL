@@ -11,34 +11,8 @@ from convs.ucir_resnet import resnet50 as cosine_resnet50
 from convs.linears import SimpleLinear, SplitCosineLinear, CosineLinear
 from convs.modified_represnet import resnet18_rep,resnet34_rep
 from convs.resnet_cbam import resnet18_cbam,resnet34_cbam,resnet50_cbam
-
-# FOR MEMO
-from convs.memo_resnet import  get_resnet18_imagenet as get_memo_resnet18 #for imagenet
-from convs.memo_cifar_resnet import get_resnet32_a2fc as get_memo_resnet32 #for cifar
-
-# FOR AUC & DER
-from convs.conv_cifar import conv2 as conv2_cifar
-from convs.cifar_resnet import resnet14 as resnet14_cifar
-from convs.cifar_resnet import resnet20 as resnet20_cifar
-from convs.cifar_resnet import resnet26 as resnet26_cifar
-
-from convs.conv_imagenet import conv4 as conv4_imagenet
-from convs.resnet import resnet10 as resnet10_imagenet
-from convs.resnet import resnet26 as resnet26_imagenet
-from convs.resnet import resnet34 as resnet34_imagenet
-from convs.resnet import resnet50 as resnet50_imagenet
-
-# FOR AUC & MEMO
-from convs.conv_cifar import get_conv_a2fc as memo_conv2_cifar
-from convs.memo_cifar_resnet import get_resnet14_a2fc as memo_resnet14_cifar
-from convs.memo_cifar_resnet import get_resnet20_a2fc as memo_resnet20_cifar
-from convs.memo_cifar_resnet import get_resnet26_a2fc as memo_resnet26_cifar
-
-from convs.conv_imagenet import conv_a2fc_imagenet as memo_conv4_imagenet
-from convs.memo_resnet import get_resnet10_imagenet as memo_resnet10_imagenet
-from convs.memo_resnet import get_resnet26_imagenet as memo_resnet26_imagenet
-from convs.memo_resnet import get_resnet34_imagenet as memo_resnet34_imagenet
-from convs.memo_resnet import get_resnet50_imagenet as memo_resnet50_imagenet
+from convs.memo_resnet import  get_resnet18_imagenet as get_memo_resnet18 #for MEMO imagenet
+from convs.memo_cifar_resnet import get_resnet32_a2fc as get_memo_resnet32 #for MEMO cifar
 
 def get_convnet(args, pretrained=False):
     name = args["convnet_type"].lower()
@@ -75,57 +49,6 @@ def get_convnet(args, pretrained=False):
         _basenet, _adaptive_net = get_memo_resnet32()
         return _basenet, _adaptive_net
     
-    # AUC
-    ## cifar
-    elif name == 'conv2':
-        return conv2_cifar()
-    elif name == 'resnet14_cifar':
-        return resnet14_cifar()
-    elif name == 'resnet20_cifar':
-        return resnet20_cifar()
-    elif name == 'resnet26_cifar':
-        return resnet26_cifar()
-    
-    elif name == 'memo_conv2':
-        g_blocks, s_blocks = memo_conv2_cifar() # generalized/specialized
-        return g_blocks, s_blocks
-    elif name == 'memo_resnet14_cifar':
-        g_blocks, s_blocks = memo_resnet14_cifar() # generalized/specialized
-        return g_blocks, s_blocks
-    elif name == 'memo_resnet20_cifar':
-        g_blocks, s_blocks = memo_resnet20_cifar() # generalized/specialized
-        return g_blocks, s_blocks
-    elif name == 'memo_resnet26_cifar':
-        g_blocks, s_blocks = memo_resnet26_cifar() # generalized/specialized
-        return g_blocks, s_blocks
-    
-    ## imagenet
-    elif name == 'conv4':
-        return conv4_imagenet()
-    elif name == 'resnet10_imagenet':
-        return resnet10_imagenet()
-    elif name == 'resnet26_imagenet':
-        return resnet26_imagenet()
-    elif name == 'resnet34_imagenet':
-        return resnet34_imagenet()
-    elif name == 'resnet50_imagenet':
-        return resnet50_imagenet()
-    
-    elif name == 'memo_conv4':
-        g_blcoks, s_blocks = memo_conv4_imagenet()
-        return g_blcoks, s_blocks
-    elif name == 'memo_resnet10_imagenet':
-        g_blcoks, s_blocks = memo_resnet10_imagenet()
-        return g_blcoks, s_blocks
-    elif name == 'memo_resnet26_imagenet':
-        g_blcoks, s_blocks = memo_resnet26_imagenet()
-        return g_blcoks, s_blocks
-    elif name == 'memo_resnet34_imagenet':
-        g_blocks, s_blocks = memo_resnet34_imagenet()
-        return g_blocks, s_blocks
-    elif name == 'memo_resnet50_imagenet':
-        g_blcoks, s_blocks = memo_resnet50_imagenet()
-        return g_blcoks, s_blocks
     else:
         raise NotImplementedError("Unknown type {}".format(name))
 
