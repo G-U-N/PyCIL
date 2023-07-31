@@ -1,0 +1,23 @@
+{
+    "prefix": "simplecil",
+    "dataset": "cifar100",
+    "memory_size": 0,
+    "memory_per_class": 0,
+    "fixed_memory": false,
+    "shuffle": true,
+    "init_cls": 50,
+    "increment": 5,
+    "model_name": "simplecil",
+    "convnet_type": "cosine_resnet18",
+    "device": ["0"],
+    "seed": [1993],
+    
+    "init_epoch": 200,
+    "init_lr": 0.01,
+    "batch_size": 256,
+    "weight_decay": 0.05,
+    "init_lr_decay": 0.1,
+    "init_weight_decay": 5e-4,
+    "min_lr": 0
+}
+

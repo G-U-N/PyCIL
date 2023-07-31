@@ -1,7 +1,22 @@
 import os
 import numpy as np
 import torch
+import  json
+from enum import Enum
 
+class ConfigEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, type):
+            return {'$class': o.__module__ + "." + o.__name__}
+        elif isinstance(o, Enum):
+            return {
+                '$enum': o.__module__ + "." + o.__class__.__name__ + '.' + o.name
+            }
+        elif callable(o):
+            return {
+                '$function': o.__module__ + "." + o.__name__
+            }
+        return json.JSONEncoder.default(self, o)
 
 def count_parameters(model, trainable=False):
     if trainable:
@@ -71,3 +86,26 @@ def split_images_labels(imgs):
         labels.append(item[1])
 
     return np.array(images), np.array(labels)
+
+def save_fc(args, model):
+    _path = os.path.join(args['logfilename'], "fc.pt")
+    if len(args['device']) > 1: 
+        fc_weight = model._network.fc.weight.data    
+    else:
+        fc_weight = model._network.fc.weight.data.cpu()
+    torch.save(fc_weight, _path)
+
+    _save_dir = os.path.join(f"./results/fc_weights/{args['prefix']}")
+    os.makedirs(_save_dir, exist_ok=True)
+    _save_path = os.path.join(_save_dir, f"{args['csv_name']}.csv")
+    with open(_save_path, "a+") as f:
+        f.write(f"{args['time_str']},{args['model_name']},{_path} \n")
+
+def save_model(args, model):
+    #used in PODNet
+    _path = os.path.join(args['logfilename'], "model.pt")
+    if len(args['device']) > 1:
+        weight = model._network   
+    else:
+        weight = model._network.cpu()
+    torch.save(weight, _path)

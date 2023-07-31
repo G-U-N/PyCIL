@@ -150,8 +150,18 @@ class ResNet(nn.Module):
         
         assert args is not None, "you should pass args to resnet"
         if 'cifar' in args["dataset"]:
-            self.conv1 = nn.Sequential(nn.Conv2d(3, self.inplanes, kernel_size=3, stride=1, padding=1, bias=False),
-                                       nn.BatchNorm2d(self.inplanes), nn.ReLU(inplace=True))
+            if args["model_name"] == "memo":
+                self.conv1 = nn.Sequential(
+                    nn.Conv2d(3, self.inplanes, kernel_size=7, stride=2, padding=3, bias=False),
+                    nn.BatchNorm2d(self.inplanes),
+                    nn.ReLU(inplace=True),
+                    nn.MaxPool2d(kernel_size=3, stride=2, padding=1),
+                )
+            else:
+                self.conv1 = nn.Sequential(
+                    nn.Conv2d(3, self.inplanes, kernel_size=3, stride=1, padding=1, bias=False),                       
+                    nn.BatchNorm2d(self.inplanes), 
+                    nn.ReLU(inplace=True))
         elif 'imagenet' in args["dataset"]:
             if args["init_cls"] == args["increment"]:
                 self.conv1 = nn.Sequential(
@@ -258,6 +268,19 @@ def _resnet(arch, block, layers, pretrained, progress, **kwargs):
         model.load_state_dict(state_dict)
     return model
 
+def resnet10(pretrained=False, progress=True, **kwargs):
+    """
+    For MEMO implementations of ResNet-10
+    """
+    return _resnet('resnet10', BasicBlock, [1, 1, 1, 1], pretrained, progress,
+                   **kwargs)
+        
+def resnet26(pretrained=False, progress=True, **kwargs):
+    """
+    For MEMO implementations of ResNet-26
+    """
+    return _resnet('resnet26', Bottleneck, [2, 2, 2, 2], pretrained, progress,
+                   **kwargs)
 
 def resnet18(pretrained=False, progress=True, **kwargs):
     r"""ResNet-18 model from

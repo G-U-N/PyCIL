@@ -104,6 +104,9 @@ def _train(args):
                 "nme_top1": nme_accy["top1"],
                 "nme_top5": nme_accy["top5"]
             })
+
+            logging.info("Average Accuracy (CNN): {}".format(sum(cnn_curve["top1"])/len(cnn_curve["top1"])))
+            logging.info("Average Accuracy (NME): {}".format(sum(nme_curve["top1"])/len(nme_curve["top1"])))
         else:
             logging.info("No NME accuracy.")
             logging.info("CNN: {}".format(cnn_accy["grouped"]))
@@ -119,7 +122,10 @@ def _train(args):
                 "cnn_top5": cnn_accy["top5"],
             })
 
+            print('Average Accuracy (CNN):', sum(cnn_curve["top1"])/len(cnn_curve["top1"]))
+            logging.info("Average Accuracy (CNN): {}".format(sum(cnn_curve["top1"])/len(cnn_curve["top1"])))
 
+    
 def _set_device(args):
     device_type = args["device"]
     gpus = []
