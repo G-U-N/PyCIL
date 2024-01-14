@@ -202,8 +202,7 @@ We have implemented the pre-processing of `CIFAR100`, `imagenet100,` and `imagen
 
 ### Other Awesome Works
 
-- Dynamic Residual Classifier for Class Incremental Learning (**ICCV 2023**) [[paper](Towards Realistic Evaluation of Industrial Continual Learning Scenarios with
-an Emphasis on Energy Consumption and Computational Footprint)][[code](https://github.com/Vivek9Chavan/RECIL)] 
+- Dynamic Residual Classifier for Class Incremental Learning (**ICCV 2023**) [[paper](https://openaccess.thecvf.com/content/ICCV2023/papers/Chavan_Towards_Realistic_Evaluation_of_Industrial_Continual_Learning_Scenarios_with_an_ICCV_2023_paper.pdf)][[code](https://github.com/Vivek9Chavan/RECIL)] 
 
 - Dynamic Residual Classifier for Class Incremental Learning (**ICCV 2023**) [[paper](https://openaccess.thecvf.com/content/ICCV2023/papers/Chen_Dynamic_Residual_Classifier_for_Class_Incremental_Learning_ICCV_2023_paper.pdf)][[code](https://github.com/chen-xw/DRC-CIL)] 
 
