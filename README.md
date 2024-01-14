@@ -186,6 +186,8 @@ We have implemented the pre-processing of `CIFAR100`, `imagenet100,` and `imagen
 
 - PILOT: A Pre-Trained Model-Based Continual Learning Toolbox (**arXiv 2023**) [[paper](https://arxiv.org/abs/2309.07117)] [[code](https://github.com/sun-hailong/LAMDA-PILOT)]
 
+- Few-Shot Class-Incremental Learning via Training-Free Prototype Calibration (**NeurIPS 2023**)[[paper](https://arxiv.org/abs/2312.05229)] [[Code](https://github.com/wangkiw/TEEN)]
+
 - BEEF: Bi-Compatible Class-Incremental Learning via Energy-Based Expansion and Fusion (**ICLR 2023**) [[paper](https://openreview.net/forum?id=iP77_axu0h3)] [[code](https://github.com/G-U-N/ICLR23-BEEF/)]
 
 - A model or 603 exemplars: Towards memory-efficient class-incremental learning (**ICLR 2023**) [[paper](https://arxiv.org/abs/2205.13218)] [[code](https://github.com/wangkiw/ICLR23-MEMO/)]
@@ -200,7 +202,10 @@ We have implemented the pre-processing of `CIFAR100`, `imagenet100,` and `imagen
 
 ### Other Awesome Works
 
-- Towards Continual Egocentric Activity Recognition: A Multi-modal Egocentric Activity Dataset for Continual Learning (**arXiv 2023**) [[paper](https://arxiv.org/abs/2301.10931)]
+- Dynamic Residual Classifier for Class Incremental Learning (**ICCV 2023**) [[paper](Towards Realistic Evaluation of Industrial Continual Learning Scenarios with
+an Emphasis on Energy Consumption and Computational Footprint)][[code](https://github.com/Vivek9Chavan/RECIL)] 
+
+- Dynamic Residual Classifier for Class Incremental Learning (**ICCV 2023**) [[paper](https://openaccess.thecvf.com/content/ICCV2023/papers/Chen_Dynamic_Residual_Classifier_for_Class_Incremental_Learning_ICCV_2023_paper.pdf)][[code](https://github.com/chen-xw/DRC-CIL)] 
 
 - S-Prompts Learning with Pre-trained Transformers: An Occam's Razor for Domain Incremental Learning (**NeurIPS 2022**) [[paper](https://openreview.net/forum?id=ZVe_WeMold)] [[code](https://github.com/iamwangyabin/S-Prompts)]
 
