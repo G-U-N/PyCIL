@@ -63,5 +63,17 @@ def get_model(model_name, args):
     elif name == "simplecil":
         from models.simplecil import SimpleCIL
         return SimpleCIL(args)
+    elif name == "acil":
+        from models.acil import ACIL
+        return ACIL(args)
+    elif name == "g-acil":
+        from models.gacil import GACIL
+        return GACIL(args)
+    elif name == "gkeal":
+        from models.gkeal import GKEAL
+        return GKEAL(args)
+    elif name == "ds-al":
+        from models.dsal import DSAL
+        return DSAL(args)
     else:
         assert 0
