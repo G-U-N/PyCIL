@@ -36,32 +36,32 @@ Welcome to PyCIL, perhaps the toolbox for class-incremental learning with the **
         year = {2023},
         volume = {66},
         number = {9},
-        pages = {197101-},
+        pages = {197101},
         doi = {https://doi.org/10.1007/s11432-022-3600-y}
       }
     
     @article{zhou2023class,
         author = {Zhou, Da-Wei and Wang, Qi-Wei and Qi, Zhi-Hong and Ye, Han-Jia and Zhan, De-Chuan and Liu, Ziwei},
-        title = {Deep Class-Incremental Learning: A Survey},
-        journal = {arXiv preprint arXiv:2302.03648},
-        year = {2023}
+        title = {Class-Incremental Learning: A Survey},
+        journal={IEEE Transactions on Pattern Analysis and Machine Intelligence},
+        year = {2024}
      }
 
-    @article{zhou2024continual,
-      title={Continual Learning with Pre-Trained Models: A Survey},
-      author={Zhou, Da-Wei and Sun, Hai-Long and Ning, Jingyi and Ye, Han-Jia and Zhan, De-Chuan},
-      journal={arXiv preprint arXiv:2401.16386},
-      year={2024}
+    @inproceedings{zhou2024continual,
+        title={Continual learning with pre-trained models: A survey},
+        author={Zhou, Da-Wei and Sun, Hai-Long and Ning, Jingyi and Ye, Han-Jia and Zhan, De-Chuan},
+        booktitle={IJCAI},
+        year={2024}
     }
 
 
 ## What's New
+- [2024-07]🌟 Check out our [rigorous and unified survey](https://arxiv.org/abs/2302.03648) about class-incremental learning, which introduces some memory-agnostic measures with holistic evaluations from multiple aspects (**TPAMI 2024**)!
 - [2024-03]🌟 Check out our [latest work](https://arxiv.org/abs/2403.12030) on pre-trained model-based class-incremental learning (**CVPR 2024**)!
 - [2024-01]🌟 Check out our [latest survey](https://arxiv.org/abs/2401.16386) on pre-trained model-based continual learning (**IJCAI 2024**)!
 - [2023-09]🌟 We have released [PILOT](https://github.com/sun-hailong/LAMDA-PILOT) toolbox for class-incremental learning with pre-trained models. Have a try!
 - [2023-07]🌟 Add [MEMO](https://openreview.net/forum?id=S07feAlQHgM), [BEEF](https://openreview.net/forum?id=iP77_axu0h3), and [SimpleCIL](https://arxiv.org/abs/2303.07338). State-of-the-art methods of 2023!
 - [2023-05]🌟 Check out our recent work about [class-incremental learning with vision-language models](https://arxiv.org/abs/2305.19270)!
-- [2023-02]🌟 Check out our [rigorous and unified survey](https://arxiv.org/abs/2302.03648) about class-incremental learning, which introduces some memory-agnostic measures with holistic evaluations from multiple aspects!
 - [2022-12]🌟 Add FrTrIL, PASS, IL2A, and SSRE.
 - [2022-10]🌟 PyCIL has been published in [SCIENCE CHINA Information Sciences](https://link.springer.com/article/10.1007/s11432-022-3600-y). Check out the [official introduction](https://mp.weixin.qq.com/s/h1qu2LpdvjeHAPLOnG478A)!  
 - [2022-08]🌟 Add RMM.
