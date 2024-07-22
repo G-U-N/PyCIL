@@ -192,6 +192,8 @@ We have implemented the pre-processing of `CIFAR100`, `imagenet100,` and `imagen
   
 - Expandable Subspace Ensemble for Pre-Trained Model-Based Class-Incremental Learning (**CVPR 2024**) [[paper](https://arxiv.org/abs/2403.12030 )] [[code](https://github.com/sun-hailong/CVPR24-Ease)]
 
+- Multi-layer Rehearsal Feature Augmentation for Class-Incremental Learning (**ICML 2024**) [[paper](https://openreview.net/forum?id=aksdU1KOpT)] [[code](https://github.com/bwnzheng/MRFA_ICML2024)]
+
 - Continual Learning with Pre-Trained Models: A Survey (**IJCAI 2024**) [[paper](https://arxiv.org/abs/2401.16386)] [[code](https://github.com/sun-hailong/LAMDA-PILOT)]
 
 - Learning without Forgetting for Vision-Language Models (**arXiv 2023**) [[paper](https://arxiv.org/abs/2305.19270)]
