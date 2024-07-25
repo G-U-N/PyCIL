@@ -13,6 +13,10 @@ from convs.modified_represnet import resnet18_rep,resnet34_rep
 from convs.resnet_cbam import resnet18_cbam,resnet34_cbam,resnet50_cbam
 from convs.memo_resnet import  get_resnet18_imagenet as get_memo_resnet18 #for MEMO imagenet
 from convs.memo_cifar_resnet import get_resnet32_a2fc as get_memo_resnet32 #for MEMO cifar
+from convs.ACL_buffer import RandomBuffer, activation_t
+from convs.linears import RecursiveLinear
+from typing import Dict, Any
+
 
 def get_convnet(args, pretrained=False):
     name = args["convnet_type"].lower()
@@ -818,3 +822,165 @@ class AdaptiveNet(nn.Module):
         self.fc.load_state_dict(model_infos['fc'])
         test_acc = model_infos['test_acc']
         return test_acc
+
+
+class ACILNet(BaseNet):
+    """
+    Network structure of the ACIL [1].
+
+    This implementation refers to the official implementation https://github.com/ZHUANGHP/Analytic-continual-learning.
+
+    References:
+    [1] Zhuang, Huiping, et al.
+        "ACIL: Analytic class-incremental learning with absolute memorization and privacy protection."
+        Advances in Neural Information Processing Systems 35 (2022): 11602-11614.
+    """
+    def __init__(
+        self,
+        args: Dict[str, Any],
+        buffer_size: int = 8192,
+        gamma: float = 0.1,
+        pretrained: bool = False,
+        device=None,
+        dtype=torch.double,
+    ) -> None:
+        super().__init__(args, pretrained)
+        assert isinstance(
+            self.convnet, torch.nn.Module
+        ), "The backbone network `convnet` must be a `torch.nn.Module`."
+        self.convnet: torch.nn.Module = self.convnet.to(device, non_blocking=True)
+
+        self.args = args
+        self.buffer_size: int = buffer_size
+        self.gamma: float = gamma
+        self.device = device
+        self.dtype = dtype
+
+    @torch.no_grad()
+    def forward(self, X: torch.Tensor) -> Dict[str, torch.Tensor]:
+        X = self.convnet(X)["features"]
+        X = self.buffer(X)
+        X = self.fc(X)["logits"]
+        return {"logits": X}
+
+    def update_fc(self, nb_classes: int) -> None:
+        self.fc.update_fc(nb_classes)
+
+    def generate_fc(self, *_) -> None:
+        self.fc = RecursiveLinear(
+            self.buffer_size,
+            self.gamma,
+            bias=False,
+            device=self.device,
+            dtype=self.dtype,
+        )
+
+    def generate_buffer(self) -> None:
+        self.buffer = RandomBuffer(
+            self.feature_dim, self.buffer_size, device=self.device, dtype=self.dtype
+        )
+
+    def after_task(self) -> None:
+        self.fc.after_task()
+
+    @torch.no_grad()
+    def fit(self, X: torch.Tensor, y: torch.Tensor) -> None:
+        X = self.convnet(X)["features"]
+        X = self.buffer(X)
+        Y: torch.Tensor = torch.nn.functional.one_hot(y, self.fc.out_features)
+        self.fc.fit(X, Y)
+
+
+class DSALNet(ACILNet):
+    """
+    Network structure of the DS-AL [1].
+
+    This implementation refers to the official implementation https://github.com/ZHUANGHP/Analytic-continual-learning.
+
+    References:
+    [1] Zhuang, Huiping, et al.
+        "DS-AL: A Dual-Stream Analytic Learning for Exemplar-Free Class-Incremental Learning."
+        Proceedings of the AAAI Conference on Artificial Intelligence. Vol. 38. No. 15. 2024.
+    """
+    def __init__(
+        self,
+        args: Dict[str, Any],
+        buffer_size: int = 8192,
+        gamma_main: float = 1e-3,
+        gamma_comp: float = 1e-3,
+        C: float = 1,
+        activation_main: activation_t = torch.relu,
+        activation_comp: activation_t = torch.tanh,
+        pretrained: bool = False,
+        device=None,
+        dtype=torch.double,
+    ) -> None:
+        self.C = C
+        self.gamma_comp = gamma_comp
+        self.activation_main = activation_main
+        self.activation_comp = activation_comp
+        super().__init__(args, buffer_size, gamma_main, pretrained, device, dtype)
+
+    @torch.no_grad()
+    def forward(self, X: torch.Tensor) -> Dict[str, torch.Tensor]:
+        X = self.buffer(self.convnet(X)["features"])
+        X_main = self.fc(self.activation_main(X))["logits"]
+        X_comp = self.fc_comp(self.activation_comp(X))["logits"]
+        return {"logits": X_main + self.C * X_comp}
+
+    @torch.no_grad()
+    def fit(self, X: torch.Tensor, y: torch.Tensor) -> None:
+        num_classes = max(self.fc.out_features, int(y.max().item()) + 1)
+        Y_main = torch.nn.functional.one_hot(y, num_classes=num_classes)
+        X = self.buffer(self.convnet(X)["features"])
+
+        # Train the main stream
+        X_main = self.activation_main(X)
+        self.fc.fit(X_main, Y_main)
+        self.fc.after_task()
+
+        # Previous label cleansing (PLC)
+        Y_comp = Y_main - self.fc(X_main)["logits"]
+        Y_comp[:, : -self.increment_size] = 0
+
+        # Train the compensation stream
+        X_comp = self.activation_comp(X)
+        self.fc_comp.fit(X_comp, Y_comp)
+
+    @torch.no_grad()
+    def after_task(self) -> None:
+        self.fc.after_task()
+        self.fc_comp.after_task()
+
+    def generate_buffer(self) -> None:
+        self.buffer = RandomBuffer(
+            self.feature_dim,
+            self.buffer_size,
+            activation=None,
+            device=self.device,
+            dtype=self.dtype,
+        )
+
+    def generate_fc(self, *_) -> None:
+        # Main stream
+        self.fc = RecursiveLinear(
+            self.buffer_size,
+            self.gamma,
+            bias=False,
+            device=self.device,
+            dtype=self.dtype,
+        )
+
+        # Compensation stream
+        self.fc_comp = RecursiveLinear(
+            self.buffer_size,
+            self.gamma_comp,
+            bias=False,
+            device=self.device,
+            dtype=self.dtype,
+        )
+
+    def update_fc(self, nb_classes) -> None:
+        self.increment_size = nb_classes - self.fc.out_features
+        self.fc.update_fc(nb_classes)
+        self.fc_comp.update_fc(nb_classes)
