@@ -40,7 +40,7 @@ Welcome to PyCIL, perhaps the toolbox for class-incremental learning with the **
         doi = {https://doi.org/10.1007/s11432-022-3600-y}
       }
     
-    @article{zhou2023class,
+    @article{zhou2024class,
         author = {Zhou, Da-Wei and Wang, Qi-Wei and Qi, Zhi-Hong and Ye, Han-Jia and Zhan, De-Chuan and Liu, Ziwei},
         title = {Class-Incremental Learning: A Survey},
         journal={IEEE Transactions on Pattern Analysis and Machine Intelligence},
@@ -51,11 +51,13 @@ Welcome to PyCIL, perhaps the toolbox for class-incremental learning with the **
         title={Continual learning with pre-trained models: A survey},
         author={Zhou, Da-Wei and Sun, Hai-Long and Ning, Jingyi and Ye, Han-Jia and Zhan, De-Chuan},
         booktitle={IJCAI},
+        pages={8363-8371},
         year={2024}
     }
 
 
 ## What's New
+- [2024-08]🌟 Check out our [latest work](https://arxiv.org/abs/2303.07338) on pre-trained model-based class-incremental learning (**IJCV 2024**)!
 - [2024-07]🌟 Check out our [rigorous and unified survey](https://arxiv.org/abs/2302.03648) about class-incremental learning, which introduces some memory-agnostic measures with holistic evaluations from multiple aspects (**TPAMI 2024**)!
 - [2024-06]🌟 Check out our [work about all-layer margin in class-incremental learning](https://openreview.net/forum?id=aksdU1KOpT) (**ICML 2024**)!
 - [2024-03]🌟 Check out our [latest work](https://arxiv.org/abs/2403.12030) on pre-trained model-based class-incremental learning (**CVPR 2024**)!
@@ -99,7 +101,7 @@ For more information about incremental learning, you can refer to these reading 
 -  `FOSTER`: Feature Boosting and Compression for Class-incremental Learning. ECCV 2022 [[paper](https://arxiv.org/abs/2204.04662)]
 -  `MEMO`: A Model or 603 Exemplars: Towards Memory-Efficient Class-Incremental Learning. ICLR 2023 Spotlight [[paper](https://openreview.net/forum?id=S07feAlQHgM)]
 -  `BEEF`: BEEF: Bi-Compatible Class-Incremental Learning via Energy-Based Expansion and Fusion. ICLR 2023 [[paper](https://openreview.net/forum?id=iP77_axu0h3)]
--  `SimpleCIL`: Revisiting Class-Incremental Learning with Pre-Trained Models: Generalizability and Adaptivity are All You Need. arXiv 2023 [[paper](https://arxiv.org/abs/2303.07338)]
+-  `SimpleCIL`: Revisiting Class-Incremental Learning with Pre-Trained Models: Generalizability and Adaptivity are All You Need. IJCV 2024 [[paper](https://arxiv.org/abs/2303.07338)]
 
 
 
@@ -189,8 +191,10 @@ We have implemented the pre-processing of `CIFAR100`, `imagenet100,` and `imagen
 
 ### Our Papers
 
+- Revisiting Class-Incremental Learning with Pre-Trained Models: Generalizability and Adaptivity are All You Need (**IJCV 2024**) [[paper](https://arxiv.org/abs/2303.07338)] [[code](https://github.com/zhoudw-zdw/RevisitingCIL)]
+
 - Class-Incremental Learning: A Survey (**TPAMI 2024**) [[paper](https://arxiv.org/abs/2302.03648)] [[code](https://github.com/zhoudw-zdw/CIL_Survey/)]
-  
+
 - Expandable Subspace Ensemble for Pre-Trained Model-Based Class-Incremental Learning (**CVPR 2024**) [[paper](https://arxiv.org/abs/2403.12030 )] [[code](https://github.com/sun-hailong/CVPR24-Ease)]
 
 - Multi-layer Rehearsal Feature Augmentation for Class-Incremental Learning (**ICML 2024**) [[paper](https://openreview.net/forum?id=aksdU1KOpT)] [[code](https://github.com/bwnzheng/MRFA_ICML2024)]
@@ -198,8 +202,6 @@ We have implemented the pre-processing of `CIFAR100`, `imagenet100,` and `imagen
 - Continual Learning with Pre-Trained Models: A Survey (**IJCAI 2024**) [[paper](https://arxiv.org/abs/2401.16386)] [[code](https://github.com/sun-hailong/LAMDA-PILOT)]
 
 - Learning without Forgetting for Vision-Language Models (**arXiv 2023**) [[paper](https://arxiv.org/abs/2305.19270)]
-
-- Revisiting Class-Incremental Learning with Pre-Trained Models: Generalizability and Adaptivity are All You Need (**arXiv 2023**) [[paper](https://arxiv.org/abs/2303.07338)] [[code](https://github.com/zhoudw-zdw/RevisitingCIL)]
 
 - PILOT: A Pre-Trained Model-Based Continual Learning Toolbox (**arXiv 2023**) [[paper](https://arxiv.org/abs/2309.07117)] [[code](https://github.com/sun-hailong/LAMDA-PILOT)]
 
