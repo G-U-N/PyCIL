@@ -1,0 +1,48 @@
+{
+    "model_name": "acil",
+    "prefix": "ACIL",
+    "memory_size": 0,
+
+    "dataset": "cifar100",
+    "seed": [1993],
+    "shuffle": true,
+    "device": ["0"],
+
+    "convnet_type": "resnet32",
+    "init_cls": 50,
+    "increment": 5,
+
+    "num_workers": 16,
+    "init_batch_size": 128,
+    "IL_batch_size": 4096,
+    "inplace_repeat": 1,
+
+    "configurations": {
+        "cifar100": {
+            "buffer_size": 8192,
+            "gamma": 0.1,
+            "init_weight_decay": 5e-4,
+            "scheduler": {
+                "type": "MultiStep",
+                "init_lr": 0.1,
+                "init_epochs": 160,
+                "warmup": 0,
+                "milestones": [120, 140],
+                "decay": 0.1
+            }
+        },
+        "imagenet1000": {
+            "buffer_size": 16384,
+            "gamma": 0.1,
+            "init_weight_decay": 5e-5,
+            "scheduler": {
+                "type": "MultiStep",
+                "init_lr": 0.1,
+                "init_epochs": 90,
+                "warmup": 0,
+                "milestones": [30, 60],
+                "decay": 0.1
+            }
+        }
+    }
+}
