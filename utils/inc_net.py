@@ -437,6 +437,60 @@ class SimpleCosineIncrementalNet(BaseNet):
         fc = CosineLinear(in_dim, out_dim)
         return fc
 
+    def regenerate_fc(self, nb_classes):
+        fc = self.generate_fc(self.feature_dim, nb_classes).cuda()
+        del self.fc
+        self.fc = fc
+        return fc
+
+class MultiBranchCosineIncrementalNet(BaseNet):
+    def __init__(self, args, pretrained):
+        super().__init__(args, pretrained)
+
+        # no need the convnet.
+
+        print(
+            'Clear the convnet in MultiBranchCosineIncrementalNet, since we are using self.convnets with dual branches')
+        self.convnet = torch.nn.Identity()
+        for param in self.convnet.parameters():
+            param.requires_grad = False
+
+        self.convnets = nn.ModuleList()
+        self.args = args
+
+    def update_fc(self, nb_classes, nextperiod_initialization=None):
+        fc = self.generate_fc(self._feature_dim, nb_classes).cuda()
+        if self.fc is not None:
+            nb_output = self.fc.out_features
+            weight = copy.deepcopy(self.fc.weight.data)
+            fc.sigma.data = self.fc.sigma.data
+            if nextperiod_initialization is not None:
+                weight = torch.cat([weight, nextperiod_initialization])
+            else:
+                weight = torch.cat([weight, torch.zeros(nb_classes - nb_output, self._feature_dim).cuda()])
+            fc.weight = nn.Parameter(weight)
+        del self.fc
+        self.fc = fc
+
+    def generate_fc(self, in_dim, out_dim):
+        fc = CosineLinear(in_dim, out_dim)
+        return fc
+
+    def forward(self, x):
+        features = [convnet(x)["features"] for convnet in self.convnets]
+        features = torch.cat(features, 1)
+        # import pdb; pdb.set_trace()
+        out = self.fc(features)
+        out.update({"features": features})
+        return out
+
+    def construct_dual_branch_network(self, trained_model, tuned_model, cls_num):
+        self.convnets.append(trained_model.convnet)
+        self.convnets.append(tuned_model.convnet)
+
+        self._feature_dim = self.convnets[0].out_dim * len(self.convnets)
+        self.fc = self.generate_fc(self._feature_dim, cls_num)
+
 
 class FOSTERNet(nn.Module):
     def __init__(self, args, pretrained):

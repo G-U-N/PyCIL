@@ -1,0 +1,21 @@
+{
+    "prefix": "reproduce",
+    "dataset": "cifar100",
+    "memory_size": 2000,
+    "memory_per_class": 20,
+    "fixed_memory": false,
+    "shuffle": true,
+    "init_cls": 10,
+    "increment": 10,
+    "model_name": "aper_finetune",
+    "convnet_type": "cosine_resnet32",
+    "device": ["0"],
+    "trained_epoch": 200,
+    "tuned_epoch": 20,
+    "optimizer": "sgd",
+    "init_weight_decay": 0.05,
+    "weight_decay": 0.05,
+    "finetune_lr": 0.005,
+
+    "seed": [1993]
+}

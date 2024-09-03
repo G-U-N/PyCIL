@@ -69,5 +69,8 @@ def get_model(model_name, args):
     elif name == "ds-al":
         from models.dsal import DSAL
         return DSAL(args)
+    elif name == "aper_finetune":
+        from models.aper_finetune import APER_FINETUNE
+        return APER_FINETUNE(args)
     else:
         assert 0
