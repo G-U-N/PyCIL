@@ -1,6 +1,7 @@
 """
 Re-implementation of APER-Finetune (https://arxiv.org/abs/2303.07338) without pre-trained weights.
-Note: this method was initially designed for PTMs, whereas it has been slightly modified here to adapt to the train-from-scratch setting.
+Note: this method was initially designed for PTMs, whereas it has been slightly modified here to adapt to the train-from-scratch setting. 
+Please refer to the original implementation (https://github.com/zhoudw-zdw/RevisitingCIL) if you are using pre-trained weights.
 """
 
 import logging
