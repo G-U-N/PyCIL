@@ -202,6 +202,8 @@ We have implemented the pre-processing of `CIFAR100`, `imagenet100,` and `imagen
 
 - Continual Learning with Pre-Trained Models: A Survey (**IJCAI 2024**) [[paper](https://arxiv.org/abs/2401.16386)] [[code](https://github.com/sun-hailong/LAMDA-PILOT)]
 
+- Adaptive Adapter Routing for Long-Tailed Class-Incremental Learning (**Machine Learning 2024**) [[paper](https://arxiv.org/abs/2409.07446)] [[code](https://github.com/vita-qzh/APART)]
+
 - Learning without Forgetting for Vision-Language Models (**arXiv 2023**) [[paper](https://arxiv.org/abs/2305.19270)]
 
 - PILOT: A Pre-Trained Model-Based Continual Learning Toolbox (**arXiv 2023**) [[paper](https://arxiv.org/abs/2309.07117)] [[code](https://github.com/sun-hailong/LAMDA-PILOT)]
