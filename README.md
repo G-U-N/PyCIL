@@ -13,7 +13,7 @@
 </p>
 
 <div align="center">
-<img src="./resources/logo.png" width="200px">
+<img src="./resources/logo_v2.png" width="800px">
 </div>
 
 ---
