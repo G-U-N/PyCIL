@@ -60,6 +60,7 @@ Welcome to PyCIL, perhaps the toolbox for class-incremental learning with the **
 
 
 ## What's New
+- [2025-02]🌟 Check out our [latest work](https://arxiv.org/abs/2305.19270) on class-incremental learning with vision-language models (**TPAMI 2025**)!
 - [2024-12]🌟 Check out our [latest work](https://arxiv.org/abs/2412.09441) on pre-trained model-based class-incremental learning (**AAAI 2025**)!
 - [2024-10]🌟 Check out our [latest work](https://arxiv.org/abs/2410.00911) on pre-trained model-based domain-incremental learning! 
 - [2024-08]🌟 Check out our [latest work](https://arxiv.org/abs/2303.07338) on pre-trained model-based class-incremental learning (**IJCV 2024**)!
@@ -69,7 +70,6 @@ Welcome to PyCIL, perhaps the toolbox for class-incremental learning with the **
 - [2024-01]🌟 Check out our [latest survey](https://arxiv.org/abs/2401.16386) on pre-trained model-based continual learning (**IJCAI 2024**)!
 - [2023-09]🌟 We have released [PILOT](https://github.com/sun-hailong/LAMDA-PILOT) toolbox for class-incremental learning with pre-trained models. Have a try!
 - [2023-07]🌟 Add [MEMO](https://openreview.net/forum?id=S07feAlQHgM), [BEEF](https://openreview.net/forum?id=iP77_axu0h3), and [SimpleCIL](https://arxiv.org/abs/2303.07338). State-of-the-art methods of 2023!
-- [2023-05]🌟 Check out our recent work about [class-incremental learning with vision-language models](https://arxiv.org/abs/2305.19270)!
 - [2022-12]🌟 Add FrTrIL, PASS, IL2A, and SSRE.
 - [2022-10]🌟 PyCIL has been published in [SCIENCE CHINA Information Sciences](https://link.springer.com/article/10.1007/s11432-022-3600-y). Check out the [official introduction](https://mp.weixin.qq.com/s/h1qu2LpdvjeHAPLOnG478A)!  
 - [2022-08]🌟 Add RMM.
@@ -199,6 +199,10 @@ We have implemented the pre-processing of `CIFAR100`, `imagenet100,` and `imagen
 
 ### Our Papers
 
+- Learning without Forgetting for Vision-Language Models (**TPAMI 2025**) [[paper](https://arxiv.org/abs/2305.19270)] [[code](https://github.com/zhoudw-zdw/PROOF)]
+ 
+- PILOT: A Pre-Trained Model-Based Continual Learning Toolbox (**SCIS 2025**) [[paper](https://arxiv.org/abs/2309.07117)] [[code](https://github.com/sun-hailong/LAMDA-PILOT)]
+
 - Dual Consolidation for Pre-Trained Model-Based Domain-Incremental Learning (**arXiv 2024**) [[paper](https://arxiv.org/abs/2410.00911)]
 
 - Revisiting Class-Incremental Learning with Pre-Trained Models: Generalizability and Adaptivity are All You Need (**IJCV 2024**) [[paper](https://arxiv.org/abs/2303.07338)] [[code](https://github.com/zhoudw-zdw/RevisitingCIL)]
@@ -212,10 +216,6 @@ We have implemented the pre-processing of `CIFAR100`, `imagenet100,` and `imagen
 - Continual Learning with Pre-Trained Models: A Survey (**IJCAI 2024**) [[paper](https://arxiv.org/abs/2401.16386)] [[code](https://github.com/sun-hailong/LAMDA-PILOT)]
 
 - Adaptive Adapter Routing for Long-Tailed Class-Incremental Learning (**Machine Learning 2024**) [[paper](https://arxiv.org/abs/2409.07446)] [[code](https://github.com/vita-qzh/APART)]
-
-- Learning without Forgetting for Vision-Language Models (**arXiv 2023**) [[paper](https://arxiv.org/abs/2305.19270)]
-
-- PILOT: A Pre-Trained Model-Based Continual Learning Toolbox (**arXiv 2023**) [[paper](https://arxiv.org/abs/2309.07117)] [[code](https://github.com/sun-hailong/LAMDA-PILOT)]
 
 - Few-Shot Class-Incremental Learning via Training-Free Prototype Calibration (**NeurIPS 2023**)[[paper](https://arxiv.org/abs/2312.05229)] [[Code](https://github.com/wangkiw/TEEN)]
 
@@ -238,6 +238,8 @@ We have implemented the pre-processing of `CIFAR100`, `imagenet100,` and `imagen
 - Dynamic Residual Classifier for Class Incremental Learning (**ICCV 2023**) [[paper](https://openaccess.thecvf.com/content/ICCV2023/papers/Chen_Dynamic_Residual_Classifier_for_Class_Incremental_Learning_ICCV_2023_paper.pdf)][[code](https://github.com/chen-xw/DRC-CIL)] 
 
 - S-Prompts Learning with Pre-trained Transformers: An Occam's Razor for Domain Incremental Learning (**NeurIPS 2022**) [[paper](https://openreview.net/forum?id=ZVe_WeMold)] [[code](https://github.com/iamwangyabin/S-Prompts)]
+
+- ...
 
 
 ## License
