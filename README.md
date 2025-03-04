@@ -60,7 +60,8 @@ Welcome to PyCIL, perhaps the toolbox for class-incremental learning with the **
 
 
 ## What's New
-- [2025-02]🌟 Check out our [latest work](https://arxiv.org/abs/2410.00911) on pre-trained model-based domain-incremental learning(**CVPR 2025**)! 
+- [2025-03]🌟 Check out our [latest work](https://arxiv.org/abs/2503.00823) on class-incremental learning (**CVPR 2025**)! 
+- [2025-02]🌟 Check out our [latest work](https://arxiv.org/abs/2410.00911) on pre-trained model-based domain-incremental learning (**CVPR 2025**)! 
 - [2025-02]🌟 Check out our [latest work](https://arxiv.org/abs/2305.19270) on class-incremental learning with vision-language models (**TPAMI 2025**)!
 - [2024-12]🌟 Check out our [latest work](https://arxiv.org/abs/2412.09441) on pre-trained model-based class-incremental learning (**AAAI 2025**)!
 - [2024-08]🌟 Check out our [latest work](https://arxiv.org/abs/2303.07338) on pre-trained model-based class-incremental learning (**IJCV 2024**)!
@@ -198,7 +199,9 @@ We have implemented the pre-processing of `CIFAR100`, `imagenet100,` and `imagen
 ## Awesome Papers using PyCIL
 
 ### Our Papers
-- Dual Consolidation for Pre-Trained Model-Based Domain-Incremental Learning (**CVPR 2025**) [[paper](https://arxiv.org/abs/2410.00911)]
+- Dual Consolidation for Pre-Trained Model-Based Domain-Incremental Learning (**CVPR 2025**) [[paper](https://arxiv.org/abs/2410.00911)] [[code](https://github.com/Estrella-fugaz/CVPR25-Duct)]
+
+- Task-Agnostic Guided Feature Expansion for Class-Incremental Learning (**CVPR 2025**) [[paper](https://arxiv.org/abs/2503.00823)] [[code](https://github.com/bwnzheng/TagFex_CVPR2025)]
   
 - Learning without Forgetting for Vision-Language Models (**TPAMI 2025**) [[paper](https://arxiv.org/abs/2305.19270)] [[code](https://github.com/zhoudw-zdw/PROOF)]
 
