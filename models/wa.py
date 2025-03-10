@@ -37,7 +37,12 @@ class WA(BaseLearner):
 
     def after_task(self):
         if self._cur_task > 0:
-            self._network.weight_align(self._total_classes - self._known_classes)
+            if len(self._multiple_gpus) > 1:
+                self._network.module.weight_align(
+                    self._total_classes - self._known_classes
+                )
+            else:
+                self._network.weight_align(self._total_classes - self._known_classes)
         self._old_network = self._network.copy().freeze()
         self._known_classes = self._total_classes
         logging.info("Exemplar size: {}".format(self.exemplar_size))
@@ -104,12 +109,6 @@ class WA(BaseLearner):
                 optimizer=optimizer, milestones=milestones, gamma=lrate_decay
             )
             self._update_representation(train_loader, test_loader, optimizer, scheduler)
-            if len(self._multiple_gpus) > 1:
-                self._network.module.weight_align(
-                    self._total_classes - self._known_classes
-                )
-            else:
-                self._network.weight_align(self._total_classes - self._known_classes)
 
     def _init_train(self, train_loader, test_loader, optimizer, scheduler):
         prog_bar = tqdm(range(init_epoch))
