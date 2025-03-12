@@ -60,6 +60,7 @@ Welcome to PyCIL, perhaps the toolbox for class-incremental learning with the **
 
 
 ## What's New
+- [2025-03]🌟 Check out our [latest work](https://arxiv.org/abs/2503.08510) on class-incremental learning with CLIP!
 - [2025-03]🌟 Check out our [latest work](https://arxiv.org/abs/2503.00823) on class-incremental learning (**CVPR 2025**)! 
 - [2025-02]🌟 Check out our [latest work](https://arxiv.org/abs/2410.00911) on pre-trained model-based domain-incremental learning (**CVPR 2025**)! 
 - [2025-02]🌟 Check out our [latest work](https://arxiv.org/abs/2305.19270) on class-incremental learning with vision-language models (**TPAMI 2025**)!
@@ -199,6 +200,8 @@ We have implemented the pre-processing of `CIFAR100`, `imagenet100,` and `imagen
 ## Awesome Papers using PyCIL
 
 ### Our Papers
+- External Knowledge Injection for CLIP-Based Class-Incremental Learning (arXiv 2025) [[paper](https://arxiv.org/abs/2503.08510)] [[code](https://github.com/RenaissCode/ENGINE)]
+
 - Dual Consolidation for Pre-Trained Model-Based Domain-Incremental Learning (**CVPR 2025**) [[paper](https://arxiv.org/abs/2410.00911)] [[code](https://github.com/Estrella-fugaz/CVPR25-Duct)]
 
 - Task-Agnostic Guided Feature Expansion for Class-Incremental Learning (**CVPR 2025**) [[paper](https://arxiv.org/abs/2503.00823)] [[code](https://github.com/bwnzheng/TagFex_CVPR2025)]
